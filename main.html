@@ -1,37 +1,92 @@
 <!DOCTYPE html>
 <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="icon" href="./images/icon.png">
+        <title>SSW - Schedule</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="./images/icon.png">
-    <title>SSW - Schedule</title>
-</head>
+    <body>
+        <header class="header">
+            <button class="header__menu-toggle">☰</button>
+            <h1 class="header__title">SimpleScheduleWork (SSW)</h1>
+            <button class="header__theme-toggle"></button>
+            <div class="header__headbar">
+                <div class="header__headbar__btn">Фильтры</div>
+                <div class="header__headbar__btn_">Расписание</div>
+                <div class="header__headbar__btn">Проекты</div>
+            </div>
+            <div class="header__icon"></div>
+            <div class="header__list">
+                <div class="header__list__btn">На главный</div>
+                <div class="header__list__btn">Выход</div>
+            </div>
+        </header>
 
-<body>
-    <header class="header">
-        <h1 class="header__title">SimpleScheduleWork (SSW)</h1>
-        <div class="header__icon"></div>
-        <div class="header__list">
-            <div class="header__list__btn_main">На главный</div>
-            <div class="header__list__btn_exit">Выход</div>
-        </div>
-    </header>
-    
-    <section1 class="subtitle">
-        <h1 class="subtitle__title">График работы сотрудников</h1>
-    </section1>
-    
-    <section2 class="sidebar">
-        <div class="sidebar__btn_filter">Фильтры</div>
-        <div class="sidebar__btn_schedule">Расписание</div>
-        <div class="sidebar__btn_projects">Проекты</div>
-    </section2>
-    
-    <section3 class="worksheet">
-    </section3>
-    
-    <footer class="footer">
-    </footer>
-</body>
+        <section class="subtitle">
+            <h1 class="subtitle__title">График работы сотрудников</h1>
+            <div class="subtitle__date">
+                <button class="subtitle__btn">◄</button>
+                <div class="subtitle__date__place">01 - 07 января 1970</div>
+                <button class="subtitle__btn">►</button>
+            </div>
+        </section>
+
+        <section class="sidebar">
+            <button class="sidebar__btn">Фильтры</button>
+            <button class="sidebar__btn">Расписание</button>
+            <button class="sidebar__btn">Проекты</button>
+        </section>
+
+        <section class="worksheet">
+            <div class="worksheet__row">
+                <div class="worksheet__cell header-cell">Сотрудник</div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+            </div>
+            <div class="worksheet__row">
+                <div class="worksheet__cell header-cell">Сотрудник</div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+            </div>
+            <div class="worksheet__row">
+                <div class="worksheet__cell name-cell">Иванов</div>
+                <div class="worksheet__cell green"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+            </div>
+            <div class="worksheet__row">
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell name-cell">Иванов</div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+                <div class="worksheet__cell"></div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <button class="footer__btn">◄</button>
+            <div class="footer__place">Лист 1 из 1</div>
+            <button class="footer__btn">►</button>
+        </footer>
+
+    </body>
+</html>
