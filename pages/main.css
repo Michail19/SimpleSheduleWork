@@ -5,6 +5,12 @@
     margin: 0;
     padding: 0;
     background: #F5F7FA;
+    color: #353535;
+}
+
+.dark-theme {
+    background: #1E1E1E;
+    color: #EAEAEA;
 }
 
 .header {
@@ -43,9 +49,19 @@
     border: none;
 }
 
+.dark-theme .header__up-blocks__theme-toggle {
+    background: url("../images/night.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 4vw;
+    height: 5vh;
+    border: none;
+}
+
 .header__up-blocks__wrapper {
     position: relative; 
     display: inline-block;
+    align-items: center;
 }
 
 .header__up-blocks__wrapper__icon {
