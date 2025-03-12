@@ -180,7 +180,7 @@ html, body {
 .main {
     display: flex;
     height: calc(100vh - 185px - 2rem);
-    margin: 0 0.75vw 0 1vw;
+    margin: 0 0.75vw 3vh 1vw;
     gap: 15px;
     /* border: 3px solid black; */
 }
@@ -225,18 +225,20 @@ html, body {
     display: none;
 }
 
-.worksheet__row__header:not(:first-child) {
+.worksheet__row_mobile {
     display: none;
 }
 
 
 .worksheet  {
-    position: relative;
     display: flex;
     padding: 1.5vh 1vw;
     border-radius: 15px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     flex: 1;
+    flex-direction: column;
+    gap: 25px;
+    align-self: flex-start;
     
     background: #E3E7ED;
 }
@@ -255,8 +257,9 @@ html, body {
     height: 2rem;
     padding: 0.5rem;
     border-radius: 5px;
-    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
+    align-content: center;
     
+    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
     background: #C5C1E8;
 }
 
@@ -265,8 +268,8 @@ html, body {
     height: 2.5rem;
     padding: 0.25rem;
     border-radius: 5px;
-    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
     
+    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
     background: #C5C1E8;
 }
 
@@ -276,6 +279,43 @@ html, body {
     background-repeat: no-repeat;
     width: 2.5rem;
     height: 2.5rem;
+}
+
+.current {
+    background: #F7FF00;
+    margin: -1vh -1vw;
+    padding: 1vh 1vw;
+}
+
+.worksheet__row {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.worksheet__cell {
+    flex: 1;
+    text-align: center; 
+    align-content: center;
+    height: 2rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    
+    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
+    background: #C5C1E8;
+}
+
+.worksheet__cell_clock {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.25rem;
+    border-radius: 5px;
+    text-align: center; 
+    align-content: center;
+    
+    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
+    background: #C5C1E8;
 }
 
 .dark-theme .worksheet {
@@ -292,10 +332,24 @@ html, body {
     box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 1);
 }
 
+.dark-theme .worksheet__cell_clock {
+    background: #413A79;
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 1);
+}
+
+.dark-theme .worksheet__cell {
+    background: #413A79;
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 1);
+}
+
 .dark-theme .cell_clock_img {
     background: url("../images/timeN.png");
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.dark-theme .current {
+    background: #A4AA01;
 }
 
 /* -------------------------------------- */
