@@ -172,7 +172,7 @@ html, body {
 
 .dark-theme .subtitle__date__btn {
     background: #30378B;
-    color: #C3DE86;
+    color: #EAEAEA;
 }
 
 /* ------------------------------------------- */
@@ -232,7 +232,7 @@ html, body {
 
 .worksheet  {
     display: flex;
-    padding: 1.5vh 1vw;
+    padding: 1.5vh 1vw 20px 1vw;
     border-radius: 15px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     flex: 1;
@@ -251,7 +251,9 @@ html, body {
 }
 
 .worksheet__row__header__cell {
-    font-size: 1.25em;
+    font-size: 1.2em;
+    /* font-weight: bold;
+    text-transform: uppercase; */
     flex: 1;
     text-align: center; 
     height: 2rem;
@@ -259,7 +261,7 @@ html, body {
     border-radius: 5px;
     align-content: center;
     
-    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
     background: #C5C1E8;
 }
 
@@ -269,7 +271,7 @@ html, body {
     padding: 0.25rem;
     border-radius: 5px;
     
-    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
     background: #C5C1E8;
 }
 
@@ -302,7 +304,7 @@ html, body {
     padding: 0.5rem;
     border-radius: 5px;
     
-    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
     background: #C5C1E8;
 }
 
@@ -314,7 +316,7 @@ html, body {
     text-align: center; 
     align-content: center;
     
-    box-shadow: 2.5px 2.5px 10px rgba(197, 193, 232, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
     background: #C5C1E8;
 }
 
@@ -324,22 +326,22 @@ html, body {
 
 .dark-theme .worksheet__row__header__cell {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
 }
 
 .dark-theme .worksheet__row__header__cell_clock {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
 }
 
 .dark-theme .worksheet__cell_clock {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
 }
 
 .dark-theme .worksheet__cell {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 1);
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
 }
 
 .dark-theme .cell_clock_img {
