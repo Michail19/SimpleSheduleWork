@@ -96,8 +96,10 @@
     border-radius: 10px;
     flex: 1;
     white-space: nowrap;
+    font-size: 1.25em;
     
     background: #98ED9B;
+    color: #353535;
 }
 
 .dark-theme .header__up-blocks__wrapper__list {
@@ -106,6 +108,7 @@
 
 .dark-theme .header__up-blocks__wrapper__list__btn {
     background: #377939;
+    color: #EAEAEA;
 }
 
 .header__up-blocks__wrapper:hover .header__up-blocks__wrapper__list {
@@ -180,23 +183,34 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: 1vh 1vw;
+    padding: 1.5vh 1vw;
+    gap: 10px;
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    align-self: flex-start;
+    
+    background: #E3E7ED;
 }
 
 .sidebar__btn {
-    padding: 4vh 3vw;
+    padding: 2vh 3vw;
     text-align: center;
     border-radius: 10px;
+    border: none;
     white-space: nowrap;
+    font-size: 1.25em;
     
     background: #98ED9B;
+    color: #353535;
 }
 
 .dark-theme .sidebar {
+    background: #252525;
 }
 
 .dark-theme .sidebar__btn {
     background: #377939;
+    color: #EAEAEA;
 }
 
 /* -------------------------------------- */
