@@ -95,6 +95,10 @@ html, body {
     color: #353535;
 }
 
+.dark-theme .header__up-blocks__wrapper__list {
+    background: #252525;
+}
+
 .header__up-blocks__wrapper__list__btn {
     padding: 3vh 2vw;
     text-align: center;
@@ -105,10 +109,6 @@ html, body {
     
     background: #98ED9B;
     color: #353535;
-}
-
-.dark-theme .header__up-blocks__wrapper__list {
-    background: #252525;
 }
 
 .dark-theme .header__up-blocks__wrapper__list__btn {
@@ -152,6 +152,10 @@ html, body {
     background: #DAD5FF;
 }
 
+.dark-theme .subtitle__date {
+    background: #3E3E3E;
+}
+
 .subtitle__date__btn {
     width: 40px;
     height: 32px;
@@ -164,10 +168,6 @@ html, body {
     
     background: #ACB3FF;
     color: #F3FFD7;
-}
-
-.dark-theme .subtitle__date {
-    background: #3E3E3E;
 }
 
 .dark-theme .subtitle__date__btn {
@@ -243,6 +243,10 @@ html, body {
     background: #E3E7ED;
 }
 
+.dark-theme .worksheet {
+    background: #252525;
+}
+
 .worksheet__row__header {
     display: flex;
     justify-content: space-between;
@@ -265,6 +269,11 @@ html, body {
     background: #C5C1E8;
 }
 
+.dark-theme .worksheet__row__header__cell {
+    background: #413A79;
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
+}
+
 .worksheet__row__header__cell_clock {
     width: 2.5rem;
     height: 2.5rem;
@@ -275,6 +284,11 @@ html, body {
     background: #C5C1E8;
 }
 
+.dark-theme .worksheet__row__header__cell_clock {
+    background: #413A79;
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
+}
+
 .cell_clock_img {
     background: url("../images/time.png");
     background-size: contain;
@@ -283,10 +297,20 @@ html, body {
     height: 2.5rem;
 }
 
+.dark-theme .cell_clock_img {
+    background: url("../images/timeN.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
 .current {
     background: #F7FF00;
     margin: -1vh -1vw;
     padding: 1vh 1vw;
+}
+
+.dark-theme .current {
+    background: #A4AA01;
 }
 
 .worksheet__row {
@@ -308,6 +332,11 @@ html, body {
     background: #C5C1E8;
 }
 
+.dark-theme .worksheet__cell {
+    background: #413A79;
+    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
+}
+
 .worksheet__cell_clock {
     width: 2.5rem;
     height: 2.5rem;
@@ -320,38 +349,9 @@ html, body {
     background: #C5C1E8;
 }
 
-.dark-theme .worksheet {
-    background: #252525;
-}
-
-.dark-theme .worksheet__row__header__cell {
-    background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
-}
-
-.dark-theme .worksheet__row__header__cell_clock {
-    background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
-}
-
 .dark-theme .worksheet__cell_clock {
     background: #413A79;
     box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
-}
-
-.dark-theme .worksheet__cell {
-    background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
-}
-
-.dark-theme .cell_clock_img {
-    background: url("../images/timeN.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-.dark-theme .current {
-    background: #A4AA01;
 }
 
 /* -------------------------------------- */
@@ -378,6 +378,11 @@ html, body {
     border: 1px solid #353535;
 }
 
+.dark-theme .footer__place {
+    background: #282828;
+    border: 1px solid #EAEAEA;
+}
+
 .footer__btn {
     width: 34px;
     height: 34px;
@@ -390,11 +395,6 @@ html, body {
     
     color: #353535;
     background: #F5F7FA;
-}
-
-.dark-theme .footer__place {
-    background: #282828;
-    border: 1px solid #EAEAEA;
 }
 
 .dark-theme .footer__btn {
