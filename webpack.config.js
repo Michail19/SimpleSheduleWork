@@ -1,16 +1,18 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
         index: "./src/index.tsx",
         main: "./src/main.tsx",
-        project: "./src/project.tsx"
+        project: "./src/project.tsx",
+        changeTheme: './src/changeTheme.js',
     },  // Точка входа
     output: {
         path: path.resolve(__dirname, "dist"),  // Папка сборки
-        filename: "bundle.js",  // Имя итогового файла
+        filename: '[name].bundle.js',  // Имя итогового файла
         publicPath: "/", // ВАЖНО! Для корректной работы маршрутов
     },
     mode: "development",  // Можно сменить на 'production'
@@ -53,6 +55,11 @@ module.exports = {
             template: "./pages/project.html",
             filename: "project.html",
             chunks: ["project"],
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: 'images/icon.png', to: 'icon.png' }, // Копируем иконку в dist
+            ],
         }),
     ],
     devServer: {

@@ -230,6 +230,12 @@ html, body {
 }
 
 
+.content  {
+    display: flex;
+    flex: 1;
+    background: none;
+}
+
 .worksheet  {
     display: flex;
     padding: 1.5vh 1vw 20px 1vw;
@@ -265,13 +271,13 @@ html, body {
     border-radius: 5px;
     align-content: center;
     
-    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
+    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
     background: #C5C1E8;
 }
 
 .dark-theme .worksheet__row__header__cell {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
+    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
 }
 
 .worksheet__row__header__cell_clock {
@@ -280,13 +286,13 @@ html, body {
     padding: 0.25rem;
     border-radius: 5px;
     
-    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
+    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
     background: #C5C1E8;
 }
 
 .dark-theme .worksheet__row__header__cell_clock {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
+    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
 }
 
 .cell_clock_img {
@@ -328,13 +334,13 @@ html, body {
     padding: 0.5rem;
     border-radius: 5px;
     
-    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
+    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
     background: #C5C1E8;
 }
 
 .dark-theme .worksheet__cell {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
+    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
 }
 
 .worksheet__cell_clock {
@@ -345,13 +351,13 @@ html, body {
     text-align: center; 
     align-content: center;
     
-    box-shadow: 2.5px 2.5px 10px rgba(0, 91, 55, 0.75);
+    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
     background: #C5C1E8;
 }
 
 .dark-theme .worksheet__cell_clock {
     background: #413A79;
-    box-shadow: 2.5px 2.5px 10px rgba(171, 200, 255, 0.9);
+    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
 }
 
 /* -------------------------------------- */
