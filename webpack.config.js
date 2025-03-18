@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: {
@@ -27,7 +28,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,  // Поддержка CSS
-                use: ["style-loader", "css-loader"],
+                use: [MiniCssExtractPlugin.loader, 'css-loader'], // Заменяем style-loader на MiniCssExtractPlugin.loader
             },
             {
                 test: /\.tsx$/, // Применять загрузчик только к TypeScript-файлам
@@ -58,8 +59,11 @@ module.exports = {
         }),
         new CopyWebpackPlugin({
             patterns: [
-                { from: 'images/icon.png', to: 'icon.png' }, // Копируем иконку в dist
+                { from: './images/icon.png', to: 'icon.png' }, // Копируем иконку в dist
             ],
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css', // Имя выходного CSS-файла
         }),
     ],
     devServer: {

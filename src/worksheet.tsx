@@ -1,5 +1,18 @@
 import React from 'react'
 
+// Типы данных для расписания
+interface Schedule {
+    start: string;
+    end: string;
+}
+
+interface Employee {
+    fio: string;
+    weekSchedule: {
+        [day: string]: Schedule;
+    };
+}
+
 const Worksheet = () => {
     const rows = Array.from({ length: 8 }, (_, rowIndex) => ({
         isCurrent: rowIndex === 0, // Первая строка получает класс "current"
