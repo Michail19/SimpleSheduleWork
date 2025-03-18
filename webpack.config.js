@@ -68,7 +68,7 @@ module.exports = {
     ],
     devServer: {
         historyApiFallback: true, // ВАЖНО! Позволяет перезагружать страницы без 404
-        static: path.join(__dirname, "dist"),
+        static: path.join(__dirname, "public"),
         compress: true,
         port: 3000,
         hot: true,

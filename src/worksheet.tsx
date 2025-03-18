@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Типы данных для расписания
 interface Schedule {
@@ -13,14 +13,48 @@ interface Employee {
     };
 }
 
-const Worksheet = () => {
-    const rows = Array.from({ length: 8 }, (_, rowIndex) => ({
-        isCurrent: rowIndex === 0, // Первая строка получает класс "current"
-        cells: Array.from({ length: 9 }, (_, cellIndex) => ({
-            className: cellIndex === 1 ? "worksheet__cell_clock" : "worksheet__cell",
-            content: 1
-        }))
-    }));
+interface Data {
+    currentWeek: string;
+    employees: Employee[];
+}
+
+const Worksheet: React.FC = () => {
+    const [data, setData] = useState<Data | null>(null);
+    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [currentWeek, setCurrentWeek] = useState<string>("");
+
+    useEffect(() => {
+        fetch("/data/data_example.json")
+            .then((response) => response.json())
+            .then((data) => {
+                setData(data);
+                setEmployees(data.employees);
+                setCurrentWeek(data.currentWeek);
+            })
+            .catch((error) => console.error("Ошибка при загрузке данных:", error));
+    }, []);
+
+    const changeWeek = (direction: "next" | "previous") => {
+        // Логика для изменения недели, можно использовать библиотеку moment.js для работы с датами
+        const current = new Date(currentWeek);
+        const newDate = direction === "next" ? current.setDate(current.getDate() + 7) : current.setDate(current.getDate() - 7);
+        setCurrentWeek(new Date(newDate).toISOString().split('T')[0]); // Изменение на новую дату
+    };
+
+    const calculateWorkHours = (time: Schedule[]): number => {
+        let diff = 0;
+        for (let i = 0; i < time.length; i++) {
+            if (!time[i] || !time[i].start || !time[i].end) continue; // Защита от пустых данных
+
+            const startTime = new Date(`1970-01-01T${time[i].start}:00`);
+            const endTime = new Date(`1970-01-01T${time[i].end}:00`);
+
+            if (endTime > startTime) {
+                diff += (endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60; // Разница в часах
+            }
+        }
+        return diff;
+    };
 
     return (
         <div className="worksheet">
@@ -37,16 +71,18 @@ const Worksheet = () => {
                 <div className="worksheet__row__header__cell">Суббота</div>
                 <div className="worksheet__row__header__cell">Воскресенье</div>
             </div>
-            {rows.map((row, rowIndex) => (
-                <div
-                    key={rowIndex}
-                    className={`worksheet__row ${row.isCurrent ? "current" : ""}`}
-                >
-                    {row.cells.map((cell, cellIndex) => (
-                        <div key={cellIndex} className={cell.className}>
-                            {cell.content}
-                        </div>
-                    ))}
+            {employees.map((employee, index) => (
+                <div key={index} className="worksheet__row">
+                    <div className="worksheet__cell">{employee.fio}</div>
+                    <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}</div>
+                    {Object.keys(employee.weekSchedule).map((day, dayIndex) => {
+                        const schedule = employee.weekSchedule[day];
+                        return (
+                            <div key={dayIndex} className="worksheet__cell">
+                                <div>{`${schedule.start} - ${schedule.end}`}</div>
+                            </div>
+                        );
+                    })}
                 </div>
             ))}
         </div>
