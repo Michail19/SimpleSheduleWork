@@ -247,8 +247,9 @@ html, body {
     border-radius: 15px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     align-self: flex-start;
-    grid-template-columns: repeat(9, 1fr);
-    gap: 5px;
+    width: 100%;
+    grid-template-columns: 1fr minmax(2.5rem, 2.5rem) repeat(7, 1fr);
+    gap: 10px;
     
     background: #E3E7ED;
 }
@@ -258,22 +259,15 @@ html, body {
 }
 
 .worksheet__row__header {
-    display: flex;
-    justify-content: space-between;
-    flex: 1;
-    gap: 5px;
+    display: contents;
 }
 
 .worksheet__row__header__cell {
     font-size: 1.2em;
-    /* font-weight: bold;
-    text-transform: uppercase; */
-    flex: 1;
     text-align: center; 
     height: 2rem;
     padding: 0.5rem;
     border-radius: 5px;
-    align-content: center;
     
     box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
     background: #C5C1E8;
@@ -324,14 +318,10 @@ html, body {
 }
 
 .worksheet__row {
-    display: flex;
-    flex: 1;
-    justify-content: space-between;
-    gap: 5px;
+    display: contents;
 }
 
 .worksheet__cell {
-    flex: 1;
     text-align: center; 
     align-content: center;
     height: 2rem;
