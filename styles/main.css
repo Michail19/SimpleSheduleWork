@@ -248,7 +248,6 @@ html, body {
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     align-self: flex-start;
     width: 100%;
-    grid-template-columns: 1fr auto repeat(7, 1fr);
     gap: 10px;
     
     background: #E3E7ED;
@@ -259,7 +258,9 @@ html, body {
 }
 
 .worksheet__row__header {
-    display: contents;
+    display: grid;
+    grid-template-columns: 1fr auto repeat(7, 1fr);
+    gap: 10px;
 }
 
 .worksheet__row__header__cell {
@@ -307,18 +308,10 @@ html, body {
     background-repeat: no-repeat;
 }
 
-.current {
-    background: #F7FF00;
-    margin: -1vh -1vw;
-    padding: 1vh 1vw;
-}
-
-.dark-theme .current {
-    background: #A4AA01;
-}
-
 .worksheet__row {
-    display: contents;
+    display: grid;
+    grid-template-columns: 1fr auto repeat(7, 1fr);
+    gap: 10px;
 }
 
 .worksheet__cell {
@@ -352,6 +345,14 @@ html, body {
 .dark-theme .worksheet__cell_clock {
     background: #413A79;
     box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
+}
+
+.current {
+    background: #F7FF00;
+}
+
+.dark-theme .current {
+    background: #A4AA01;
 }
 
 /* -------------------------------------- */
