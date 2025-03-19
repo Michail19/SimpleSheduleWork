@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 
 // Типы данных для расписания
 interface Schedule {
@@ -41,51 +42,66 @@ const Worksheet: React.FC = () => {
         setCurrentWeek(new Date(newDate).toISOString().split('T')[0]); // Изменение на новую дату
     };
 
-    const calculateWorkHours = (time: Schedule[]): number => {
-        let diff = 0;
-        for (let i = 0; i < time.length; i++) {
-            if (!time[i] || !time[i].start || !time[i].end) continue; // Защита от пустых данных
+    const calculateWorkHours = (time: { [day: string]: Schedule }): string => {
+        let totalHours = 0;
 
-            const startTime = new Date(`1970-01-01T${time[i].start}:00`);
-            const endTime = new Date(`1970-01-01T${time[i].end}:00`);
+        Object.values(time).forEach((item) => {
+            if (!item?.start || !item?.end) return; // Пропускаем некорректные записи
+
+            const startTime = new Date(`1970-01-01T${item.start}:00`);
+            const endTime = new Date(`1970-01-01T${item.end}:00`);
 
             if (endTime > startTime) {
-                diff += (endTime.getTime() - startTime.getTime()) / 1000 / 60 / 60; // Разница в часах
+                totalHours += (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60); // Разница в часах
             }
-        }
-        return diff;
+        });
+
+        let result = totalHours.toFixed(1);
+        console.log(result[result.length - 1]);
+        if (result[result.length - 1] != '0') return result;
+        else return Math.round(totalHours).toString();
     };
 
     return (
-        <div className="worksheet">
-            <div className="worksheet__row__header">
-                <div className="worksheet__row__header__cell header-cell">Сотрудник</div>
-                <div className="worksheet__row__header__cell_clock">
-                    <div className="cell_clock_img"></div>
+        <>
+            {document.querySelector(".subtitle__date__place") &&
+                ReactDOM.createPortal(
+                    <span className="subtitle__date__place_text">{currentWeek}</span>,
+                    document.querySelector(".subtitle__date__place") as Element
+                )}
+            <div className="worksheet">
+                <div className="worksheet__row__header">
+                    <div className="worksheet__row__header__cell header-cell">Сотрудник</div>
+                    <div className="worksheet__row__header__cell_clock">
+                        <div className="cell_clock_img"></div>
+                    </div>
+                    <div className="worksheet__row__header__cell">Понедельник</div>
+                    <div className="worksheet__row__header__cell">Вторник</div>
+                    <div className="worksheet__row__header__cell">Среда</div>
+                    <div className="worksheet__row__header__cell">Четверг</div>
+                    <div className="worksheet__row__header__cell">Пятница</div>
+                    <div className="worksheet__row__header__cell">Суббота</div>
+                    <div className="worksheet__row__header__cell">Воскресенье</div>
                 </div>
-                <div className="worksheet__row__header__cell">Понедельник</div>
-                <div className="worksheet__row__header__cell">Вторник</div>
-                <div className="worksheet__row__header__cell">Среда</div>
-                <div className="worksheet__row__header__cell">Четверг</div>
-                <div className="worksheet__row__header__cell">Пятница</div>
-                <div className="worksheet__row__header__cell">Суббота</div>
-                <div className="worksheet__row__header__cell">Воскресенье</div>
+                {employees.map((employee, index) => (
+                    <div
+                        key={index}
+                        className={`worksheet__row ${index === 0 ? "current" : ""}`}
+                    >
+                        <div className="worksheet__cell">{employee.fio}</div>
+                        <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}ч.</div>
+                        {Object.keys(employee.weekSchedule).map((day, dayIndex) => {
+                            const schedule = employee.weekSchedule[day];
+                            return (
+                                <div key={dayIndex} className="worksheet__cell">
+                                    <div>{`${schedule.start} - ${schedule.end}`}</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ))}
             </div>
-            {employees.map((employee, index) => (
-                <div key={index} className="worksheet__row">
-                    <div className="worksheet__cell">{employee.fio}</div>
-                    <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}</div>
-                    {Object.keys(employee.weekSchedule).map((day, dayIndex) => {
-                        const schedule = employee.weekSchedule[day];
-                        return (
-                            <div key={dayIndex} className="worksheet__cell">
-                                <div>{`${schedule.start} - ${schedule.end}`}</div>
-                            </div>
-                        );
-                    })}
-                </div>
-            ))}
-        </div>
+        </>
     );
 };
 

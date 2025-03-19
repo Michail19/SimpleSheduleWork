@@ -175,6 +175,11 @@ html, body {
     color: #EAEAEA;
 }
 
+.subtitle__date__place_text {
+    font-size: 14pt;
+    font-weight: bold;
+}
+
 /* ------------------------------------------- */
 
 .main {
@@ -237,14 +242,13 @@ html, body {
 }
 
 .worksheet  {
-    display: flex;
+    display: grid;
     padding: 1.5vh 1vw 20px 1vw;
     border-radius: 15px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
-    flex: 1;
-    flex-direction: column;
-    gap: 25px;
     align-self: flex-start;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 5px;
     
     background: #E3E7ED;
 }
