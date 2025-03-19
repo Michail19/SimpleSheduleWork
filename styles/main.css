@@ -248,7 +248,7 @@ html, body {
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     align-self: flex-start;
     width: 100%;
-    grid-template-columns: 1fr minmax(2.5rem, 2.5rem) repeat(7, 1fr);
+    grid-template-columns: 1fr auto repeat(7, 1fr);
     gap: 10px;
     
     background: #E3E7ED;
@@ -265,7 +265,7 @@ html, body {
 .worksheet__row__header__cell {
     font-size: 1.2em;
     text-align: center; 
-    height: 2rem;
+    min-height: 2rem;
     padding: 0.5rem;
     border-radius: 5px;
     
@@ -324,7 +324,7 @@ html, body {
 .worksheet__cell {
     text-align: center; 
     align-content: center;
-    height: 2rem;
+    min-height: 2rem;
     padding: 0.5rem;
     border-radius: 5px;
     
@@ -338,8 +338,8 @@ html, body {
 }
 
 .worksheet__cell_clock {
-    width: 2.5rem;
-    height: 2.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
     padding: 0.25rem;
     border-radius: 5px;
     text-align: center; 
