@@ -64,7 +64,6 @@ const Worksheet: React.FC = () => {
         return () => window.removeEventListener("resize", calculateRowsPerPage);
     }, [employees]);
 
-
     const changeWeek = (direction: "next" | "previous") => {
         // Логика для изменения недели, можно использовать библиотеку moment.js для работы с датами
         const current = new Date(currentWeek);
@@ -109,6 +108,21 @@ const Worksheet: React.FC = () => {
         else return Math.round(totalHours).toString();
     };
 
+    const [editingCell, setEditingCell] = useState<{ row: number; day: number } | null>(null);
+    const [editedTime, setEditedTime] = useState<Record<string, string>>({});
+
+    const handleEdit = (row: number, day: number, type: string, value: string) => {
+        setEditedTime((prev) => ({
+            ...prev,
+            [`${row}-${day}-${type}`]: value,
+        }));
+    };
+
+    const handleBlur = (employeeIndex: number, day: number, type: string) => {
+        setEditingCell(null);
+        // TODO: отправить обновленные данные в state или API
+    };
+
     return (
         <>
             {document.querySelector(".subtitle__date__place") &&
@@ -137,11 +151,32 @@ const Worksheet: React.FC = () => {
                     >
                         <div className="worksheet__cell">{employee.fio}</div>
                         <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}ч.</div>
-                        {Object.keys(employee.weekSchedule).map((day, dayIndex) => {
+                        {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
                             const schedule = employee.weekSchedule[day];
                             return (
                                 <div key={dayIndex} className="worksheet__cell">
-                                    <div>{`${schedule.start} - ${schedule.end}`}</div>
+                                    {editingCell?.row === index && editingCell?.day === dayIndex ? (
+                                        <>
+                                            <input
+                                                type="time"
+                                                value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
+                                                onChange={(e) => handleEdit(index, dayIndex, "start", e.target.value)}
+                                                onBlur={() => handleBlur(index, dayIndex, "start")}
+                                                autoFocus
+                                            />
+                                            -
+                                            <input
+                                                type="time"
+                                                value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
+                                                onChange={(e) => handleEdit(index, dayIndex, "end", e.target.value)}
+                                                onBlur={() => handleBlur(index, dayIndex, "end")}
+                                            />
+                                        </>
+                                    ) : (
+                                        <div onClick={() => setEditingCell({ row: index, day: dayIndex })}>
+                                            {`${schedule.start} - ${schedule.end}`}
+                                        </div>
+                                    )}
                                 </div>
                             );
                         })}
