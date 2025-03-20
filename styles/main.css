@@ -348,6 +348,9 @@ html, body {
 }
 
 .current {
+    margin: -1vh -1vw;
+    padding: 1vh 1vw;
+    
     background: #F7FF00;
 }
 
