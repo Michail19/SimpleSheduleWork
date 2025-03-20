@@ -42,9 +42,20 @@ const Worksheet: React.FC = () => {
     useEffect(() => {
         const calculateRowsPerPage = () => {
             if (!containerRef.current) return;
-            const containerHeight = containerRef.current.clientHeight;
+
+            const viewportHeight = window.innerHeight; // Высота всего окна браузера
+            const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
+            const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
+            const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
+            const otherElementsHeight = 120; // Если есть отступы, доп. элементы
+
+            const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
             const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
-            const newRowsPerPage = Math.floor(containerHeight / rowHeight) || 10;
+
+            const newRowsPerPage = Math.floor(availableHeight / rowHeight) || 10;
+            console.log( Math.floor((viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight) / rowHeight));
+            console.log( Math.floor((viewportHeight - headerHeight - otherElementsHeight) / rowHeight));
+
             setRowsPerPage(newRowsPerPage);
         };
 
@@ -52,6 +63,7 @@ const Worksheet: React.FC = () => {
         calculateRowsPerPage();
         return () => window.removeEventListener("resize", calculateRowsPerPage);
     }, [employees]);
+
 
     const changeWeek = (direction: "next" | "previous") => {
         // Логика для изменения недели, можно использовать библиотеку moment.js для работы с датами
