@@ -204,6 +204,10 @@ html, body {
     background: #E3E7ED;
 }
 
+.dark-theme .sidebar {
+    background: #252525;
+}
+
 .sidebar__btn {
     padding: 2vh 3vw;
     text-align: center;
@@ -216,15 +220,38 @@ html, body {
     color: #353535;
 }
 
-.dark-theme .sidebar {
-    background: #252525;
-}
-
 .dark-theme .sidebar__btn {
     background: #377939;
     color: #EAEAEA;
 }
 
+.btn_worksheet_enable {
+    transform: translateX(1vw);
+    transition: background-color 0.3s ease;
+}
+
+.btn_worksheet_enable::after {
+    content: '';
+    position: absolute;
+    right: -0.8em;
+    top: 1vh;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 2em 2em;
+    transform: rotate(135deg);
+
+    border-color: transparent #98ED9B transparent;
+}
+
+.dark-theme .btn_worksheet_enable::after {
+    border-color: transparent #377939 transparent;
+}
+
+.hide_content {
+    visibility: hidden;
+    display: none;
+}
 
 .name-cell {
     visibility: hidden;
@@ -250,6 +277,7 @@ html, body {
     align-self: flex-start;
     width: 100%;
     gap: 10px;
+    transition: background-color 0.3s ease;
     
     background: #E3E7ED;
 }
