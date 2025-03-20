@@ -349,8 +349,8 @@ html, body {
 }
 
 .current {
-    margin: -1vh -1vw;
-    padding: 1vh 1vw;
+    margin: -0.6vh -1vw;
+    padding: 0.6vh 1vw;
     
     background: #F7FF00;
 }
@@ -375,7 +375,7 @@ html, body {
     display: flex;
     align-content: center;
     height: 20px;
-    margin: 0 0.5px;
+    margin: 0 1px;
     padding: 3px;
     border-radius: 5px;
     

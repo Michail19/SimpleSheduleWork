@@ -25,7 +25,7 @@ const Worksheet: React.FC = () => {
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         fetch("/data/data_example.json")
@@ -40,18 +40,46 @@ const Worksheet: React.FC = () => {
 
     // Рассчитываем количество строк, которые умещаются в контейнер
     useEffect(() => {
-        const calculateRowsPerPage = () => {
-            if (!containerRef.current) return;
-            const containerHeight = containerRef.current.clientHeight;
-            const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
-            const newRowsPerPage = Math.floor(containerHeight / rowHeight) || 10;
-            setRowsPerPage(newRowsPerPage);
+        const container = containerRef.current;
+        if (!container) return;
+
+        // Функция для обновления rowsPerPage
+        const updateRowsPerPage = () => {
+            const rows = container.querySelectorAll(".worksheet__row");
+            if (rows.length > 0) {
+                const rowHeight = rows[0].clientHeight; // Высота одной строки
+
+                if (rowHeight > 0) {
+                    // Используем высоту контейнера, если она задана, иначе используем высоту окна
+                    const visibleHeight = container.clientHeight || window.innerHeight;
+                    setRowsPerPage(Math.floor(visibleHeight / rowHeight));
+                }
+            }
         };
 
-        window.addEventListener("resize", calculateRowsPerPage);
-        calculateRowsPerPage();
-        return () => window.removeEventListener("resize", calculateRowsPerPage);
-    }, [employees]);
+        // Создаём ResizeObserver
+        const observer = new ResizeObserver(updateRowsPerPage);
+
+        // Наблюдаем за контейнером
+        observer.observe(container);
+
+        // Наблюдаем за всеми строками
+        const rows = container.querySelectorAll(".worksheet__row");
+        rows.forEach(row => observer.observe(row));
+
+        // Очищаем observer при размонтировании
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    // useEffect(() => {
+    //     if (containerRef.current) {
+    //         const containerHeight = containerRef.current.clientHeight;
+    //         const rowHeight = 10; // высота одной строки, можно вычислить
+    //         setRowsPerPage(Math.floor(containerHeight / rowHeight));
+    //     }
+    // }, [containerRef.current]);
 
     const changeWeek = (direction: "next" | "previous") => {
         // Логика для изменения недели, можно использовать библиотеку moment.js для работы с датами
@@ -105,7 +133,7 @@ const Worksheet: React.FC = () => {
                     <span className="subtitle__date__place_text">{currentWeek}</span>,
                     document.querySelector(".subtitle__date__place") as Element
                 )}
-            <div className="worksheet">
+            <div ref={containerRef} className="worksheet">
                 <div className="worksheet__row__header">
                     <div className="worksheet__row__header__cell header-cell">Сотрудник</div>
                     <div className="worksheet__row__header__cell_clock">
