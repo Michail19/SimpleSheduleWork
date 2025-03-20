@@ -25,6 +25,8 @@ const Worksheet: React.FC = () => {
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [editingCell, setEditingCell] = useState<{ row: number; day: string } | null>(null);
+    const [editedTime, setEditedTime] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -53,8 +55,6 @@ const Worksheet: React.FC = () => {
             const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
 
             const newRowsPerPage = Math.floor(availableHeight / rowHeight) || 10;
-            console.log( Math.floor((viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight) / rowHeight));
-            console.log( Math.floor((viewportHeight - headerHeight - otherElementsHeight) / rowHeight));
 
             setRowsPerPage(newRowsPerPage);
         };
@@ -108,20 +108,81 @@ const Worksheet: React.FC = () => {
         else return Math.round(totalHours).toString();
     };
 
-    const [editingCell, setEditingCell] = useState<{ row: number; day: number } | null>(null);
-    const [editedTime, setEditedTime] = useState<Record<string, string>>({});
-
-    const handleEdit = (row: number, day: number, type: string, value: string) => {
+    const handleEdit = (row: number, day: string, type: string, value: string) => {
         setEditedTime((prev) => ({
             ...prev,
             [`${row}-${day}-${type}`]: value,
         }));
     };
 
-    const handleBlur = (employeeIndex: number, day: number, type: string) => {
+    const handleBlur = (employeeIndex: number, day: string, type: string) => {
+        const editedValue = editedTime[`${employeeIndex}-${day}-${type}`];
+        const oldValue = employees[employeeIndex].weekSchedule[day];
+        const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+
+        // Если значение отсутствует, сохраняем старое значение
+        if (editedValue === undefined || editedValue === "" || !timeRegex.test(editedValue)) {
+            setEmployees((prev) =>
+                prev.map((employee, index) =>
+                    index === employeeIndex
+                        ? {
+                            ...employee,
+                            weekSchedule: {
+                                ...employee.weekSchedule,
+                                [day]: oldValue,
+                            },
+                        }
+                        : employee
+                )
+            );
+            setEditingCell(null);
+            return;
+        }
+
+        // Сохраняем новое значение
+        setEmployees((prev) =>
+            prev.map((employee, index) =>
+                index === employeeIndex
+                    ? {
+                        ...employee,
+                        weekSchedule: {
+                            ...employee.weekSchedule,
+                            [day]: {
+                                ...employee.weekSchedule[day],
+                                [type]: editedValue,
+                            },
+                        },
+                    }
+                    : employee
+            )
+        );
+
         setEditingCell(null);
-        // TODO: отправить обновленные данные в state или API
+        // TODO: отправить обновленные данные в API
     };
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && editingCell !== null) {
+                setEditingCell(null); // Отключаем редактирование
+            }
+            if (e.key === "Enter" && editingCell !== null) {
+                const inputElement = document.querySelector("input"); // Находим input
+                if (inputElement) {
+                    const value = inputElement.value; // Получаем значение
+                    console.log(value);
+                    handleEdit(editingCell.row, editingCell.day, "start", value); // Сохраняем значение
+                    setEditingCell(null); // Завершаем редактирование
+                }
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [editingCell]); // Добавляем editingCell в зависимости
 
     return (
         <>
@@ -155,25 +216,37 @@ const Worksheet: React.FC = () => {
                             const schedule = employee.weekSchedule[day];
                             return (
                                 <div key={dayIndex} className="worksheet__cell">
-                                    {editingCell?.row === index && editingCell?.day === dayIndex ? (
+                                    {editingCell?.row === index && editingCell?.day === day ? (
                                         <>
                                             <input
                                                 type="time"
                                                 value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
-                                                onChange={(e) => handleEdit(index, dayIndex, "start", e.target.value)}
-                                                onBlur={() => handleBlur(index, dayIndex, "start")}
-                                                autoFocus
+                                                onChange={(e) => handleEdit(index, day, "start", e.target.value)}
+                                                onBlur={() => handleBlur(index, day, "start")}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Escape") {
+                                                        setEditingCell(null); // Отмена редактирования
+                                                    }
+                                                    if (e.key === "Enter") {
+                                                        handleBlur(index, day, "start")
+                                                    }
+                                                }}
                                             />
                                             -
                                             <input
                                                 type="time"
                                                 value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
-                                                onChange={(e) => handleEdit(index, dayIndex, "end", e.target.value)}
-                                                onBlur={() => handleBlur(index, dayIndex, "end")}
+                                                onChange={(e) => handleEdit(index, day, "end", e.target.value)}
+                                                onBlur={() => handleBlur(index, day, "end")}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Escape") {
+                                                        setEditingCell(null); // Отмена редактирования
+                                                    }
+                                                }}
                                             />
                                         </>
                                     ) : (
-                                        <div onClick={() => setEditingCell({ row: index, day: dayIndex })}>
+                                        <div onClick={() => setEditingCell({ row: index, day: day })}>
                                             {`${schedule.start} - ${schedule.end}`}
                                         </div>
                                     )}
