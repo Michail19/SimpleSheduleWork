@@ -40,46 +40,18 @@ const Worksheet: React.FC = () => {
 
     // Рассчитываем количество строк, которые умещаются в контейнер
     useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        // Функция для обновления rowsPerPage
-        const updateRowsPerPage = () => {
-            const rows = container.querySelectorAll(".worksheet__row");
-            if (rows.length > 0) {
-                const rowHeight = rows[0].clientHeight; // Высота одной строки
-
-                if (rowHeight > 0) {
-                    // Используем высоту контейнера, если она задана, иначе используем высоту окна
-                    const visibleHeight = container.clientHeight || window.innerHeight;
-                    setRowsPerPage(Math.floor(visibleHeight / rowHeight));
-                }
-            }
+        const calculateRowsPerPage = () => {
+            if (!containerRef.current) return;
+            const containerHeight = containerRef.current.clientHeight;
+            const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
+            const newRowsPerPage = Math.floor(containerHeight / rowHeight) || 10;
+            setRowsPerPage(newRowsPerPage);
         };
 
-        // Создаём ResizeObserver
-        const observer = new ResizeObserver(updateRowsPerPage);
-
-        // Наблюдаем за контейнером
-        observer.observe(container);
-
-        // Наблюдаем за всеми строками
-        const rows = container.querySelectorAll(".worksheet__row");
-        rows.forEach(row => observer.observe(row));
-
-        // Очищаем observer при размонтировании
-        return () => {
-            observer.disconnect();
-        };
-    }, []);
-
-    // useEffect(() => {
-    //     if (containerRef.current) {
-    //         const containerHeight = containerRef.current.clientHeight;
-    //         const rowHeight = 10; // высота одной строки, можно вычислить
-    //         setRowsPerPage(Math.floor(containerHeight / rowHeight));
-    //     }
-    // }, [containerRef.current]);
+        window.addEventListener("resize", calculateRowsPerPage);
+        calculateRowsPerPage();
+        return () => window.removeEventListener("resize", calculateRowsPerPage);
+    }, [employees]);
 
     const changeWeek = (direction: "next" | "previous") => {
         // Логика для изменения недели, можно использовать библиотеку moment.js для работы с датами
@@ -121,7 +93,6 @@ const Worksheet: React.FC = () => {
         });
 
         let result = totalHours.toFixed(1);
-        console.log(result[result.length - 1]);
         if (result[result.length - 1] != '0') return result;
         else return Math.round(totalHours).toString();
     };
