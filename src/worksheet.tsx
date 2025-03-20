@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from 'react-dom';
 
 // Типы данных для расписания
@@ -23,6 +23,9 @@ const Worksheet: React.FC = () => {
     const [data, setData] = useState<Data | null>(null);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [currentWeek, setCurrentWeek] = useState<string>("");
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         fetch("/data/data_example.json")
@@ -35,11 +38,44 @@ const Worksheet: React.FC = () => {
             .catch((error) => console.error("Ошибка при загрузке данных:", error));
     }, []);
 
+    // Рассчитываем количество строк, которые умещаются в контейнер
+    useEffect(() => {
+        const calculateRowsPerPage = () => {
+            if (!containerRef.current) return;
+            const containerHeight = containerRef.current.clientHeight;
+            const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
+            const newRowsPerPage = Math.floor(containerHeight / rowHeight) || 10;
+            setRowsPerPage(newRowsPerPage);
+        };
+
+        window.addEventListener("resize", calculateRowsPerPage);
+        calculateRowsPerPage();
+        return () => window.removeEventListener("resize", calculateRowsPerPage);
+    }, [employees]);
+
     const changeWeek = (direction: "next" | "previous") => {
         // Логика для изменения недели, можно использовать библиотеку moment.js для работы с датами
         const current = new Date(currentWeek);
         const newDate = direction === "next" ? current.setDate(current.getDate() + 7) : current.setDate(current.getDate() - 7);
         setCurrentWeek(new Date(newDate).toISOString().split('T')[0]); // Изменение на новую дату
+    };
+
+    // Фиксируем `current` сотрудника на всех страницах
+    const currentEmployee = employees.length > 0 ? employees[0] : null;
+    const paginatedEmployees = employees.slice(1); // Убираем `current` из списка
+    const totalPages = Math.ceil(paginatedEmployees.length / rowsPerPage);
+
+    const displayedEmployees = [
+        ...(currentEmployee ? [currentEmployee] : []), // Всегда добавляем `current`
+        ...paginatedEmployees.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+    ];
+
+    const changePage = (direction: "next" | "previous") => {
+        setCurrentPage((prev) => {
+            if (direction === "next" && prev < totalPages) return prev + 1;
+            if (direction === "previous" && prev > 1) return prev - 1;
+            return prev;
+        });
     };
 
     const calculateWorkHours = (time: { [day: string]: Schedule }): string => {
@@ -83,7 +119,7 @@ const Worksheet: React.FC = () => {
                     <div className="worksheet__row__header__cell">Суббота</div>
                     <div className="worksheet__row__header__cell">Воскресенье</div>
                 </div>
-                {employees.map((employee, index) => (
+                {displayedEmployees.map((employee, index) => (
                     <div
                         key={index}
                         className={`worksheet__row ${index === 0 ? "current" : ""}`}
@@ -101,6 +137,29 @@ const Worksheet: React.FC = () => {
                     </div>
                 ))}
             </div>
+            {document.querySelector(".footer") &&
+                ReactDOM.createPortal(
+                    <>
+                        <button
+                            className="footer__btn"
+                            onClick={() => changePage("previous")}
+                            disabled={currentPage === 1}
+                        >
+                            ◄
+                        </button>
+                        <div className="footer__place">
+                            Лист {currentPage} из {totalPages}
+                        </div>
+                        <button
+                            className="footer__btn"
+                            onClick={() => changePage("next")}
+                            disabled={currentPage === totalPages}
+                        >
+                            ►
+                        </button>
+                    </>,
+                    document.querySelector(".footer") as Element
+                )}
         </>
     );
 };
