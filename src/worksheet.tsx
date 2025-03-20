@@ -25,9 +25,10 @@ const Worksheet: React.FC = () => {
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-    const [editingCell, setEditingCell] = useState<{ row: number; day: string } | null>(null);
+    const [editingCell, setEditingCell] = useState<{ row: number; day: string; dayIndex: number } | null>(null);
     const [editedTime, setEditedTime] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
     useEffect(() => {
         fetch("/data/data_example.json")
@@ -108,15 +109,15 @@ const Worksheet: React.FC = () => {
         else return Math.round(totalHours).toString();
     };
 
-    const handleEdit = (row: number, day: string, type: string, value: string) => {
+    const handleEdit = (row: number, dayIndex: number, day: string, type: string, value: string) => {
         setEditedTime((prev) => ({
             ...prev,
-            [`${row}-${day}-${type}`]: value,
+            [`${row}-${dayIndex}-${type}`]: value,
         }));
     };
 
-    const handleBlur = (employeeIndex: number, day: string, type: string) => {
-        const editedValue = editedTime[`${employeeIndex}-${day}-${type}`];
+    const handleBlur = (employeeIndex: number, dayIndex: number, day: string, type: string) => {
+        const editedValue = editedTime[`${employeeIndex}-${dayIndex}-${type}`];
         const oldValue = employees[employeeIndex].weekSchedule[day];
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
@@ -170,8 +171,11 @@ const Worksheet: React.FC = () => {
                 const inputElement = document.querySelector("input"); // Находим input
                 if (inputElement) {
                     const value = inputElement.value; // Получаем значение
-                    console.log(value);
-                    handleEdit(editingCell.row, editingCell.day, "start", value); // Сохраняем значение
+                    handleEdit(editingCell.row, editingCell.dayIndex, editingCell.day, "start", value); // Сохраняем значение
+                    const nextInput = inputRefs.current[1]; // Следующий input
+                    if (nextInput) {
+                        nextInput.focus(); // Переключаем фокус на следующий input
+                    }
                     setEditingCell(null); // Завершаем редактирование
                 }
             }
@@ -221,14 +225,14 @@ const Worksheet: React.FC = () => {
                                             <input
                                                 type="time"
                                                 value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
-                                                onChange={(e) => handleEdit(index, day, "start", e.target.value)}
-                                                onBlur={() => handleBlur(index, day, "start")}
+                                                onChange={(e) => handleEdit(index, dayIndex, day, "start", e.target.value)}
+                                                onBlur={() => handleBlur(index, dayIndex, day, "start")}
                                                 onKeyDown={(e) => {
                                                     if (e.key === "Escape") {
                                                         setEditingCell(null); // Отмена редактирования
                                                     }
                                                     if (e.key === "Enter") {
-                                                        handleBlur(index, day, "start")
+                                                        handleBlur(index, dayIndex, day, "start")
                                                     }
                                                 }}
                                             />
@@ -236,8 +240,8 @@ const Worksheet: React.FC = () => {
                                             <input
                                                 type="time"
                                                 value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
-                                                onChange={(e) => handleEdit(index, day, "end", e.target.value)}
-                                                onBlur={() => handleBlur(index, day, "end")}
+                                                onChange={(e) => handleEdit(index, dayIndex, day, "end", e.target.value)}
+                                                onBlur={() => handleBlur(index, dayIndex, day, "end")}
                                                 onKeyDown={(e) => {
                                                     if (e.key === "Escape") {
                                                         setEditingCell(null); // Отмена редактирования
@@ -246,7 +250,7 @@ const Worksheet: React.FC = () => {
                                             />
                                         </>
                                     ) : (
-                                        <div onClick={() => setEditingCell({ row: index, day: day })}>
+                                        <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
                                             {`${schedule.start} - ${schedule.end}`}
                                         </div>
                                     )}
