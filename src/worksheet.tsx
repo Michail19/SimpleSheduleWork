@@ -50,7 +50,7 @@ const Worksheet: React.FC = () => {
             const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
             const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-            const otherElementsHeight = 120; // Если есть отступы, доп. элементы
+            const otherElementsHeight = 140; // Если есть отступы, доп. элементы
 
             const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
             const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;

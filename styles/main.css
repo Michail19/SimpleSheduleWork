@@ -228,7 +228,7 @@ html, body {
 
 .main {
     display: flex;
-    height: calc(100vh - 185px - 2rem);
+    /* height: calc(100vh - 175px - 2rem); */
     margin: 0 0.75vw 3vh 1vw;
     gap: 15px;
     /* border: 3px solid black; */
@@ -287,13 +287,13 @@ html, body {
 .btn_worksheet_enable::after {
     content: '';
     position: absolute;
-    right: -0.8em;
-    top: 1vh;
+    left: 100%;
+    top: 50%;
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 0 0 2em 2em;
-    transform: rotate(135deg);
+    border-width: 0 0 2rem 2rem;
+    transform: translateX(-60%) translateY(-50%) rotate(135deg);
 
     border-color: transparent #98ED9B transparent;
 }
