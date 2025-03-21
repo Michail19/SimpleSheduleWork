@@ -48,6 +48,7 @@ html, body {
     font-weight: bold;
 }
 
+
 .page {
     font-family: 'Inter', sans-serif;
     background: #F5F7FA;
@@ -148,14 +149,24 @@ html, body {
     flex: 1;
     white-space: nowrap;
     font-size: 1.25em;
+    text-decoration: none;
+    cursor: pointer;
     
     background: #98ED9B;
     color: #353535;
 }
 
+.header__up-blocks__wrapper__list__btn:hover {
+    background: #a3ffa6;
+}
+
 .dark-theme .header__up-blocks__wrapper__list__btn {
     background: #377939;
     color: #EAEAEA;
+}
+
+.dark-theme .header__up-blocks__wrapper__list__btn:hover {
+    background: #469a48;
 }
 
 .header__up-blocks__wrapper:hover .header__up-blocks__wrapper__list {
@@ -280,6 +291,7 @@ html, body {
 }
 
 .btn_worksheet_enable {
+    position: relative; /* Добавляем позиционирование */
     transform: translateX(1vw);
     /*transition: background-color 0.3s ease;*/
 }
@@ -287,14 +299,15 @@ html, body {
 .btn_worksheet_enable::after {
     content: '';
     position: absolute;
-    left: 100%;
+    right: -0.9rem;
     top: 50%;
+    transform: translateY(-50%) rotate(135deg);
+
+    /* Адаптивные размеры треугольника */
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 0 0 2rem 2rem;
-    transform: translateX(-60%) translateY(-50%) rotate(135deg);
-
+    border-width: 0 0 calc(0.8 * 3rem) calc(0.8 * 3rem); /* Пропорционально шрифту кнопки */
     border-color: transparent #98ED9B transparent;
 }
 
