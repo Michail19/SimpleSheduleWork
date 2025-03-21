@@ -12,10 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Восстанавливаем состояние скрытых элементов
     if (localStorage.getItem('btn_state') !== 'enabled') {
-        button.classList.add('btn_worksheet_enable');
         content.classList.add('hide_content');
         subtitle_date.classList.add('hide_content');
         footer.classList.add('hide_content');
+        button.classList.toggle('btn_worksheet_enable');
     }
 
     // Обработчик для переключения темы
