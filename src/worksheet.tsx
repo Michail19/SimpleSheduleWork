@@ -214,7 +214,7 @@ const Worksheet: React.FC = () => {
                         key={index}
                         className={`worksheet__row ${index === 0 ? "current" : ""}`}
                     >
-                        <div className="worksheet__cell">{employee.fio}</div>
+                        <div className="worksheet__cell_name">{employee.fio}</div>
                         <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}ч.</div>
                         {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
                             const schedule = employee.weekSchedule[day];

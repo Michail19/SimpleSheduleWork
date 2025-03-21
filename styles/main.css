@@ -149,6 +149,7 @@ html, body {
     margin: 0 1vw;
     gap: 0.5rem;
     border-radius: 20%;
+    transition: background-color 0.3s ease, opacity 0.25s ease-out;
     
     background: #DAD5FF;
 }
@@ -166,6 +167,7 @@ html, body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s ease;
     
     background: #ACB3FF;
     color: #F3FFD7;
@@ -200,6 +202,7 @@ html, body {
     border-radius: 15px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     align-self: flex-start;
+    transition: background-color 0.3s ease;
     
     background: #E3E7ED;
 }
@@ -215,9 +218,15 @@ html, body {
     border: none;
     white-space: nowrap;
     font-size: 1.25em;
+    text-decoration: none;
+    cursor: pointer;
     
     background: #98ED9B;
     color: #353535;
+}
+
+.sidebar__btn:hover {
+    background: #a3ffa6;
 }
 
 .dark-theme .sidebar__btn {
@@ -225,9 +234,13 @@ html, body {
     color: #EAEAEA;
 }
 
+.dark-theme .sidebar__btn:hover {
+    background: #469a48;
+}
+
 .btn_worksheet_enable {
     transform: translateX(1vw);
-    transition: background-color 0.3s ease;
+    /*transition: background-color 0.3s ease;*/
 }
 
 .btn_worksheet_enable::after {
@@ -244,13 +257,22 @@ html, body {
     border-color: transparent #98ED9B transparent;
 }
 
+.btn_worksheet_enable:hover::after {
+    border-color: transparent #a3ffa6 transparent;
+}
+
 .dark-theme .btn_worksheet_enable::after {
     border-color: transparent #377939 transparent;
 }
 
+.dark-theme .btn_worksheet_enable:hover::after {
+    border-color: transparent #469a48 transparent;
+}
+
 .hide_content {
-    visibility: hidden;
-    display: none;
+    opacity: 0;
+    transition: opacity 0.25s ease-in-out;
+    pointer-events: none;
 }
 
 .name-cell {
@@ -267,6 +289,7 @@ html, body {
     display: flex;
     flex: 1;
     background: none;
+    transition: opacity 0.25s ease-out;
 }
 
 .worksheet  {
@@ -299,13 +322,13 @@ html, body {
     padding: 0.5rem;
     border-radius: 5px;
     
-    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
     background: #C5C1E8;
 }
 
 .dark-theme .worksheet__row__header__cell {
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.75);
     background: #413A79;
-    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
 }
 
 .worksheet__row__header__cell_clock {
@@ -314,13 +337,13 @@ html, body {
     padding: 0.25rem;
     border-radius: 5px;
     
-    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
     background: #C5C1E8;
 }
 
 .dark-theme .worksheet__row__header__cell_clock {
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.75);
     background: #413A79;
-    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
 }
 
 .cell_clock_img {
@@ -350,13 +373,29 @@ html, body {
     padding: 0.5rem;
     border-radius: 5px;
     
-    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
-    background: #C5C1E8;
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+    background: #E8F0FE;
 }
 
 .dark-theme .worksheet__cell {
-    background: #413A79;
-    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
+    box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+    background: #323232;
+}
+
+.worksheet__cell_name {
+    text-align: center;
+    align-content: center;
+    min-height: 2rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+
+    box-shadow: 5px 5px 5px rgba(0, 206, 167, 0.75);
+    background: #DBDCB0;
+}
+
+.dark-theme .worksheet__cell_name {
+    box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+    background: #4D4E20;
 }
 
 .worksheet__cell_clock {
@@ -367,13 +406,13 @@ html, body {
     text-align: center; 
     align-content: center;
     
-    box-shadow: 5px 5px 10px rgba(171, 200, 255, 0.9);
-    background: #C5C1E8;
+    box-shadow: 5px 5px 5px rgba(0, 206, 167, 0.75);
+    background: #3FFF55;
 }
 
 .dark-theme .worksheet__cell_clock {
-    background: #413A79;
-    box-shadow: 5px 5px 10px rgba(0, 91, 55, 0.75);
+    box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+    background: #16921A;
 }
 
 .current {
@@ -384,7 +423,7 @@ html, body {
 }
 
 .dark-theme .current {
-    background: #A4AA01;
+    background: #4b4b00;
 }
 
 /* -------------------------------------- */
@@ -397,6 +436,7 @@ html, body {
     right: 0;
     bottom: 0;
     margin: 5px;
+    transition: opacity 0.25s ease-out;
 }
 
 .footer__place {
@@ -406,6 +446,7 @@ html, body {
     margin: 0 1px;
     padding: 3px;
     border-radius: 5px;
+    transition: background-color 0.3s ease;
     
     background: #F2F2F2;
     border: 1px solid #353535;
@@ -425,6 +466,7 @@ html, body {
     border-radius: 25%;
     border: none;
     font-size: 30px;
+    transition: background-color 0.3s ease;
     
     color: #353535;
     background: #F5F7FA;
