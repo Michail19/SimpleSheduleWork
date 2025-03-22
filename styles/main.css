@@ -76,10 +76,44 @@ html, body {
 }
 
 .header__menu-toggle,
-.header__up-blocks__headbar,
 .header__up-blocks__wrapper__list {
     visibility: hidden;
     display: none;
+}
+
+@media screen and (max-width: 1489px) and (min-width: 1190px) {
+    .header__up-blocks__headbar {
+        display: flex;
+        gap: 10px;
+        margin: 0 1vw;
+    }
+}
+
+@media screen and (min-width: 1489px) {
+    .header__up-blocks__headbar {
+        visibility: hidden;
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1489px) and (min-width: 1190px) {
+    .header__headbar__up-blocks__btn {
+        padding: 2vh 3vw;
+        text-align: center;
+        border-radius: 10px;
+        border: none;
+        white-space: nowrap;
+        font-size: 1.25em;
+        text-decoration: none;
+        cursor: pointer;
+        background: #A3A3A3;
+        color: #FFFFFF;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .header__headbar__up-blocks__btn:hover {
+        background: #bdbdbd;
+    }
 }
 
 .header__up-blocks {
@@ -129,7 +163,7 @@ html, body {
     top: 100%;
     right: 0;
     padding: 2vh 2vw;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10%;
     justify-content: center;
     z-index: 9999;
@@ -235,6 +269,14 @@ html, body {
     font-weight: bold;
 }
 
+/*@media screen and (max-width: 1489px) and (min-width: 1190px) {*/
+
+/*}*/
+
+/*@media screen and (min-width: 1489px) {*/
+
+/*}*/
+
 /* ------------------------------------------- */
 
 .main {
@@ -261,6 +303,13 @@ html, body {
 
 .dark-theme .sidebar {
     background: #252525;
+}
+
+@media screen and (max-width: 1489px) and (min-width: 1090px) {
+    .sidebar {
+        display: none;
+        visibility: hidden;
+    }
 }
 
 .sidebar__btn {
