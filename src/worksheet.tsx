@@ -29,6 +29,15 @@ const Worksheet: React.FC = () => {
     const [editedTime, setEditedTime] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement | null>(null);
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1090);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         fetch("/data/data_example.json")
@@ -189,101 +198,142 @@ const Worksheet: React.FC = () => {
     }, [editingCell]); // Добавляем editingCell в зависимости
 
     return (
-        <>
-            {document.querySelector(".subtitle__date__place") &&
-                ReactDOM.createPortal(
-                    <span className="subtitle__date__place_text">{currentWeek}</span>,
-                    document.querySelector(".subtitle__date__place") as Element
-                )}
-            <div ref={containerRef} className="worksheet">
-                <div className="worksheet__row__header">
-                    <div className="worksheet__row__header__cell header-cell">Сотрудник</div>
-                    <div className="worksheet__row__header__cell_clock">
-                        <div className="cell_clock_img"></div>
-                    </div>
-                    <div className="worksheet__row__header__cell">Понедельник</div>
-                    <div className="worksheet__row__header__cell">Вторник</div>
-                    <div className="worksheet__row__header__cell">Среда</div>
-                    <div className="worksheet__row__header__cell">Четверг</div>
-                    <div className="worksheet__row__header__cell">Пятница</div>
-                    <div className="worksheet__row__header__cell">Суббота</div>
-                    <div className="worksheet__row__header__cell">Воскресенье</div>
-                </div>
-                {displayedEmployees.map((employee, index) => (
-                    <div
-                        key={index}
-                        className={`worksheet__row ${index === 0 ? "current" : ""}`}
-                    >
-                        <div className="worksheet__cell_name">{employee.fio}</div>
-                        <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}ч.</div>
-                        {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
-                            const schedule = employee.weekSchedule[day];
-                            return (
-                                <div key={dayIndex} className="worksheet__cell">
-                                    {editingCell?.row === index && editingCell?.day === day ? (
-                                        <>
-                                            <input
-                                                type="time"
-                                                value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
-                                                onChange={(e) => handleEdit(index, dayIndex, day, "start", e.target.value)}
-                                                onBlur={() => handleBlur(index, dayIndex, day, "start")}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === "Escape") {
-                                                        setEditingCell(null); // Отмена редактирования
-                                                    }
-                                                    if (e.key === "Enter") {
-                                                        handleBlur(index, dayIndex, day, "start")
-                                                    }
-                                                }}
-                                            />
-                                            -
-                                            <input
-                                                type="time"
-                                                value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
-                                                onChange={(e) => handleEdit(index, dayIndex, day, "end", e.target.value)}
-                                                onBlur={() => handleBlur(index, dayIndex, day, "end")}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === "Escape") {
-                                                        setEditingCell(null); // Отмена редактирования
-                                                    }
-                                                }}
-                                            />
-                                        </>
-                                    ) : (
-                                        <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
-                                            {`${schedule.start} - ${schedule.end}`}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                ))}
-            </div>
-            {document.querySelector(".footer") &&
-                ReactDOM.createPortal(
-                    <>
-                        <button
-                            className="footer__btn"
-                            onClick={() => changePage("previous")}
-                            disabled={currentPage === 1}
-                        >
-                            ◄
-                        </button>
-                        <div className="footer__place">
-                            Лист {currentPage} из {totalPages}
+        <div className="content">
+            {isMobile ? (
+                <>
+                    {(
+                        <div className="worksheet__row_mobile">
+                            <div className="worksheet__cell name-cell">{displayedEmployees[0].fio}</div>
+                            <div className="worksheet__cell_block"></div>
+                            {Object.keys(displayedEmployees[0].weekSchedule).map((day: string, dayIndex: number) => {
+                                const schedule = displayedEmployees[0].weekSchedule[day];
+                                return (
+                                    <div className="worksheet__cell" key={dayIndex}>
+                                        {editingCell?.row === 0 && editingCell?.day === day ? (
+                                            <>
+                                                <input
+                                                    type="time"
+                                                    value={editedTime[`0-${dayIndex}-start`] || schedule.start}
+                                                    onChange={(e) => handleEdit(0, dayIndex, day, "start", e.target.value)}
+                                                    onBlur={() => handleBlur(0, dayIndex, day, "start")}
+                                                />
+                                                -
+                                                <input
+                                                    type="time"
+                                                    value={editedTime[`0-${dayIndex}-end`] || schedule.end}
+                                                    onChange={(e) => handleEdit(0, dayIndex, day, "end", e.target.value)}
+                                                    onBlur={() => handleBlur(0, dayIndex, day, "end")}
+                                                />
+                                            </>
+                                        ) : (
+                                            <div onClick={() => setEditingCell({ row: 0, day: day, dayIndex: dayIndex })}>
+                                                {`${schedule.start} - ${schedule.end}`}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
-                        <button
-                            className="footer__btn"
-                            onClick={() => changePage("next")}
-                            disabled={currentPage === totalPages}
-                        >
-                            ►
-                        </button>
-                    </>,
-                    document.querySelector(".footer") as Element
-                )}
-        </>
+                    )}
+                </>
+                ) : (
+                <>
+                    {document.querySelector(".subtitle__date__place") &&
+                        ReactDOM.createPortal(
+                            <span className="subtitle__date__place_text">{currentWeek}</span>,
+                            document.querySelector(".subtitle__date__place") as Element
+                        )}
+                    <div ref={containerRef} className="worksheet">
+                        <div className="worksheet__row__header">
+                            <div className="worksheet__row__header__cell header-cell">Сотрудник</div>
+                            <div className="worksheet__row__header__cell_clock">
+                                <div className="cell_clock_img"></div>
+                            </div>
+                            <div className="worksheet__row__header__cell">Понедельник</div>
+                            <div className="worksheet__row__header__cell">Вторник</div>
+                            <div className="worksheet__row__header__cell">Среда</div>
+                            <div className="worksheet__row__header__cell">Четверг</div>
+                            <div className="worksheet__row__header__cell">Пятница</div>
+                            <div className="worksheet__row__header__cell">Суббота</div>
+                            <div className="worksheet__row__header__cell">Воскресенье</div>
+                        </div>
+                        {displayedEmployees.map((employee, index) => (
+                            <div
+                                key={index}
+                                className={`worksheet__row ${index === 0 ? "current" : ""}`}
+                            >
+                                <div className="worksheet__cell_name">{employee.fio}</div>
+                                <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}ч.</div>
+                                {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
+                                    const schedule = employee.weekSchedule[day];
+                                    return (
+                                        <div key={dayIndex} className="worksheet__cell">
+                                            {editingCell?.row === index && editingCell?.day === day ? (
+                                                <>
+                                                    <input
+                                                        type="time"
+                                                        value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
+                                                        onChange={(e) => handleEdit(index, dayIndex, day, "start", e.target.value)}
+                                                        onBlur={() => handleBlur(index, dayIndex, day, "start")}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === "Escape") {
+                                                                setEditingCell(null); // Отмена редактирования
+                                                            }
+                                                            if (e.key === "Enter") {
+                                                                handleBlur(index, dayIndex, day, "start")
+                                                            }
+                                                        }}
+                                                    />
+                                                    -
+                                                    <input
+                                                        type="time"
+                                                        value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
+                                                        onChange={(e) => handleEdit(index, dayIndex, day, "end", e.target.value)}
+                                                        onBlur={() => handleBlur(index, dayIndex, day, "end")}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === "Escape") {
+                                                                setEditingCell(null); // Отмена редактирования
+                                                            }
+                                                        }}
+                                                    />
+                                                </>
+                                            ) : (
+                                                <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
+                                                    {`${schedule.start} - ${schedule.end}`}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ))}
+                    </div>
+                    {document.querySelector(".footer") &&
+                        ReactDOM.createPortal(
+                            <>
+                                <button
+                                    className="footer__btn"
+                                    onClick={() => changePage("previous")}
+                                    disabled={currentPage === 1}
+                                >
+                                    ◄
+                                </button>
+                                <div className="footer__place">
+                                    Лист {currentPage} из {totalPages}
+                                </div>
+                                <button
+                                    className="footer__btn"
+                                    onClick={() => changePage("next")}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    ►
+                                </button>
+                            </>,
+                            document.querySelector(".footer") as Element
+                        )}
+                </>
+            )}
+        </div>
     );
 };
 
