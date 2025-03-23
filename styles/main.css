@@ -70,6 +70,13 @@ html, body {
     justify-content: space-between;
 }
 
+@media screen and (max-width: 767px) {
+    .header {
+        height: 100px;
+        justify-content: center;
+    }
+}
+
 .header__title {
     padding: 1rem 2vw;
     font-weight: 500;
@@ -93,6 +100,26 @@ html, body {
 .header__up-blocks__wrapper__list {
     visibility: hidden;
     display: none;
+}
+
+@media screen and (max-width: 767px) {
+    .header__menu-toggle {
+        display: flex;
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        margin-left: 2vw;
+        text-align: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        border: none;
+        font-size: 2rem;
+        color: #E3FFA1;
+        background-color: #353535;
+        border-radius: 5px;
+        font-weight: bold;
+    }
 }
 
 @media screen and (max-width: 1489px) and (min-width: 1090px) {
@@ -290,6 +317,7 @@ html, body {
 @media screen and (min-width: 1490px) {
     .sidebar {
         position: relative;
+        visibility: visible;
         display: flex;
         flex-direction: column;
         padding: 1.5vh 1vw;
