@@ -70,7 +70,7 @@ html, body {
     justify-content: space-between;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 869px) {
     .header {
         height: 100px;
         justify-content: center;
@@ -82,13 +82,13 @@ html, body {
     font-weight: 500;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 869px) {
     .header__title {
         text-align: center;
     }
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 869px) {
     .mobile {
         visibility: hidden;
         display: none;
@@ -102,7 +102,7 @@ html, body {
     display: none;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 869px) {
     .header__menu-toggle {
         display: flex;
         visibility: visible;
@@ -122,7 +122,7 @@ html, body {
     }
 }
 
-@media screen and (max-width: 1489px) and (min-width: 1090px) {
+@media screen and (max-width: 1489px) and (min-width: 870px) {
     .header__up-blocks__headbar {
         display: flex;
         visibility: visible;
@@ -131,7 +131,7 @@ html, body {
     }
 }
 
-@media screen and (max-width: 1489px) and (min-width: 1090px) {
+@media screen and (max-width: 1489px) and (min-width: 870px) {
     .header__headbar__up-blocks__btn {
         padding: 2vh 3vw;
         text-align: center;
@@ -247,11 +247,21 @@ html, body {
 
 /* --------------------------------------------- */
 
-@media screen and (min-width: 1090px) {
+@media screen and (min-width: 870px) {
     .subtitle {
         display: flex;
         justify-items: center;
         justify-content: space-between;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 869px) {
+    .subtitle {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
         align-items: center;
     }
 }
@@ -366,7 +376,7 @@ html, body {
 
 @media screen and (min-width: 1490px) {
     .btn_worksheet_enable {
-        position: relative; /* Добавляем позиционирование */
+        position: relative;
         transform: translateX(1vw);
         /*transition: background-color 0.3s ease;*/
     }
@@ -410,6 +420,12 @@ html, body {
     flex: 1;
     background: none;
     transition: opacity 0.25s ease-out;
+}
+
+@media screen and (max-width: 869px) {
+    .content  {
+        margin-top: 20px;
+    }
 }
 
 .worksheet  {
@@ -546,6 +562,69 @@ html, body {
     background: #4b4b00;
 }
 
+@media screen and (max-width: 869px) and (min-width: 320px) {
+    .worksheet__row_mobile {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        grid-template-areas:
+            "name name name"
+            "cell1 block block"
+            "cell2 cell3 cell4"
+            "cell5 cell6 cell7";
+    }
+
+    .worksheet__cell:nth-child(3) {
+        grid-area: cell1;
+    }
+
+    .worksheet__cell:nth-child(4) {
+        grid-area: cell2;
+    }
+
+    .worksheet__cell:nth-child(5) {
+        grid-area: cell3;
+    }
+
+    .worksheet__cell:nth-child(6) {
+        grid-area: cell4;
+    }
+
+    .worksheet__cell:nth-child(7) {
+        grid-area: cell5;
+    }
+
+    .worksheet__cell:nth-child(8) {
+        grid-area: cell6;
+    }
+
+    .worksheet__cell:nth-child(9) {
+        grid-area: cell7;
+    }
+
+    .worksheet__cell {
+        grid-row: 1 / -1;
+    }
+
+    .worksheet__cell_block_cell {
+        grid-area: block;
+        background-color: #9c89ff;
+        grid-row: 1 / -1;
+    }
+
+    .worksheet__cell_name-cell {
+        grid-area: name;
+        background-color: #cce7ff;
+        padding: 10px;
+        text-align: center;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+}
+
 /* -------------------------------------- */
 
 .footer {
@@ -619,14 +698,14 @@ html, body {
 
 }
 
-@media screen and (max-width: 1089px) and (min-width: 768px) {
+@media screen and (max-width: 1089px) and (min-width: 870px) {
 
 }
 
-@media screen and (max-width: 767px) and (min-width: 412px) {
+@media screen and (max-width: 869px) and (min-width: 512px) {
 
 }
 
-@media screen and (max-width: 411px) and (min-width: 180px) {
+@media screen and (max-width: 511px) and (min-width: 320px) {
 
 }
