@@ -199,9 +199,14 @@ const Worksheet: React.FC = () => {
 
     return (
         <div className="content">
+            {document.querySelector(".subtitle__date__place") &&
+                ReactDOM.createPortal(
+                    <span className="subtitle__date__place_text">{currentWeek}</span>,
+                    document.querySelector(".subtitle__date__place") as Element
+                )}
             {isMobile ? (
                 <>
-                    {(
+                    {displayedEmployees.length > 0 && (
                         <div className="worksheet__row_mobile">
                             <div className="worksheet__cell name-cell">{displayedEmployees[0].fio}</div>
                             <div className="worksheet__cell_block"></div>
@@ -238,11 +243,6 @@ const Worksheet: React.FC = () => {
                 </>
                 ) : (
                 <>
-                    {document.querySelector(".subtitle__date__place") &&
-                        ReactDOM.createPortal(
-                            <span className="subtitle__date__place_text">{currentWeek}</span>,
-                            document.querySelector(".subtitle__date__place") as Element
-                        )}
                     <div ref={containerRef} className="worksheet">
                         <div className="worksheet__row__header">
                             <div className="worksheet__row__header__cell header-cell">Сотрудник</div>
