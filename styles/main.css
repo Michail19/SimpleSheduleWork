@@ -176,6 +176,22 @@ html, body {
     background-repeat: no-repeat;
 }
 
+.header__up-blocks__theme-toggle_lang {
+    background: url("../images/ru.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+}
+
+.dark-theme .header__up-blocks__theme-toggle_lang {
+    background: url("../images/en.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
 .header__up-blocks__wrapper {
     position: relative;
     display: flex;

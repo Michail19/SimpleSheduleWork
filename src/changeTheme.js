@@ -5,17 +5,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const subtitle_date = document.querySelector('.subtitle__date');
     const footer = document.querySelector('.footer');
 
-    // Восстанавливаем состояние темы
-    if (localStorage.getItem('dark_theme') === 'enabled') {
-        document.body.classList.add('dark-theme');
-    }
+    // Проверяем, первый ли это запуск
+    const isFirstLaunch = localStorage.getItem('first_launch') === null;
 
-    // Восстанавливаем состояние скрытых элементов
-    if (localStorage.getItem('btn_state') !== 'enabled') {
-        content.classList.add('hide_content');
-        subtitle_date.classList.add('hide_content');
-        footer.classList.add('hide_content');
-        button.classList.toggle('btn_worksheet_enable');
+    if (isFirstLaunch) {
+        // Устанавливаем флаг, что первый запуск уже был
+        localStorage.setItem('first_launch', 'done');
+    } else {
+        // Восстанавливаем тему
+        if (localStorage.getItem('dark_theme') === 'enabled') {
+            document.body.classList.add('dark-theme');
+        }
+
+        // Восстанавливаем состояние скрытых элементов
+        if (localStorage.getItem('btn_state') === 'hidden') {
+            content.classList.add('hide_content');
+            subtitle_date.classList.add('hide_content');
+            button.classList.toggle('btn_worksheet_enable');
+            footer.classList.add('hide_content');
+        } else {
+            button.classList.add('btn_worksheet_enable');
+        }
     }
 
     // Обработчик для переключения темы
@@ -38,9 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Сохранение состояния
             if (button.classList.contains('btn_worksheet_enable')) {
-                localStorage.setItem('btn_state', 'enabled');
+                localStorage.setItem('btn_state', 'visible');
             } else {
-                localStorage.removeItem('btn_state');
+                localStorage.setItem('btn_state', 'hidden');
             }
         }
     });
