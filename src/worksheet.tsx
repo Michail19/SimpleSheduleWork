@@ -323,9 +323,32 @@ const Worksheet: React.FC = () => {
         <div className="content" key={updateKey}>
             {document.querySelector(".subtitle__date__place") &&
                 ReactDOM.createPortal(
+                    <button
+                        className="subtitle__date__btn"
+                        onClick={() => changeWeek('previous')}
+                    >
+                        ◄
+                    </button>,
+                    document.querySelector(".subtitle__date__place") as Element
+                )}
+
+            {document.querySelector(".subtitle__date__place") &&
+                ReactDOM.createPortal(
                     <span className="subtitle__date__place_text">{currentWeek}</span>,
                     document.querySelector(".subtitle__date__place") as Element
                 )}
+
+            {document.querySelector(".subtitle__date") &&
+                ReactDOM.createPortal(
+                    <button
+                        className="subtitle__date__btn"
+                        onClick={() => changeWeek('next')}
+                    >
+                        ►
+                    </button>,
+                    document.querySelector(".subtitle__date") as Element
+                )}
+
             {isMobile ? (
                 <>
                     {displayedEmployees.length > 0 && (
