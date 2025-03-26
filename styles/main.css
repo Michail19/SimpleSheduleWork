@@ -562,70 +562,177 @@ html, body {
     background: #4b4b00;
 }
 
-@media screen and (max-width: 869px) and (min-width: 320px) {
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+}
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0 10px;
+    }
+}
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+    }
+}
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .worksheet {
+        flex: 1;
+        margin-bottom: 20px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+}
+
+@media screen and (max-width: 1089px) and (min-width: 870px) {
     .worksheet__row_mobile {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        grid-auto-rows: minmax(0, 1fr);
+        grid-auto-rows: minmax(auto, auto);
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        grid-template-areas:
+            "name name name"
+            "cell1 cell2 cell3"
+            "cell1 cell2 cell3"
+            "cell4 cell5 cell6"
+            "cell4 cell5 cell6"
+            "cell7 block block"
+            "cell7 block block";
+    }
+}
+
+@media screen and (max-width: 869px) and (min-width: 512px) {
+    .worksheet__row_mobile {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: minmax(auto, auto);
         gap: 10px;
         padding: 10px;
         border-radius: 10px;
         grid-template-areas:
             "name name name"
             "cell1 block block"
+            "cell1 block block"
             "cell2 cell3 cell4"
+            "cell2 cell3 cell4"
+            "cell5 cell6 cell7"
             "cell5 cell6 cell7";
-        height: 100%; /* Добавляем высоту */
-        min-height: 0; /* Важно для правильного растягивания в grid */
     }
+}
 
-    .worksheet__cell {
-        height: 100%;
-        min-height: 0; /* Важно для содержимого */
-        box-sizing: border-box;
+@media screen and (max-width: 511px) and (min-width: 300px) {
+    .worksheet__row_mobile {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: minmax(auto, auto);
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        grid-template-areas:
+            "cell1 name"
+            "cell1 name"
+            "cell2 cell3"
+            "cell2 cell3"
+            "cell4 cell5"
+            "cell4 cell5"
+            "cell6 cell7"
+            "cell6 cell7";
     }
+}
 
-    .worksheet__cell:nth-child(3) {
-        grid-area: cell1;
-    }
-
-    .worksheet__cell:nth-child(4) {
-        grid-area: cell2;
-    }
-
-    .worksheet__cell:nth-child(5) {
-        grid-area: cell3;
-    }
-
-    .worksheet__cell:nth-child(6) {
-        grid-area: cell4;
-    }
-
-    .worksheet__cell:nth-child(7) {
-        grid-area: cell5;
-    }
-
-    .worksheet__cell:nth-child(8) {
-        grid-area: cell6;
-    }
-
-    .worksheet__cell:nth-child(9) {
-        grid-area: cell7;
-    }
-
-    .worksheet__cell_block_cell {
-        grid-area: block;
-        background-color: #9c89ff;
-    }
-
+@media screen and (max-width: 1089px) and (min-width: 512px) {
     .worksheet__cell_name-cell {
         grid-area: name;
-        background-color: #cce7ff;
-        padding: 10px;
+        text-align: center;
+        align-content: center;
+        border-radius: 10px;
+        font-weight: bold;
+        white-space: normal;
+        word-wrap: break-word;
+        min-height: auto;
+        font-size: 1.5rem;
+
+        box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+        background-color: #DAD5FF;
+    }
+
+    .dark-theme .worksheet__cell_name-cell {
+        box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+        background-color: #4A4A4A;
+    }
+}
+
+@media screen and (max-width: 511px) and (min-width: 300px) {
+    .worksheet__cell_name-cell {
+        grid-area: name;
         text-align: center;
         border-radius: 10px;
         font-weight: bold;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+        background-color: #DAD5FF;
     }
+
+    .dark-theme .worksheet__cell_name-cell {
+        box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+        background-color: #4A4A4A;
+    }
+}
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .worksheet__cell_block_cell {
+        grid-area: block;
+        border-radius: 10px;
+
+        box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+        background-color: #8F84E7;
+    }
+
+    .dark-theme .worksheet__cell_block_cell {
+        box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+        background-color: #4D4E20;
+    }
+}
+
+@media screen and (max-width: 511px) and (min-width: 300px) {
+    .worksheet__cell_block_cell {
+        display: none;
+        visibility: hidden;
+    }
+}
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .worksheet__cell {
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    .worksheet__cell:nth-child(3) { grid-area: cell1; }
+    .worksheet__cell:nth-child(4) { grid-area: cell2; }
+    .worksheet__cell:nth-child(5) { grid-area: cell3; }
+    .worksheet__cell:nth-child(6) { grid-area: cell4; }
+    .worksheet__cell:nth-child(7) { grid-area: cell5; }
+    .worksheet__cell:nth-child(8) { grid-area: cell6; }
+    .worksheet__cell:nth-child(9) { grid-area: cell7; }
 }
 
 /* -------------------------------------- */
@@ -709,6 +816,6 @@ html, body {
 
 }
 
-@media screen and (max-width: 511px) and (min-width: 320px) {
+@media screen and (max-width: 511px) and (min-width: 300px) {
 
 }
