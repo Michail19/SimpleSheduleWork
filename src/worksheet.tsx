@@ -34,6 +34,18 @@ const translations: Record<Language, { [key: string]: string }> = {
         page: "Лист",
         outOf: "из",
         hour: "ч.",
+        january: "Январь",
+        february: "Февраль",
+        march: "Март",
+        april: "Апрель",
+        may: "Май",
+        june: "Июнь",
+        july: "Июль",
+        august: "Август",
+        september: "Сентябрь",
+        october: "Октябрь",
+        november: "Ноябрь",
+        december: "Декабрь",
     },
     en: {
         title: "Employee",
@@ -47,7 +59,55 @@ const translations: Record<Language, { [key: string]: string }> = {
         page: "Page",
         outOf: "of",
         hour: "h.",
+        january: "January",
+        february: "February",
+        march: "March",
+        april: "April",
+        may: "May",
+        june: "June",
+        july: "July",
+        august: "August",
+        september: "September",
+        october: "October",
+        november: "November",
+        december: "December",
     },
+};
+
+const parseWeekRange = (weekRange: string, currentTranslation: any): { start: Date; end: Date } | null => {
+    const match = weekRange.match(/(\d+)-(\d+)\s+(\S+)\s+(\d{4})/);
+    if (!match) return null;
+
+    const [, startDay, endDay, monthName, year] = match;
+
+    // Найдем ключ месяца в переводах
+    const monthKey = Object.keys(currentTranslation).find(key => currentTranslation[key] === monthName);
+    if (!monthKey) return null;
+
+    const monthIndex = Object.keys(translations.ru).indexOf(monthKey) - 7; // -7, т.к. первые 7 ключей - дни недели
+    if (monthIndex < 0) return null;
+
+    const startDate = new Date(parseInt(year, 10), monthIndex, parseInt(startDay, 10));
+    const endDate = new Date(parseInt(year, 10), monthIndex, parseInt(endDay, 10));
+
+    return { start: startDate, end: endDate };
+};
+
+const formatWeekRange = (start: Date, end: Date, currentTranslation: any): string => {
+    const monthKey = Object.keys(translations.ru)[start.getMonth() + 7]; // +7, т.к. первые 7 ключей - дни недели
+    const monthName = currentTranslation[monthKey];
+
+    return `${start.getDate()}-${end.getDate()} ${monthName} ${start.getFullYear()}`;
+};
+
+const translateMonth = (weekString: string, currentTranslation: any): string => {
+    const match = weekString.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/i);
+    if (!match) return weekString; // Если месяц не найден, вернуть строку как есть
+
+    const englishMonth = match[0].toLowerCase(); // Найденный месяц
+    const translatedMonth = currentTranslation[englishMonth] || englishMonth; // Перевод или оригинал
+
+    return weekString.replace(new RegExp(englishMonth, "i"), translatedMonth); // Заменяем в строке
 };
 
 const Worksheet: React.FC = () => {
@@ -87,17 +147,17 @@ const Worksheet: React.FC = () => {
         return () => window.removeEventListener("languageUpdateEvent", handleLanguageChange);
     }, []);
 
-
     useEffect(() => {
         fetch("/data/data_example.json")
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
                 setEmployees(data.employees);
-                setCurrentWeek(data.currentWeek);
+                const translatedWeek = translateMonth(data.currentWeek, currentTranslation);
+                setCurrentWeek(translatedWeek);
             })
             .catch((error) => console.error("Ошибка при загрузке данных:", error));
-    }, []);
+    }, [language]);
 
     // Рассчитываем количество строк, которые умещаются в контейнер
     useEffect(() => {
@@ -124,10 +184,22 @@ const Worksheet: React.FC = () => {
     }, [employees]);
 
     const changeWeek = (direction: "next" | "previous") => {
-        // Логика для изменения недели, можно использовать библиотеку moment.js для работы с датами
-        const current = new Date(currentWeek);
-        const newDate = direction === "next" ? current.setDate(current.getDate() + 7) : current.setDate(current.getDate() - 7);
-        setCurrentWeek(new Date(newDate).toISOString().split('T')[0]); // Изменение на новую дату
+        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
+        if (!parsedWeek) return;
+
+        const { start, end } = parsedWeek;
+        const newStart = new Date(start);
+        const newEnd = new Date(end);
+
+        if (direction === "next") {
+            newStart.setDate(newStart.getDate() + 7);
+            newEnd.setDate(newEnd.getDate() + 7);
+        } else {
+            newStart.setDate(newStart.getDate() - 7);
+            newEnd.setDate(newEnd.getDate() - 7);
+        }
+
+        setCurrentWeek(formatWeekRange(newStart, newEnd, currentTranslation));
     };
 
     // Фиксируем `current` сотрудника на всех страницах
@@ -265,6 +337,7 @@ const Worksheet: React.FC = () => {
                                     const schedule = displayedEmployees[0].weekSchedule[day];
                                     return (
                                         <div className="worksheet__cell" key={dayIndex}>
+                                            <div className="worksheet__day-label">{currentTranslation[day]}</div>
                                             {editingCell?.row === 0 && editingCell?.day === day ? (
                                                 <>
                                                     <input
