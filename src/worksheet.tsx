@@ -19,6 +19,37 @@ interface Data {
     employees: Employee[];
 }
 
+type Language = "ru" | "en";
+
+const translations: Record<Language, { [key: string]: string }> = {
+    ru: {
+        title: "Сотрудник",
+        monday: "Понедельник",
+        tuesday: "Вторник",
+        wednesday: "Среда",
+        thursday: "Четверг",
+        friday: "Пятница",
+        saturday: "Суббота",
+        sunday: "Воскресенье",
+        page: "Лист",
+        outOf: "из",
+        hour: "ч.",
+    },
+    en: {
+        title: "Employee",
+        monday: "Monday",
+        tuesday: "Tuesday",
+        wednesday: "Wednesday",
+        thursday: "Thursday",
+        friday: "Friday",
+        saturday: "Saturday",
+        sunday: "Sunday",
+        page: "Page",
+        outOf: "of",
+        hour: "h.",
+    },
+};
+
 const Worksheet: React.FC = () => {
     const [data, setData] = useState<Data | null>(null);
     const [employees, setEmployees] = useState<Employee[]>([]);
@@ -30,6 +61,10 @@ const Worksheet: React.FC = () => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
+    const [language, setLanguage] = useState<Language>("ru");
+    const [updateKey, setUpdateKey] = useState(0);
+
+    const currentTranslation = translations[language] ?? translations["ru"];
 
     useEffect(() => {
         const handleResize = () => {
@@ -38,6 +73,20 @@ const Worksheet: React.FC = () => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+    useEffect(() => {
+        const handleLanguageChange = (event: Event) => {
+            const newLang = (event as CustomEvent<string>).detail as Language; // Приведение типа
+            if (newLang) {
+                setLanguage(newLang);
+                setUpdateKey((prev) => prev + 1);
+            }
+        };
+
+        window.addEventListener("languageUpdateEvent", handleLanguageChange);
+        return () => window.removeEventListener("languageUpdateEvent", handleLanguageChange);
+    }, []);
+
 
     useEffect(() => {
         fetch("/data/data_example.json")
@@ -197,8 +246,9 @@ const Worksheet: React.FC = () => {
         };
     }, [editingCell]); // Добавляем editingCell в зависимости
 
+
     return (
-        <div className="content">
+        <div className="content" key={updateKey}>
             {document.querySelector(".subtitle__date__place") &&
                 ReactDOM.createPortal(
                     <span className="subtitle__date__place_text">{currentWeek}</span>,
@@ -247,17 +297,17 @@ const Worksheet: React.FC = () => {
                 <>
                     <div ref={containerRef} className="worksheet">
                         <div className="worksheet__row__header">
-                            <div className="worksheet__row__header__cell header-cell">Сотрудник</div>
+                            <div className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
                             <div className="worksheet__row__header__cell_clock">
                                 <div className="cell_clock_img"></div>
                             </div>
-                            <div className="worksheet__row__header__cell">Понедельник</div>
-                            <div className="worksheet__row__header__cell">Вторник</div>
-                            <div className="worksheet__row__header__cell">Среда</div>
-                            <div className="worksheet__row__header__cell">Четверг</div>
-                            <div className="worksheet__row__header__cell">Пятница</div>
-                            <div className="worksheet__row__header__cell">Суббота</div>
-                            <div className="worksheet__row__header__cell">Воскресенье</div>
+                            <div className="worksheet__row__header__cell">{currentTranslation.monday}</div>
+                            <div className="worksheet__row__header__cell">{currentTranslation.tuesday}</div>
+                            <div className="worksheet__row__header__cell">{currentTranslation.wednesday}</div>
+                            <div className="worksheet__row__header__cell">{currentTranslation.thursday}</div>
+                            <div className="worksheet__row__header__cell">{currentTranslation.friday}</div>
+                            <div className="worksheet__row__header__cell">{currentTranslation.saturday}</div>
+                            <div className="worksheet__row__header__cell">{currentTranslation.sunday}</div>
                         </div>
                         {displayedEmployees.map((employee, index) => (
                             <div
@@ -265,7 +315,7 @@ const Worksheet: React.FC = () => {
                                 className={`worksheet__row ${index === 0 ? "current" : ""}`}
                             >
                                 <div className="worksheet__cell_name">{employee.fio}</div>
-                                <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}ч.</div>
+                                <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
                                 {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
                                     const schedule = employee.weekSchedule[day];
                                     return (
@@ -321,7 +371,7 @@ const Worksheet: React.FC = () => {
                                     ◄
                                 </button>
                                 <div className="footer__place">
-                                    Лист {currentPage} из {totalPages}
+                                    {currentTranslation.page} {currentPage} {currentTranslation.outOf} {totalPages}
                                 </div>
                                 <button
                                     className="footer__btn"

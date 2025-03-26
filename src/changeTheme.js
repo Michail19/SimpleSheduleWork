@@ -1,3 +1,66 @@
+const translations = {
+    ru: {
+        loading: "Загрузка...",
+        filters: "Фильтры",
+        projects: "Проекты",
+        home: "На главный",
+        logout: "Выход",
+        login: "Вход",
+        work_schedule: "График работы сотрудников",
+        sidebar_filters: "Фильтры",
+        sidebar_schedule: "Расписание",
+        sidebar_projects: "Проекты"
+    },
+    en: {
+        loading: "Loading...",
+        filters: "Filters",
+        projects: "Projects",
+        home: "Home",
+        logout: "Logout",
+        login: "Login",
+        work_schedule: "Employee Work Schedule",
+        sidebar_filters: "Filters",
+        sidebar_schedule: "Schedule",
+        sidebar_projects: "Projects"
+    }
+};
+
+function resetHover() {
+    document.body.style.pointerEvents = "none"; // Отключаем ховеры
+    setTimeout(() => {
+        document.body.style.pointerEvents = "auto"; // Включаем обратно
+    }, 10); // 10 мс — почти незаметно
+}
+
+let currentLang = localStorage.getItem("lang") || "ru";
+
+function changeLanguage() {
+    const preloader = document.getElementById('preloader');
+    resetHover();
+    preloader.classList.remove('hidden');
+
+    // Меняем язык
+    currentLang = currentLang === "ru" ? "en" : "ru";
+    localStorage.setItem("lang", currentLang);
+
+    // Отправляем событие с `detail`
+    window.dispatchEvent(new CustomEvent("languageUpdateEvent", { detail: currentLang }));
+
+    // Обновляем текст
+    updateText();
+
+    setTimeout(() => {
+        preloader.classList.add('hidden');
+    }, 500);
+}
+
+function updateText() {
+    document.querySelectorAll("[data-key]").forEach((el) => {
+        const key = el.getAttribute("data-key");
+        el.textContent = translations[currentLang][key];
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.querySelector('.header__up-blocks__theme-toggle');
     const langToggle = document.querySelector('.header__up-blocks__theme-toggle_lang');
@@ -21,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Восстанавливаем язык
         if (localStorage.getItem('changed-lang') === 'enabled') {
             document.body.classList.add('changed-lang');
+            updateText();
         }
 
         // Восстанавливаем состояние скрытых элементов
@@ -47,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Обработчик для переключения языка
     langToggle.addEventListener('click', () => {
         document.body.classList.toggle('changed-lang');
+        changeLanguage();
         if (document.body.classList.contains('changed-lang')) {
             localStorage.setItem('changed-lang', 'enabled');
         } else {
@@ -74,7 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('load', () => {
     const preloader = document.getElementById('preloader');
+    updateText();
     setTimeout(() => {
         preloader.classList.add('hidden');
     }, 500); // Задержка перед скрытием
 });
+

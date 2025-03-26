@@ -14,31 +14,31 @@
 <body class="page">
     <div id="preloader">
         <div class="loader"></div>
-        <p>Загрузка...</p>
+        <p data-key="loading">Загрузка...</p>
     </div>
     <header class="header">
         <button class="header__menu-toggle">☰</button>
         <h1 class="header__title"><span class="mobile">SimpleScheduleWork (</span>SSW<span class="mobile">)</span></h1>
         <div class="header__up-blocks">
             <div class="header__up-blocks__headbar">
-                <div class="header__headbar__up-blocks__btn">Фильтры</div>
+                <div class="header__headbar__up-blocks__btn" data-key="filters">Фильтры</div>
 <!--                <div class="header__headbar__up-blocks__btn_">Расписание</div>-->
-                <a class="header__headbar__up-blocks__btn" href="./project.html">Проекты</a>
+                <a class="header__headbar__up-blocks__btn" href="./project.html" data-key="projects">Проекты</a>
             </div>
             <div class="header__up-blocks__wrapper">
                 <div class="header__up-blocks__wrapper__icon"></div>
                 <div class="header__up-blocks__wrapper__list">
                     <button class="header__up-blocks__theme-toggle"></button>
                     <button class="header__up-blocks__theme-toggle_lang"></button>
-                    <a class="header__up-blocks__wrapper__list__btn" href="./index.html">На главный</a>
-                    <div class="header__up-blocks__wrapper__list__btn">Выход</div>
+                    <a class="header__up-blocks__wrapper__list__btn" href="./index.html" data-key="home">На главный</a>
+                    <div class="header__up-blocks__wrapper__list__btn" data-key="logout">Выход</div>
                 </div>
             </div>
         </div>
     </header>
 
     <section class="subtitle">
-        <h1 class="subtitle__title">График работы сотрудников</h1>
+        <h1 class="subtitle__title" data-key="work_schedule">График работы сотрудников</h1>
         <div class="subtitle__date">
             <button class="subtitle__date__btn">◄</button>
             <div class="subtitle__date__place"></div> <!--<div class="subtitle__date__place">01 - 07 января 1970</div>-->
@@ -48,9 +48,9 @@
 
     <section class="main">
         <div class="sidebar">
-            <button class="sidebar__btn">Фильтры</button>
-            <button class="sidebar__btn btn_worksheet btn_worksheet_enable">Расписание</button>
-            <a class="sidebar__btn" href="./project.html">Проекты</a>
+            <button class="sidebar__btn" data-key="sidebar_filters">Фильтры</button>
+            <button class="sidebar__btn btn_worksheet btn_worksheet_enable" data-key="sidebar_schedule">Расписание</button>
+            <a class="sidebar__btn" href="./project.html" data-key="sidebar_projects">Проекты</a>
         </div>
 
         <div id="root" class="content">
