@@ -575,6 +575,14 @@ html, body {
             "cell1 block block"
             "cell2 cell3 cell4"
             "cell5 cell6 cell7";
+        height: 100%; /* Добавляем высоту */
+        min-height: 0; /* Важно для правильного растягивания в grid */
+    }
+
+    .worksheet__cell {
+        height: 100%;
+        min-height: 0; /* Важно для содержимого */
+        box-sizing: border-box;
     }
 
     .worksheet__cell:nth-child(3) {
@@ -605,14 +613,9 @@ html, body {
         grid-area: cell7;
     }
 
-    .worksheet__cell {
-        grid-row: 1 / -1;
-    }
-
     .worksheet__cell_block_cell {
         grid-area: block;
         background-color: #9c89ff;
-        grid-row: 1 / -1;
     }
 
     .worksheet__cell_name-cell {
