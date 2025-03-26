@@ -135,6 +135,16 @@ const Worksheet: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        // Применяем сохранённые настройки языка при загрузке
+        const langSetting = localStorage.getItem('changed-lang');
+        if (langSetting === 'enabled') {
+            setLanguage("en");
+        } else {
+            setLanguage("ru");
+        }
+    }, []);
+
+    useEffect(() => {
         const handleLanguageChange = (event: Event) => {
             const newLang = (event as CustomEvent<string>).detail as Language; // Приведение типа
             if (newLang) {
