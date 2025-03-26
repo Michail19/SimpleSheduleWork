@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.querySelector('.header__up-blocks__theme-toggle');
+    const langToggle = document.querySelector('.header__up-blocks__theme-toggle_lang');
     const button = document.querySelector('.btn_worksheet');
     const content = document.querySelector('.content');
     const subtitle_date = document.querySelector('.subtitle__date');
@@ -15,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Восстанавливаем тему
         if (localStorage.getItem('dark_theme') === 'enabled') {
             document.body.classList.add('dark-theme');
+        }
+
+        // Восстанавливаем язык
+        if (localStorage.getItem('changed-lang') === 'enabled') {
+            document.body.classList.add('changed-lang');
         }
 
         // Восстанавливаем состояние скрытых элементов
@@ -35,6 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('dark_theme', 'enabled');
         } else {
             localStorage.removeItem('dark_theme');
+        }
+    });
+
+    // Обработчик для переключения языка
+    langToggle.addEventListener('click', () => {
+        document.body.classList.toggle('changed-lang');
+        if (document.body.classList.contains('changed-lang')) {
+            localStorage.setItem('changed-lang', 'enabled');
+        } else {
+            localStorage.removeItem('changed-lang');
         }
     });
 

@@ -164,7 +164,7 @@ html, body {
     background: url("../images/day.png");
     background-size: contain;
     background-repeat: no-repeat;
-    
+
     width: 2.5rem;
     height: 2.5rem;
     border: none;
@@ -181,12 +181,13 @@ html, body {
     background-size: contain;
     background-repeat: no-repeat;
 
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 25px;
     border: none;
 }
 
-.dark-theme .header__up-blocks__theme-toggle_lang {
+.changed-lang .header__up-blocks__theme-toggle_lang {
     background: url("../images/en.png");
     background-size: contain;
     background-repeat: no-repeat;
@@ -218,7 +219,7 @@ html, body {
     border-radius: 10%;
     justify-content: center;
     z-index: 9999;
-    
+
     background: #E3E7ED;
     color: #353535;
 }
@@ -236,7 +237,7 @@ html, body {
     font-size: 1.25em;
     text-decoration: none;
     cursor: pointer;
-    
+
     background: #98ED9B;
     color: #353535;
 }
