@@ -12,9 +12,11 @@ module.exports = {
         changeTheme: './src/changeTheme.js',
     },  // Точка входа
     output: {
-        path: path.resolve(__dirname, "dist"),  // Папка сборки
         filename: '[name].bundle.js',  // Имя итогового файла
-        publicPath: "/", // ВАЖНО! Для корректной работы маршрутов
+        publicPath: process.env.NODE_ENV === 'production'
+            ? '/SimpleSheduleWork/'  // Для GitHub Pages
+            : '/',                 // Для dev-сервера
+        path: path.resolve(__dirname, 'dist'),
     },
     mode: "development",  // Можно сменить на 'production'
     module: {
