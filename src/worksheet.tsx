@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useState, useRef, useMemo} from "react";
 import ReactDOM from 'react-dom';
 
 // Типы данных для расписания
@@ -9,6 +9,7 @@ interface Schedule {
 
 interface Employee {
     fio: string;
+    projects?: string; // Добавьте это поле (знак ? означает необязательное поле)
     weekSchedule: {
         [day: string]: Schedule;
     };
@@ -17,6 +18,11 @@ interface Employee {
 interface Data {
     currentWeek: string;
     employees: Employee[];
+}
+
+interface FiltersState {
+    projects: string[];
+    activeProjects: string[];
 }
 
 type Language = "ru" | "en";
@@ -46,6 +52,8 @@ const translations: Record<Language, { [key: string]: string }> = {
         october: "Октябрь",
         november: "Ноябрь",
         december: "Декабрь",
+        filters: 'Фильтры',
+        clearFilters: 'Сбросить фильтры',
     },
     en: {
         title: "Employee",
@@ -71,6 +79,8 @@ const translations: Record<Language, { [key: string]: string }> = {
         october: "October",
         november: "November",
         december: "December",
+        filters: 'Filters',
+        clearFilters: 'Clear filters',
     },
 };
 
@@ -123,6 +133,10 @@ const Worksheet: React.FC = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [language, setLanguage] = useState<Language>("ru");
     const [updateKey, setUpdateKey] = useState(0);
+    const [filters, setFilters] = useState<FiltersState>({
+        projects: [], // Все доступные проекты
+        activeProjects: [], // Выбранные проекты для фильтрации
+    });
     const currentTranslation = translations[language] ?? translations["ru"];
 
     useEffect(() => {
@@ -165,6 +179,20 @@ const Worksheet: React.FC = () => {
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
+
+                // Извлекаем все уникальные проекты
+                const allProjects = data.employees.flatMap((employee: { projects: string; }) =>
+                    employee.projects?.split(' ') || []
+                ).filter(Boolean);
+
+                const uniqueProjects = [...new Set(allProjects)];
+
+                // @ts-ignore
+                setFilters(prev => ({
+                    ...prev,
+                    projects: uniqueProjects
+                }));
+
                 setEmployees(data.employees);
                 const translatedWeek = translateMonth(data.currentWeek, currentTranslation);
                 setCurrentWeek(translatedWeek);
@@ -215,15 +243,59 @@ const Worksheet: React.FC = () => {
         setCurrentWeek(formatWeekRange(newStart, newEnd, currentTranslation));
     };
 
-    // Фиксируем `current` сотрудника на всех страницах
-    const currentEmployee = employees.length > 0 ? employees[0] : null;
-    const paginatedEmployees = employees.slice(1); // Убираем `current` из списка
+
+    const toggleProjectFilter = (project: string) => {
+        setFilters(prev => {
+            const newActiveProjects = prev.activeProjects.includes(project)
+                ? prev.activeProjects.filter(p => p !== project)
+                : [...prev.activeProjects, project];
+
+            return {
+                ...prev,
+                activeProjects: newActiveProjects
+            };
+        });
+    };
+
+    const clearFilters = () => {
+        setFilters(prev => ({
+            ...prev,
+            activeProjects: []
+        }));
+    };
+
+    // Применяем фильтрацию если есть активные фильтры
+    const filteredEmployees = filters.activeProjects.length > 0
+        ? employees.filter(employee => {
+            const employeeProjects = employee.projects?.split(' ') || [];
+            return filters.activeProjects.some(project =>
+                employeeProjects.includes(project)
+            );
+        })
+        : employees; // Если фильтры не выбраны - берем всех сотрудников
+
+    // Фиксируем current сотрудника (первого в списке)
+    const currentEmployee = filteredEmployees.length > 0 ? filteredEmployees[0] : null;
+
+// Остальные сотрудники (без current) для пагинации
+    const paginatedEmployees = filteredEmployees.slice(1);
+
+// Рассчитываем общее количество страниц
     const totalPages = Math.ceil(paginatedEmployees.length / rowsPerPage);
 
+// Формируем список для отображения
     const displayedEmployees = [
-        ...(currentEmployee ? [currentEmployee] : []), // Всегда добавляем `current`
-        ...paginatedEmployees.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+        ...(currentEmployee ? [currentEmployee] : []), // Всегда добавляем current первым
+        ...paginatedEmployees.slice(
+            (currentPage - 1) * rowsPerPage,
+            currentPage * rowsPerPage
+        )
     ];
+
+    useEffect(() => {
+        // Сбрасываем на первую страницу при изменении фильтров
+        setCurrentPage(1);
+    }, [filters.activeProjects]);
 
     const changePage = (direction: "next" | "previous") => {
         setCurrentPage((prev) => {
@@ -344,6 +416,31 @@ const Worksheet: React.FC = () => {
 
     return (
         <div className="content" key={updateKey}>
+            {ReactDOM.createPortal(
+                <div className="filters-dropdown">
+                    <h3>{currentTranslation.filters}</h3>
+                    <div className="projects-filter">
+                        {filters.projects.map(project => (
+                            <label key={project}>
+                                <input
+                                    type="checkbox"
+                                    checked={filters.activeProjects.includes(project)}
+                                    onChange={() => toggleProjectFilter(project)}
+                                />
+                                {project.replace('Project_', '')}
+                            </label>
+                        ))}
+                    </div>
+                    <button
+                        onClick={clearFilters}
+                        disabled={filters.activeProjects.length === 0}
+                    >
+                        {currentTranslation.clearFilters}
+                    </button>
+                </div>,
+                document.querySelector('.header__up-blocks__headbar') as Element
+            )}
+
             {document.querySelector(".subtitle__date__place") &&
                 ReactDOM.createPortal(
                     <button
