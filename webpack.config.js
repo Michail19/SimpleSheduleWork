@@ -64,7 +64,6 @@ module.exports = {
         }),
         new MiniCssExtractPlugin({
             filename: '[name].css', // Имя выходного CSS-файла
-            publicPath: '/SimpleSheduleWork/', // 🔥 Добавь сюда
         }),
     ],
     devServer: {
