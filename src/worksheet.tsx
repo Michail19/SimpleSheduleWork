@@ -157,7 +157,11 @@ const Worksheet: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        fetch("/data/data_example.json")
+        const jsonPath = process.env.NODE_ENV === "production"
+            ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_example.json"
+            : "/data/data_example.json";
+
+        fetch(jsonPath)
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
