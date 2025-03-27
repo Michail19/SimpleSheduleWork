@@ -123,7 +123,6 @@ const Worksheet: React.FC = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [language, setLanguage] = useState<Language>("ru");
     const [updateKey, setUpdateKey] = useState(0);
-
     const currentTranslation = translations[language] ?? translations["ru"];
 
     useEffect(() => {
@@ -239,11 +238,22 @@ const Worksheet: React.FC = () => {
             const startTime = new Date(`1970-01-01T${item.start}:00`);
             const endTime = new Date(`1970-01-01T${item.end}:00`);
 
-            if (endTime > startTime) {
-                totalHours += (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60); // Разница в часах
+            if (endTime >= startTime) {
+                // Обычная смена (в пределах одного дня)
+                totalHours += (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+            } else {
+                // 🔹 Ночная смена (переход через полночь)
+                const midnight = new Date("1970-01-02T00:00:00");
+
+                // Часы до полуночи
+                totalHours += (midnight.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+
+                // Часы после полуночи
+                totalHours += (endTime.getTime() - new Date("1970-01-01T00:00:00").getTime()) / (1000 * 60 * 60);
             }
         });
 
+        // Округляем красиво
         let result = totalHours.toFixed(1);
         if (result[result.length - 1] != '0') return result;
         else return Math.round(totalHours).toString();
@@ -251,18 +261,20 @@ const Worksheet: React.FC = () => {
 
     const handleEdit = (row: number, dayIndex: number, day: string, type: string, value: string) => {
         setEditedTime((prev) => ({
-            ...prev,
-            [`${row}-${dayIndex}-${type}`]: value,
-        }));
-    };
+                ...prev,
+                [`${row}-${dayIndex}-${type}`]: value,
+            }));
+        };
 
-    const handleBlur = (employeeIndex: number, dayIndex: number, day: string, type: string) => {
-        const editedValue = editedTime[`${employeeIndex}-${dayIndex}-${type}`];
-        const oldValue = employees[employeeIndex].weekSchedule[day];
+        const handleBlur = (employeeIndex: number, dayIndex: number, day: string, type: "start" | "end") => {
+        const editedStart = editedTime[`${employeeIndex}-${dayIndex}-start`];
+        const editedEnd = editedTime[`${employeeIndex}-${dayIndex}-end`];
+
+        const oldValue = employees[employeeIndex].weekSchedule[day] || { start: "", end: "" };
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
-        // Если значение отсутствует, сохраняем старое значение
-        if (editedValue === undefined || editedValue === "" || !timeRegex.test(editedValue)) {
+        // Проверяем, что оба поля корректны
+        if (!timeRegex.test(editedStart || "") || !timeRegex.test(editedEnd || "")) {
             setEmployees((prev) =>
                 prev.map((employee, index) =>
                     index === employeeIndex
@@ -270,7 +282,7 @@ const Worksheet: React.FC = () => {
                             ...employee,
                             weekSchedule: {
                                 ...employee.weekSchedule,
-                                [day]: oldValue,
+                                [day]: oldValue, // Оставляем старые значения, если ввод некорректный
                             },
                         }
                         : employee
@@ -280,7 +292,7 @@ const Worksheet: React.FC = () => {
             return;
         }
 
-        // Сохраняем новое значение
+        // Если оба поля заполнены, сохраняем в state
         setEmployees((prev) =>
             prev.map((employee, index) =>
                 index === employeeIndex
@@ -288,10 +300,7 @@ const Worksheet: React.FC = () => {
                         ...employee,
                         weekSchedule: {
                             ...employee.weekSchedule,
-                            [day]: {
-                                ...employee.weekSchedule[day],
-                                [type]: editedValue,
-                            },
+                            [day]: { start: editedStart, end: editedEnd },
                         },
                     }
                     : employee
