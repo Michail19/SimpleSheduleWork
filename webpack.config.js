@@ -14,7 +14,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "dist"),  // Папка сборки
         filename: '[name].bundle.js',  // Имя итогового файла
-        publicPath: "/", // ВАЖНО! Для корректной работы маршрутов
+        publicPath: "./", // ВАЖНО! Для корректной работы маршрутов
     },
     mode: "development",  // Можно сменить на 'production'
     module: {

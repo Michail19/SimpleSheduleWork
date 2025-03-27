@@ -10,3 +10,5 @@ npm install react-router-dom
 npm install html-webpack-plugin
 npm install --save-dev copy-webpack-plugin
 npm install --save-dev mini-css-extract-plugin
+npm install gh-pages --save-dev
+
