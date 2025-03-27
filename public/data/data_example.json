@@ -1,0 +1,149 @@
+{
+  "currentWeek": "17-23 march 2025",
+  "employees": [
+    {
+      "fio": "Ершов Михаил Алексеевич",
+      "weekSchedule": {
+        "monday": { "start": "08:00", "end": "13:40" },
+        "tuesday": { "start": "08:00", "end": "15:30" },
+        "wednesday": { "start": "15:20", "end": "20:00" },
+        "thursday": { "start": "15:20", "end": "20:00" },
+        "friday": { "start": "08:00", "end": "15:30" },
+        "saturday": { "start": "", "end": "" },
+        "sunday": { "start": "", "end": "" }
+      }
+    },
+    {
+      "fio": "Иванов Иван Иванович",
+      "weekSchedule": {
+        "monday": { "start": "08:00", "end": "17:00" },
+        "tuesday": { "start": "08:00", "end": "17:00" },
+        "wednesday": { "start": "08:00", "end": "17:00" },
+        "thursday": { "start": "08:00", "end": "17:00" },
+        "friday": { "start": "08:00", "end": "16:00" },
+        "saturday": { "start": "10:00", "end": "14:00" },
+        "sunday": { "start": "10:00", "end": "14:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    },
+    {
+      "fio": "Петров Петр Петрович",
+      "weekSchedule": {
+        "monday": { "start": "09:00", "end": "18:00" },
+        "tuesday": { "start": "09:00", "end": "18:00" },
+        "wednesday": { "start": "09:00", "end": "18:00" },
+        "thursday": { "start": "09:00", "end": "18:00" },
+        "friday": { "start": "09:00", "end": "18:00" },
+        "saturday": { "start": "10:00", "end": "15:00" },
+        "sunday": { "start": "10:00", "end": "15:00" }
+      }
+    }
+  ]
+}
