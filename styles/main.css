@@ -356,6 +356,12 @@ html, body {
     padding: 0 1rem;
 }
 
+@media screen and (orientation: landscape) and (max-height: 511px) and (max-width: 869px) {
+    .subtitle__title {
+        margin-bottom: 5px;
+    }
+}
+
 .subtitle__date {
     display: flex;
     align-items: center;
@@ -743,6 +749,20 @@ html, body {
     }
 }
 
+@media screen and (orientation: landscape) {
+    .worksheet__row_mobile {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: minmax(auto, auto);
+        gap: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        grid-template-areas:
+            "name cell1 cell2 cell3"
+            "cell4 cell5 cell6 cell7";
+    }
+}
+
 @media screen and (max-width: 1089px) and (min-width: 512px) {
     .worksheet__cell_name-cell {
         grid-area: name;
@@ -785,6 +805,27 @@ html, body {
     }
 }
 
+@media screen and (orientation: landscape) {
+    .worksheet__cell_name-cell {
+        grid-area: name;
+        text-align: center;
+        border-radius: 10px;
+        font-weight: bold;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 1rem;
+
+        box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+        background-color: #DAD5FF;
+    }
+
+    .dark-theme .worksheet__cell_name-cell {
+        box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+        background-color: #4A4A4A;
+    }
+}
+
 @media screen and (max-width: 1089px) and (min-width: 300px) {
     .worksheet__cell_block_cell {
         grid-area: block;
@@ -801,6 +842,13 @@ html, body {
 }
 
 @media screen and (max-width: 511px) and (min-width: 300px) {
+    .worksheet__cell_block_cell {
+        display: none;
+        visibility: hidden;
+    }
+}
+
+@media screen and (orientation: landscape) {
     .worksheet__cell_block_cell {
         display: none;
         visibility: hidden;
