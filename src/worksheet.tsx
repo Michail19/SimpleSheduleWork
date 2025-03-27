@@ -137,6 +137,7 @@ const Worksheet: React.FC = () => {
         projects: [], // Все доступные проекты
         activeProjects: [], // Выбранные проекты для фильтрации
     });
+    const [showFilters, setShowFilters] = useState(false);
     const currentTranslation = translations[language] ?? translations["ru"];
 
     useEffect(() => {
@@ -242,7 +243,6 @@ const Worksheet: React.FC = () => {
 
         setCurrentWeek(formatWeekRange(newStart, newEnd, currentTranslation));
     };
-
 
     const toggleProjectFilter = (project: string) => {
         setFilters(prev => {
@@ -413,10 +413,67 @@ const Worksheet: React.FC = () => {
         };
     }, [editingCell]); // Добавляем editingCell в зависимости
 
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('.filters-panel') && !target.closest('.sidebar__btn[data-key="sidebar_filters"]')) {
+                setShowFilters(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const FiltersPanel = () => (
+        <div className="filters-panel">
+            <h3>{currentTranslation.filters}</h3>
+            <div className="filters-list">
+                {filters.projects.map(project => (
+                    <label key={project} className="filter-item">
+                        <input
+                            type="checkbox"
+                            checked={filters.activeProjects.includes(project)}
+                            onChange={() => toggleProjectFilter(project)}
+                        />
+                        <span>{project.replace('Project_', '')}</span>
+                    </label>
+                ))}
+            </div>
+            <button
+                className="clear-filters-btn"
+                onClick={clearFilters}
+                disabled={filters.activeProjects.length === 0}
+            >
+                {currentTranslation.clearFilters}
+            </button>
+        </div>
+    );
+
 
     return (
         <div className="content" key={updateKey}>
-            {ReactDOM.createPortal(
+            {document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className={`sidebar__btn ${showFilters ? 'active' : ''}`}
+                        onClick={() => setShowFilters(!showFilters)}
+                        data-key="sidebar_filters"
+                    >
+                        {currentTranslation.filters}
+                    </button>,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+            {showFilters && document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <FiltersPanel />,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+
+            {document.querySelector(".header__up-blocks__headbar") &&
+                ReactDOM.createPortal(
                 <div className="filters-dropdown">
                     <h3>{currentTranslation.filters}</h3>
                     <div className="projects-filter">
