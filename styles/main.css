@@ -935,69 +935,145 @@ html, body {
 
 /* ---------------------------- */
 
-.filters-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    padding: 1rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 1000;
-    min-width: 250px;
-}
-
-.projects-filter {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.5rem;
-    margin: 1rem 0;
-}
-
-.projects-filter label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
 /* Стили для панели фильтров */
-.filters-panel {
-    position: absolute;
-    left: 100%;
-    top: 0;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    min-width: 250px;
-    z-index: 100;
+@media screen and (min-width: 1490px) {
+    .filters-panel {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        min-width: 250px;
+        z-index: 100;
+        color: #353535;
+    }
+
+    .filters-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        margin: 15px 0;
+    }
+
+    .filter-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .clear-filters-btn {
+        width: 100%;
+        padding: 8px;
+        background: #f0f0f0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .sidebar__btn.active {
+        background-color: #e0e0ff;
+    }
+
+    .search-container {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 8px 30px 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+    }
+
+    /* Адаптация списка фильтров */
+    .filters-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin: 10px 0;
+        padding-right: 5px;
+    }
 }
 
-.filters-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
-    margin: 15px 0;
-}
+@media screen and (max-width: 1489px) and (min-width: 1090px) {
+    .filters-panel {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        min-width: 250px;
+        z-index: 100;
+        color: #353535;
+    }
 
-.filter-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
+    .filters-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        margin: 15px 0;
+    }
 
-.clear-filters-btn {
-    width: 100%;
-    padding: 8px;
-    background: #f0f0f0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    .filter-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
 
-.sidebar__btn.active {
-    background-color: #e0e0ff;
+    .clear-filters-btn {
+        width: 100%;
+        padding: 8px;
+        background: #f0f0f0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .header__headbar__up-blocks__btn.active {
+        background-color: #e0e0ff;
+    }
+
+    .search-container {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 8px 30px 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.5;
+    }
+
+    /* Адаптация списка фильтров */
+    .filters-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin: 10px 0;
+        padding-right: 5px;
+    }
 }
 
 /* ----------------------------------- */

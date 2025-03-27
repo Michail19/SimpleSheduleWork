@@ -54,6 +54,7 @@ const translations: Record<Language, { [key: string]: string }> = {
         december: "Декабрь",
         filters: 'Фильтры',
         clearFilters: 'Сбросить фильтры',
+        searchByName: 'Поиск по имени...',
     },
     en: {
         title: "Employee",
@@ -81,6 +82,7 @@ const translations: Record<Language, { [key: string]: string }> = {
         december: "December",
         filters: 'Filters',
         clearFilters: 'Clear filters',
+        searchByName: 'Search by name...',
     },
 };
 
@@ -138,6 +140,8 @@ const Worksheet: React.FC = () => {
         activeProjects: [], // Выбранные проекты для фильтрации
     });
     const [showFilters, setShowFilters] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef<HTMLInputElement>(null);
     const currentTranslation = translations[language] ?? translations["ru"];
 
     useEffect(() => {
@@ -264,15 +268,34 @@ const Worksheet: React.FC = () => {
         }));
     };
 
+    useEffect(() => {
+        if (showFilters && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [showFilters]);
+
     // Применяем фильтрацию если есть активные фильтры
-    const filteredEmployees = filters.activeProjects.length > 0
-        ? employees.filter(employee => {
-            const employeeProjects = employee.projects?.split(' ') || [];
-            return filters.activeProjects.some(project =>
-                employeeProjects.includes(project)
-            );
-        })
-        : employees; // Если фильтры не выбраны - берем всех сотрудников
+    const filteredEmployees = useMemo(() => {
+        let result = employees;
+
+        // Фильтрация по проектам
+        if (filters.activeProjects.length > 0) {
+            result = result.filter(employee => {
+                const employeeProjects = employee.projects?.split(' ') || [];
+                // @ts-ignore
+                return filters.activeProjects.some(project =>
+                    employeeProjects.includes(project))
+            });
+        }
+
+        // Фильтрация по имени
+        if (searchQuery) {
+            result = result.filter(employee =>
+                employee.fio.toLowerCase().includes(searchQuery.toLowerCase()))
+        }
+
+        return result;
+    }, [employees, filters.activeProjects, searchQuery]);
 
     // Фиксируем current сотрудника (первого в списке)
     const currentEmployee = filteredEmployees.length > 0 ? filteredEmployees[0] : null;
@@ -416,7 +439,8 @@ const Worksheet: React.FC = () => {
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            if (!target.closest('.filters-panel') && !target.closest('.sidebar__btn[data-key="sidebar_filters"]')) {
+            if (!target.closest('.filters-panel') &&
+                !target.closest('.sidebar__btn[data-key="sidebar_filters"]')) {
                 setShowFilters(false);
             }
         };
@@ -425,30 +449,73 @@ const Worksheet: React.FC = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const FiltersPanel = () => (
-        <div className="filters-panel">
-            <h3>{currentTranslation.filters}</h3>
-            <div className="filters-list">
-                {filters.projects.map(project => (
-                    <label key={project} className="filter-item">
-                        <input
-                            type="checkbox"
-                            checked={filters.activeProjects.includes(project)}
-                            onChange={() => toggleProjectFilter(project)}
-                        />
-                        <span>{project.replace('Project_', '')}</span>
-                    </label>
-                ))}
-            </div>
-            <button
-                className="clear-filters-btn"
-                onClick={clearFilters}
-                disabled={filters.activeProjects.length === 0}
+    const FiltersPanel = () => {
+        const filteredProjects = filters.projects.filter(project =>
+            project.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        const inputRef = useRef<HTMLInputElement>(null);
+
+        // Фиксируем фокус при монтировании
+        useEffect(() => {
+            inputRef.current?.focus();
+        }, []);
+
+        const handleKeyDown = (e: React.KeyboardEvent) => {
+            // Предотвращаем всплытие событий клавиш
+            e.stopPropagation();
+
+            // Дополнительно: закрытие по Escape
+            if (e.key === 'Escape') {
+                setShowFilters(false);
+            }
+        };
+
+        return (
+            <div
+                className="filters-panel"
+                onKeyDown={handleKeyDown}
+                onClick={(e) => e.stopPropagation()}
             >
-                {currentTranslation.clearFilters}
-            </button>
-        </div>
-    );
+                <div className="search-container">
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Поиск..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+
+                    <h3>{currentTranslation.filters}</h3>
+
+                    <div className="filters-list">
+                        {filteredProjects.map(project => (
+                            <label key={project} className="filter-item">
+                                <input
+                                    type="checkbox"
+                                    checked={filters.activeProjects.includes(project)}
+                                    onChange={() => toggleProjectFilter(project)}
+                                />
+                                <span>{project.replace('Project_', '')}</span>
+                            </label>
+                        ))}
+                    </div>
+
+                    <button
+                        className="clear-filters-btn"
+                        onClick={() => {
+                            clearFilters();
+                            setSearchQuery('');
+                        }}
+                        disabled={filters.activeProjects.length === 0 && !searchQuery}
+                    >
+                        {currentTranslation.clearFilters}
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
 
     return (
@@ -472,31 +539,24 @@ const Worksheet: React.FC = () => {
                 )
             }
 
-            {document.querySelector(".header__up-blocks__headbar") &&
+            {document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
-                <div className="filters-dropdown">
-                    <h3>{currentTranslation.filters}</h3>
-                    <div className="projects-filter">
-                        {filters.projects.map(project => (
-                            <label key={project}>
-                                <input
-                                    type="checkbox"
-                                    checked={filters.activeProjects.includes(project)}
-                                    onChange={() => toggleProjectFilter(project)}
-                                />
-                                {project.replace('Project_', '')}
-                            </label>
-                        ))}
-                    </div>
                     <button
-                        onClick={clearFilters}
-                        disabled={filters.activeProjects.length === 0}
+                        className={`header__headbar__up-blocks__btn ${showFilters ? 'active' : ''}`}
+                        onClick={() => setShowFilters(!showFilters)}
+                        data-key="sidebar_filters"
                     >
-                        {currentTranslation.clearFilters}
-                    </button>
-                </div>,
-                document.querySelector('.header__up-blocks__headbar') as Element
-            )}
+                        {currentTranslation.filters}
+                    </button>,
+                    document.querySelector('.header__up-blocks__headbar') as Element
+                )
+            }
+            {showFilters && document.querySelector('.header__up-blocks__headbar') &&
+                ReactDOM.createPortal(
+                    <FiltersPanel />,
+                    document.querySelector('.header__up-blocks__headbar') as Element
+                )
+            }
 
             {document.querySelector(".subtitle__date__place") &&
                 ReactDOM.createPortal(
