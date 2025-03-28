@@ -372,16 +372,25 @@ const Worksheet: React.FC = () => {
             return; // Не сбрасываем состояние, если переходим на другой input
         }
 
-        setEditingCell(null);
-
-        const editedStart = editedTime[`${employeeIndex}-${dayIndex}-start`];
-        const editedEnd = editedTime[`${employeeIndex}-${dayIndex}-end`];
+        const editedStart = editedTime[`${employeeIndex}-${dayIndex}-start`] || "";
+        const editedEnd = editedTime[`${employeeIndex}-${dayIndex}-end`] || "";
 
         const oldValue = employees[employeeIndex].weekSchedule[day] || { start: "", end: "" };
+        const hadOldValues = oldValue.start !== "" || oldValue.end !== ""; // Было ли что-то в старых данных
+        const hasNewValues = editedStart !== "" || editedEnd !== ""; // Есть ли новые данные
+
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
-        // Проверяем, что оба поля корректны
-        if (!timeRegex.test(editedStart || "") || !timeRegex.test(editedEnd || "")) {
+        const isStartValid = editedStart === "" || timeRegex.test(editedStart);
+        const isEndValid = editedEnd === "" || timeRegex.test(editedEnd);
+
+        // Если оба поля пустые и раньше не было значений — не сохраняем
+        if (!hadOldValues && !hasNewValues) {
+            return;
+        }
+
+        // Если раньше было значение, но пользователь удалил всё — откатываем к старым данным
+        if (hadOldValues && !hasNewValues) {
             setEmployees((prev) =>
                 prev.map((employee, index) =>
                     index === employeeIndex
@@ -389,7 +398,7 @@ const Worksheet: React.FC = () => {
                             ...employee,
                             weekSchedule: {
                                 ...employee.weekSchedule,
-                                [day]: oldValue, // Оставляем старые значения, если ввод некорректный
+                                [day]: oldValue, // Восстанавливаем предыдущие данные
                             },
                         }
                         : employee
@@ -399,7 +408,31 @@ const Worksheet: React.FC = () => {
             return;
         }
 
-        // Если оба поля заполнены, сохраняем в state
+        // Если хотя бы одно поле некорректное — откатываем
+        if (!isStartValid || !isEndValid) {
+            setEmployees((prev) =>
+                prev.map((employee, index) =>
+                    index === employeeIndex
+                        ? {
+                            ...employee,
+                            weekSchedule: {
+                                ...employee.weekSchedule,
+                                [day]: oldValue,
+                            },
+                        }
+                        : employee
+                )
+            );
+            setEditingCell(null);
+            return;
+        }
+
+        // Если в старых данных пусто — требуем заполнения обоих полей
+        if (!hadOldValues && (editedStart === "" || editedEnd === "")) {
+            return;
+        }
+
+        // Если оба поля заполнены корректно, обновляем
         setEmployees((prev) =>
             prev.map((employee, index) =>
                 index === employeeIndex
@@ -407,7 +440,10 @@ const Worksheet: React.FC = () => {
                         ...employee,
                         weekSchedule: {
                             ...employee.weekSchedule,
-                            [day]: { start: editedStart, end: editedEnd },
+                            [day]: {
+                                start: editedStart || oldValue.start,
+                                end: editedEnd || oldValue.end,
+                            },
                         },
                     }
                     : employee
@@ -614,6 +650,14 @@ const Worksheet: React.FC = () => {
                                                         value={editedTime[`0-${dayIndex}-start`] || schedule.start}
                                                         onChange={(e) => handleEdit(0, dayIndex, day, "start", e.target.value)}
                                                         onBlur={(e) => handleBlur(0, dayIndex, day, "start", e)}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === "Escape") {
+                                                                setEditingCell(null); // Отмена редактирования
+                                                            }
+                                                            if (e.key === "Enter") {
+                                                                handleBlur(0, dayIndex, day, "start", null);
+                                                            }
+                                                        }}
                                                     />
                                                     -
                                                     <input
@@ -621,6 +665,14 @@ const Worksheet: React.FC = () => {
                                                         value={editedTime[`0-${dayIndex}-end`] || schedule.end}
                                                         onChange={(e) => handleEdit(0, dayIndex, day, "end", e.target.value)}
                                                         onBlur={(e) => handleBlur(0, dayIndex, day, "end", e)}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === "Escape") {
+                                                                setEditingCell(null); // Отмена редактирования
+                                                            }
+                                                            if (e.key === "Enter") {
+                                                                handleBlur(0, dayIndex, day, "end", null);
+                                                            }
+                                                        }}
                                                     />
                                                 </>
                                             ) : (
@@ -654,7 +706,7 @@ const Worksheet: React.FC = () => {
                         {displayedEmployees.map((employee, index) => (
                             <div
                                 key={index}
-                                className={`worksheet__row ${index === 0 ? "current" : ""}`}
+                                className={`worksheet__row ${employee === employees[0] ? "current" : ""}`}
                             >
                                 <div className="worksheet__cell_name">{employee.fio}</div>
                                 <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
