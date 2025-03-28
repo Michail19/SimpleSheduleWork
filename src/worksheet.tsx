@@ -440,7 +440,8 @@ const Worksheet: React.FC = () => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
             if (!target.closest('.filters-panel') &&
-                !target.closest('.sidebar__btn[data-key="sidebar_filters"]')) {
+                !target.closest('.sidebar__btn[data-key="sidebar_filters"]') &&
+                !target.closest('.header__headbar__up-blocks__btn')) {
                 setShowFilters(false);
             }
         };
