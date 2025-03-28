@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-//import Worksheet1 from "./worksheet";
+//import Worksheet from "./Worksheet";
 import "../styles/main.css";
 
 const pageElement = document.getElementById("root");
@@ -10,4 +10,4 @@ if (!pageElement) {
 }
 
 const root = createRoot(pageElement);
-//root.render(<Worksheet1 />);
+//root.render(<Worksheet />);

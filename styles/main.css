@@ -996,14 +996,6 @@ html, body {
         border-radius: 4px;
     }
 
-    .search-icon {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0.5;
-    }
-
     /* Адаптация списка фильтров */
     .filters-list {
         max-height: 300px;
@@ -1071,14 +1063,6 @@ html, body {
         padding: 8px 30px 8px 10px;
         border: 1px solid #ddd;
         border-radius: 4px;
-    }
-
-    .search-icon {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0.5;
     }
 
     /* Адаптация списка фильтров */

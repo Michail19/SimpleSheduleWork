@@ -411,6 +411,29 @@ const Worksheet: React.FC = () => {
     return (
         <div className="content" key={updateKey}>
             {/* Рендеринг порталов и компонентов */}
+            {document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="sidebar__btn"
+                        onClick={() => setIsAddEmployeePopupOpen(true)}
+                    >
+                        Добавить <br/>
+                        сотрудника
+                    </button>,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+            {document.querySelector('.header__up-blocks__headbar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="header__headbar__up-blocks__btn"
+                        onClick={() => setIsAddEmployeePopupOpen(true)}
+                    >
+                        Добавить сотрудника
+                    </button>,
+                    document.querySelector('.header__up-blocks__headbar') as Element
+                )
+            }
             {isAddEmployeePopupOpen && (
                 <AddEmployeePopup
                     onClose={() => setIsAddEmployeePopupOpen(false)}
@@ -421,6 +444,29 @@ const Worksheet: React.FC = () => {
                 />
             )}
 
+            {document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="sidebar__btn"
+                        onClick={() => setIsDeletePopupOpen(true)}
+                    >
+                        Удалить <br/>
+                        сотрудника
+                    </button>,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+            {document.querySelector('.header__up-blocks__headbar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="header__headbar__up-blocks__btn"
+                        onClick={() => setIsDeletePopupOpen(true)}
+                    >
+                        Удалить сотрудника
+                    </button>,
+                    document.querySelector('.header__up-blocks__headbar') as Element
+                )
+            }
             {isDeletePopupOpen && (
                 <DeleteEmployeePopup
                     employees={employees}
