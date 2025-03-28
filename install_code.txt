@@ -11,4 +11,4 @@ npm install html-webpack-plugin
 npm install --save-dev copy-webpack-plugin
 npm install --save-dev mini-css-extract-plugin
 npm install gh-pages --save-dev
-
+npm install --save-dev ts-loader typescript
