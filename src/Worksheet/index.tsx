@@ -568,7 +568,7 @@ const Worksheet: React.FC = () => {
                         <div ref={containerRef} className="worksheet">
                             <div className="worksheet__row_mobile">
                                 <div className="worksheet__cell_name-cell">{displayedEmployees[0].fio}</div>
-                                <div className="worksheet__cell_block_cell"></div>
+                                <div className="worksheet__cell_block_cell">{calculateWorkHours(displayedEmployees[0].weekSchedule)}{currentTranslation.hour}</div>
                                 {Object.keys(displayedEmployees[0].weekSchedule).map((day: string, dayIndex: number) => {
                                     const schedule = displayedEmployees[0].weekSchedule[day];
                                     return (
