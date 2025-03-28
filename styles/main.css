@@ -1180,6 +1180,87 @@
     background-color: #1a3a5e;
 }
 
+/* components/Worksheet/subcomponents/MobileEmployeeSearch.module.css */
+.mobile-employee-search {
+    position: relative;
+    padding: 10px;
+}
+
+.search-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    background: #fff;
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.search-container {
+    margin-bottom: 15px;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.employee-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.employee-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.day-slot {
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.day-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.time-inputs input {
+    width: 100%;
+}
+
+.time-display {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
 /* ----------------------------------- */
 
 @media screen and (min-width: 1490px) {
