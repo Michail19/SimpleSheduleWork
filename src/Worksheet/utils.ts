@@ -23,7 +23,7 @@ export const calculateWorkHours = (time: { [day: string]: Schedule }): string =>
     return Math.round(totalHours).toString();
 };
 
-export const filteredEmployees = (employees: Employee[], filters: FiltersState, searchQuery: string) => {
+export const filterEmployees = (employees: Employee[], filters: FiltersState, searchQuery: string) => {
     let result = employees;
 
     if (filters.activeProjects.length > 0) {

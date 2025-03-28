@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from 'react-dom';
 import { Employee, FiltersState, Language } from './types';
 import { translations } from './translations';
 import { parseWeekRange, formatWeekRange, translateMonth } from "./timeParsers"
-import { calculateWorkHours, filteredEmployees } from './utils';
+import { calculateWorkHours, filterEmployees } from './utils';
 import { FiltersPanel } from './components/FiltersPanel';
 import { AddEmployeePopup } from './components/AddEmployeePopup';
 import { DeleteEmployeePopup } from './components/DeleteEmployeePopup';
@@ -163,14 +163,10 @@ const Worksheet: React.FC = () => {
         }
     }, [showFilters]);
 
-    // Фиксируем current сотрудника (первого в списке)
-    const currentEmployee = filteredEmployees.length > 0 ? filteredEmployees[0] : null;
-
-    // Остальные сотрудники (без current) для пагинации
-    const paginatedEmployees = filteredEmployees.slice(1);
-
-    // Рассчитываем общее количество страниц
-    const totalPages = Math.ceil(paginatedEmployees.length / rowsPerPage);
+    const filteredEmployees = filterEmployees(employees, filters, searchQuery);
+    const currentEmployee = filteredEmployees.length > 0 ? filteredEmployees[0] : null; // Фиксируем current сотрудника (первого в списке)
+    const paginatedEmployees = filteredEmployees.slice(1); // Остальные сотрудники (без current) для пагинации
+    const totalPages = Math.ceil(paginatedEmployees.length / rowsPerPage); // Рассчитываем общее количество страниц
 
     // Формируем список для отображения
     const displayedEmployees = [
