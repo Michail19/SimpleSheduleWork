@@ -1,125 +1,7 @@
 import React, {useEffect, useState, useRef, useMemo} from "react";
 import ReactDOM from 'react-dom';
 
-// Типы данных для расписания
-interface Schedule {
-    start: string;
-    end: string;
-}
-
-interface Employee {
-    id: string;
-    fio: string;
-    projects?: string; // Добавьте это поле (знак ? означает необязательное поле)
-    weekSchedule: {
-        [day: string]: Schedule;
-    };
-}
-
-interface FiltersState {
-    projects: string[];
-    activeProjects: string[];
-}
-
-type Language = "ru" | "en";
-
-const translations: Record<Language, { [key: string]: string }> = {
-    ru: {
-        title: "Сотрудник",
-        monday: "Понедельник",
-        tuesday: "Вторник",
-        wednesday: "Среда",
-        thursday: "Четверг",
-        friday: "Пятница",
-        saturday: "Суббота",
-        sunday: "Воскресенье",
-        page: "Лист",
-        outOf: "из",
-        hour: "ч.",
-        january: "Январь",
-        february: "Февраль",
-        march: "Март",
-        april: "Апрель",
-        may: "Май",
-        june: "Июнь",
-        july: "Июль",
-        august: "Август",
-        september: "Сентябрь",
-        october: "Октябрь",
-        november: "Ноябрь",
-        december: "Декабрь",
-        filters: 'Фильтры',
-        clearFilters: 'Сбросить фильтры',
-        searchByName: 'Поиск по имени...',
-    },
-    en: {
-        title: "Employee",
-        monday: "Monday",
-        tuesday: "Tuesday",
-        wednesday: "Wednesday",
-        thursday: "Thursday",
-        friday: "Friday",
-        saturday: "Saturday",
-        sunday: "Sunday",
-        page: "Page",
-        outOf: "of",
-        hour: "h.",
-        january: "January",
-        february: "February",
-        march: "March",
-        april: "April",
-        may: "May",
-        june: "June",
-        july: "July",
-        august: "August",
-        september: "September",
-        october: "October",
-        november: "November",
-        december: "December",
-        filters: 'Filters',
-        clearFilters: 'Clear filters',
-        searchByName: 'Search by name...',
-    },
-};
-
-const parseWeekRange = (weekRange: string, currentTranslation: any): { start: Date; end: Date } | null => {
-    const match = weekRange.match(/(\d+)-(\d+)\s+(\S+)\s+(\d{4})/);
-    if (!match) return null;
-
-    const [, startDay, endDay, monthName, year] = match;
-
-    // Найдем ключ месяца в переводах
-    const monthKey = Object.keys(currentTranslation).find(key => currentTranslation[key] === monthName);
-    if (!monthKey) return null;
-
-    const monthIndex = Object.keys(translations.ru).indexOf(monthKey) - 7; // -7, т.к. первые 7 ключей - дни недели
-    if (monthIndex < 0) return null;
-
-    const startDate = new Date(parseInt(year, 10), monthIndex, parseInt(startDay, 10));
-    const endDate = new Date(parseInt(year, 10), monthIndex, parseInt(endDay, 10));
-
-    return { start: startDate, end: endDate };
-};
-
-const formatWeekRange = (start: Date, end: Date, currentTranslation: any): string => {
-    const monthKey = Object.keys(translations.ru)[start.getMonth() + 7]; // +7, т.к. первые 7 ключей - дни недели
-    const monthName = currentTranslation[monthKey];
-
-    return `${start.getDate()}-${end.getDate()} ${monthName} ${start.getFullYear()}`;
-};
-
-const translateMonth = (weekString: string, currentTranslation: any): string => {
-    const match = weekString.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/i);
-    if (!match) return weekString; // Если месяц не найден, вернуть строку как есть
-
-    const englishMonth = match[0].toLowerCase(); // Найденный месяц
-    const translatedMonth = currentTranslation[englishMonth] || englishMonth; // Перевод или оригинал
-
-    return weekString.replace(new RegExp(englishMonth, "i"), translatedMonth); // Заменяем в строке
-};
-
 const Worksheet: React.FC = () => {
-    const [employees, setEmployees] = useState<Employee[]>([]);
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -127,7 +9,6 @@ const Worksheet: React.FC = () => {
     const [editedTime, setEditedTime] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement | null>(null);
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [language, setLanguage] = useState<Language>("ru");
     const [updateKey, setUpdateKey] = useState(0);
     const [filters, setFilters] = useState<FiltersState>({
@@ -156,14 +37,6 @@ const Worksheet: React.FC = () => {
     const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 1090);
-        };
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
 
     useEffect(() => {
         // Применяем сохранённые настройки языка при загрузке
