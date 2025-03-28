@@ -30,7 +30,11 @@ module.exports = {
             },
             {
                 test: /\.css$/,  // Поддержка CSS
-                use: [MiniCssExtractPlugin.loader, 'css-loader'], // Заменяем style-loader на MiniCssExtractPlugin.loader
+                use: [
+                    MiniCssExtractPlugin.loader,  // Извлечение стилей в отдельный файл
+                    'css-loader',                 // Обработка CSS
+                    'postcss-loader'              // Работа с PostCSS (например, для БЭМ)
+                ]
             },
             {
             test: /\.(ts|tsx)$/,

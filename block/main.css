@@ -2,9 +2,9 @@
 
 @import url("../block/loader/loader.css");
 @import url("../block/preloader/preloader.css");
-@import url("../block/dark-theme/dark-theme.css");
 @import url("../block/page/page.css");
-/*@import url("../block");*/
+@import url("../block/dark-theme/dark-theme.css");
+@import url("../block/header/header.css");
 
 html, body {
     margin: 0;

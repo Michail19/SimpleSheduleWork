@@ -62,9 +62,9 @@ function updateText() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.querySelector('.header__up-blocks__theme-toggle');
+    const themeToggle = document.querySelector('.header__up-blocks__wrapper__list__theme-toggle');
     const themeToggle_m = document.querySelector('.header__up-blocks_menu__list__theme-toggle_m');
-    const langToggle = document.querySelector('.header__up-blocks__theme-toggle_lang');
+    const langToggle = document.querySelector('.header__up-blocks__wrapper__list__theme-toggle_lang');
     const langToggle_m = document.querySelector('.header__up-blocks_menu__list__theme-toggle_lang_m');
     const button = document.querySelector('.btn_worksheet');
     const content = document.querySelector('.content');

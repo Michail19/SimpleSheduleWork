@@ -18,6 +18,13 @@
     .dark-theme .header__up-blocks__wrapper_menu__list {
         background: #252525;
     }
+    
+    .header__up-blocks__wrapper_menu:hover .header__up-blocks__wrapper_menu__list {
+        visibility: visible;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75vh;
+    }
 }
 
 @import url("./__theme-toggle/header__up-blocks_menu__list__theme-toggle.css");

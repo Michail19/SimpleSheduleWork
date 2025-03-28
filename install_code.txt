@@ -9,7 +9,7 @@ npm install @types/react @types/react-dom --save-dev
 npm install react-router-dom
 npm install html-webpack-plugin
 npm install --save-dev copy-webpack-plugin
-npm install --save-dev mini-css-extract-plugin
+npm install --save-dev mini-css-extract-plugin postcss-bem-linter
 npm install gh-pages --save-dev
 npm install --save-dev ts-loader typescript
 npm install --save-dev ts-loader typescript @babel/preset-typescript

@@ -1,4 +1,32 @@
+@import url("./__theme-toggle/header__up-blocks__wrapper__list__theme-toggle.css");
+
 .header__up-blocks__wrapper__list {
     visibility: hidden;
     display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    padding: 2vh 2vw;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10%;
+    justify-content: center;
+    z-index: 9999;
+
+    background: #E3E7ED;
+    color: #353535;
+}
+
+.dark-theme .header__up-blocks__wrapper__list {
+    background: #252525;
+}
+
+@import url("./__btn/header__up-blocks__wrapper__list__btn.css");
+
+@media screen and (min-width: 870px) {
+    .header__up-blocks__wrapper:hover .header__up-blocks__wrapper__list {
+        visibility: visible;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75vh;
+    }
 }

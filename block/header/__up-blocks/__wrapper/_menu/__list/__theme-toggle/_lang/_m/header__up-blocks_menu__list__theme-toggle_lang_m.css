@@ -1,6 +1,6 @@
 @media screen and (max-width: 869px) {
     .header__up-blocks_menu__list__theme-toggle_lang_m {
-        background: url("../images/ru.png");
+        background: url("/images/ru.png");
         background-size: contain;
         background-repeat: no-repeat;
 
@@ -11,7 +11,7 @@
     }
 
     .changed-lang .header__up-blocks_menu__list__theme-toggle_lang_m {
-        background: url("../images/en.png");
+        background: url("/images/en.png");
         background-size: contain;
         background-repeat: no-repeat;
     }

@@ -1,4 +1,11 @@
-
 @import url("./__list/header__up-blocks__wrapper__list.css");
 @import url("./_menu/header__up-blocks__wrapper_menu.css");
 @import url("./__menu-toggle/header__up-blocks__menu-toggle.css");
+
+.header__up-blocks__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+@import url("./__icon/header__up-blocks__wrapper__icon.css");
