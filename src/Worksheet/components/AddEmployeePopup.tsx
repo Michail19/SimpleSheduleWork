@@ -1,21 +1,34 @@
-import React, {useEffect, useState} from "react";
+import React, { useState, useEffect } from 'react';
+import { Employee, Language } from '../types';
+import { translations } from '../translations';
+import {FiltersState} from "../types";
 
 interface AddEmployeePopupProps {
-    initialData: EmployeeFormData;
-    projectsList: string[];
-    translations: Record<string, string>;
     onClose: () => void;
-    onSave: (data: EmployeeFormData) => void;
+    onSave: (employee: Omit<Employee, 'id'> & { id?: string }) => void;
+    currentTranslation: typeof translations[Language];
+    filters: FiltersState;
 }
 
-const AddEmployeePopup = ({
-                              initialData,
-                              projectsList,
-                              translations,
-                              onClose,
-                              onSave
-                          }: AddEmployeePopupProps) => {
-    const [employeeData, setEmployeeData] = useState(newEmployee);
+export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
+                                                                      onClose,
+                                                                      onSave,
+                                                                      currentTranslation,
+                                                                      filters
+                                                                  }) => {
+    const [employeeData, setEmployeeData] = useState({
+        fio: '',
+        projects: '',
+        weekSchedule: {
+            monday: { start: '', end: '' },
+            tuesday: { start: '', end: '' },
+            wednesday: { start: '', end: '' },
+            thursday: { start: '', end: '' },
+            friday: { start: '', end: '' },
+            saturday: { start: '', end: '' },
+            sunday: { start: '', end: '' },
+        }
+    });
     const [projectSuggestions, setProjectSuggestions] = useState<string[]>([]);
 
     useEffect(() => {
@@ -28,7 +41,7 @@ const AddEmployeePopup = ({
                 )
             );
         }
-    }, [employeeData.projects]);
+    }, [employeeData.projects, filters.projects]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -41,10 +54,10 @@ const AddEmployeePopup = ({
     const handleScheduleChange = (day: string, type: 'start' | 'end', value: string) => {
         setEmployeeData(prev => ({
             ...prev,
-            schedule: {
-                ...prev.schedule,
+            weekSchedule: {
+                ...prev.weekSchedule,
                 [day]: {
-                    ...prev.schedule[day as keyof typeof prev.schedule],
+                    ...prev.weekSchedule[day as keyof typeof prev.weekSchedule],
                     [type]: value
                 }
             }
@@ -78,7 +91,7 @@ const AddEmployeePopup = ({
                 </div>
 
                 <h3>График работы:</h3>
-                {Object.entries(employeeData.schedule).map(([day, time]) => (
+                {Object.entries(employeeData.weekSchedule).map(([day, time]) => (
                     <div key={day} className="schedule-row">
                         <label>{currentTranslation[day as keyof typeof currentTranslation]}:</label>
                         <input
@@ -108,5 +121,3 @@ const AddEmployeePopup = ({
         </div>
     );
 };
-
-export default AddEmployeePopup;

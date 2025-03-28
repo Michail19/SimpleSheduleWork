@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef, useMemo} from "react";
 import ReactDOM from 'react-dom';
 
-const Worksheet: React.FC = () => {
+const Worksheet1: React.FC = () => {
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -399,4 +399,4 @@ const Worksheet: React.FC = () => {
 
 };
 
-export default Worksheet;
+export default Worksheet1;

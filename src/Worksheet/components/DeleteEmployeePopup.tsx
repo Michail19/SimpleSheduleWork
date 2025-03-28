@@ -1,19 +1,20 @@
-import React from "react";
-import {Employee} from "../types";
+import React, { useState } from 'react';
+import { Employee } from '../types';
 
 interface DeleteEmployeePopupProps {
     employees: Employee[];
-    translations: Record<string, string>;
-    onClose: () => void;
     onDelete: (id: string) => void;
+    onClose: () => void;
 }
 
-const DeleteEmployeePopup = ({
-                                 employees,
-                                 translations,
-                                 onClose,
-                                 onDelete
-                             }: DeleteEmployeePopupProps) => {
+export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
+                                                                            employees,
+                                                                            onDelete,
+                                                                            onClose
+                                                                        }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+
     const filteredEmployees = employees.filter(employee =>
         employee.fio.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -66,5 +67,3 @@ const DeleteEmployeePopup = ({
         </div>
     );
 };
-
-export default DeleteEmployeePopup;
