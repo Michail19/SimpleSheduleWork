@@ -1,0 +1,23 @@
+@media screen and (max-width: 869px) {
+    .header__up-blocks__wrapper_menu__list {
+        visibility: hidden;
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 2vh 2vw;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10%;
+        justify-content: center;
+        z-index: 9999;
+
+        background: #E3E7ED;
+        color: #353535;
+    }
+
+    .dark-theme .header__up-blocks__wrapper_menu__list {
+        background: #252525;
+    }
+}
+
+@import url("./__theme-toggle/header__up-blocks_menu__list__theme-toggle.css");

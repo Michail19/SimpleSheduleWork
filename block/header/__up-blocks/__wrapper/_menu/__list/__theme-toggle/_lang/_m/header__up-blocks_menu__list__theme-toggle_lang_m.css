@@ -1,0 +1,18 @@
+@media screen and (max-width: 869px) {
+    .header__up-blocks_menu__list__theme-toggle_lang_m {
+        background: url("../images/ru.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: 25px;
+        border: none;
+    }
+
+    .changed-lang .header__up-blocks_menu__list__theme-toggle_lang_m {
+        background: url("../images/en.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+}

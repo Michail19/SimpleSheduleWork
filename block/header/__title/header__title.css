@@ -1,0 +1,10 @@
+.header__title {
+    padding: 1rem 2vw;
+    font-weight: 500;
+}
+
+@media screen and (max-width: 869px) {
+    .header__title {
+        text-align: center;
+    }
+}

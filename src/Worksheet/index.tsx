@@ -427,7 +427,7 @@ const Worksheet: React.FC = () => {
             {document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
                     <button
-                        className="header__headbar__up-blocks__btn"
+                        className="header__up-blocks__headbar__btn"
                         onClick={() => setIsAddEmployeePopupOpen(true)}
                     >
                         Добавить сотрудника
@@ -460,7 +460,7 @@ const Worksheet: React.FC = () => {
             {document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
                     <button
-                        className="header__headbar__up-blocks__btn"
+                        className="header__up-blocks__headbar__btn"
                         onClick={() => setIsDeletePopupOpen(true)}
                     >
                         Удалить сотрудника
@@ -510,7 +510,7 @@ const Worksheet: React.FC = () => {
             {document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
                     <button
-                        className={`header__headbar__up-blocks__btn ${showFilters ? 'active' : ''}`}
+                        className={`header__up-blocks__headbar__btn ${showFilters ? 'active' : ''}`}
                         onClick={() => setShowFilters(!showFilters)}
                         data-key="sidebar_filters"
                     >
@@ -574,59 +574,6 @@ const Worksheet: React.FC = () => {
                         onBlur={handleBlur}
                         onSetEditingCell={setEditingCell}
                     />
-                    {/*{displayedEmployees.length > 0 && (*/}
-                    {/*    <div ref={containerRef} className="worksheet">*/}
-                    {/*        <div className="worksheet__row_mobile">*/}
-                    {/*            <div className="worksheet__cell_name-cell">{displayedEmployees[0].fio}</div>*/}
-                    {/*            <div className="worksheet__cell_block_cell">{calculateWorkHours(displayedEmployees[0].weekSchedule)}{currentTranslation.hour}</div>*/}
-                    {/*            {Object.keys(displayedEmployees[0].weekSchedule).map((day: string, dayIndex: number) => {*/}
-                    {/*                const schedule = displayedEmployees[0].weekSchedule[day];*/}
-                    {/*                return (*/}
-                    {/*                    <div className="worksheet__cell" key={dayIndex}>*/}
-                    {/*                        <div className="worksheet__day-label">{currentTranslation[day]}</div>*/}
-                    {/*                        {editingCell?.row === 0 && editingCell?.day === day ? (*/}
-                    {/*                            <>*/}
-                    {/*                                <input*/}
-                    {/*                                    type="time"*/}
-                    {/*                                    value={editedTime[`0-${dayIndex}-start`] || schedule.start}*/}
-                    {/*                                    onChange={(e) => handleEdit(0, dayIndex, day, "start", e.target.value)}*/}
-                    {/*                                    onBlur={(e) => handleBlur(0, dayIndex, day, "start", e)}*/}
-                    {/*                                    onKeyDown={(e) => {*/}
-                    {/*                                        if (e.key === "Escape") {*/}
-                    {/*                                            setEditingCell(null); // Отмена редактирования*/}
-                    {/*                                        }*/}
-                    {/*                                        if (e.key === "Enter") {*/}
-                    {/*                                            handleBlur(0, dayIndex, day, "start", null);*/}
-                    {/*                                        }*/}
-                    {/*                                    }}*/}
-                    {/*                                />*/}
-                    {/*                                -*/}
-                    {/*                                <input*/}
-                    {/*                                    type="time"*/}
-                    {/*                                    value={editedTime[`0-${dayIndex}-end`] || schedule.end}*/}
-                    {/*                                    onChange={(e) => handleEdit(0, dayIndex, day, "end", e.target.value)}*/}
-                    {/*                                    onBlur={(e) => handleBlur(0, dayIndex, day, "end", e)}*/}
-                    {/*                                    onKeyDown={(e) => {*/}
-                    {/*                                        if (e.key === "Escape") {*/}
-                    {/*                                            setEditingCell(null); // Отмена редактирования*/}
-                    {/*                                        }*/}
-                    {/*                                        if (e.key === "Enter") {*/}
-                    {/*                                            handleBlur(0, dayIndex, day, "end", null);*/}
-                    {/*                                        }*/}
-                    {/*                                    }}*/}
-                    {/*                                />*/}
-                    {/*                            </>*/}
-                    {/*                        ) : (*/}
-                    {/*                            <div onClick={() => setEditingCell({ row: 0, day: day, dayIndex: dayIndex })}>*/}
-                    {/*                                {`${schedule.start} - ${schedule.end}`}*/}
-                    {/*                            </div>*/}
-                    {/*                        )}*/}
-                    {/*                    </div>*/}
-                    {/*                );*/}
-                    {/*            })}*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
                 </>
             ) : (
                 <>
