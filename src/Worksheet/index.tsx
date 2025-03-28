@@ -21,10 +21,6 @@ const Worksheet: React.FC = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [language, setLanguage] = useState<Language>("ru");
     const [updateKey, setUpdateKey] = useState(0);
-    const [filters, setFilters] = useState<FiltersState>({
-        projects: [],
-        activeProjects: [],
-    });
     const [showFilters, setShowFilters] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -33,6 +29,23 @@ const Worksheet: React.FC = () => {
     const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+    const [filters, setFilters] = useState<FiltersState>({
+        projects: [],
+        activeProjects: [],
+    });
+    const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id'> & { id?: string }>({
+        fio: '',
+        projects: '',
+        weekSchedule: {
+            monday: { start: '', end: '' },
+            tuesday: { start: '', end: '' },
+            wednesday: { start: '', end: '' },
+            thursday: { start: '', end: '' },
+            friday: { start: '', end: '' },
+            saturday: { start: '', end: '' },
+            sunday: { start: '', end: '' },
+        }
+    });
 
     // Эффекты и обработчики
     useEffect(() => {
@@ -326,25 +339,20 @@ const Worksheet: React.FC = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleAddEmployee = (employeeData: typeof newEmployee) => {
-        const projectsFromNewEmployee = employeeData.projects.split(' ').filter(Boolean);
+    const handleAddEmployee = (employeeData: Omit<Employee, 'id'> & { id?: string }) => {
+        const projectsFromNewEmployee = employeeData.projects?.split(' ').filter(Boolean) || [];
 
         // Генерируем новый ID
         const newId = employees.length > 0
-            ? Math.max(...employees.map(e => typeof e.id === 'number' ? e.id : 0)) + 1
+            ? Math.max(...employees.map(e => parseInt(e.id))) + 1
             : 1;
 
         // Создаем нового сотрудника с ID на первом месте
-        const newEmployee = {
+        const newEmployee: Employee = {
             id: newId.toString(),
             fio: employeeData.fio,
-            projects: employeeData.projects,
-            weekSchedule: Object.fromEntries(
-                Object.entries(employeeData.schedule).map(([day, time]) => [
-                    day,
-                    { start: time.start || '', end: time.end || '' }
-                ])
-            )
+            projects: employeeData.projects || '',
+            weekSchedule: employeeData.weekSchedule
         };
 
         setEmployees(prev => [...prev, newEmployee]);
@@ -368,10 +376,9 @@ const Worksheet: React.FC = () => {
 
         setIsAddEmployeePopupOpen(false);
         setNewEmployee({
-            id: '',
             fio: '',
             projects: '',
-            schedule: {
+            weekSchedule: {
                 monday: { start: '', end: '' },
                 tuesday: { start: '', end: '' },
                 wednesday: { start: '', end: '' },
@@ -410,6 +417,7 @@ const Worksheet: React.FC = () => {
                     onSave={handleAddEmployee}
                     currentTranslation={currentTranslation}
                     filters={filters}
+                    initialData={newEmployee}
                 />
             )}
 

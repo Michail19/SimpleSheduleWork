@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Employee, Language } from '../types';
+import {Employee, FiltersState, Language} from '../types';
 import { translations } from '../translations';
-import {FiltersState} from "../types";
 
 interface AddEmployeePopupProps {
     onClose: () => void;
     onSave: (employee: Omit<Employee, 'id'> & { id?: string }) => void;
     currentTranslation: typeof translations[Language];
     filters: FiltersState;
+    initialData?: Omit<Employee, 'id'> & { id?: string };
 }
 
 export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                                                                       onClose,
                                                                       onSave,
                                                                       currentTranslation,
-                                                                      filters
+                                                                      filters,
+                                                                      initialData
                                                                   }) => {
-    const [employeeData, setEmployeeData] = useState({
+    const [employeeData, setEmployeeData] = useState<Omit<Employee, 'id'> & { id?: string }>({
         fio: '',
         projects: '',
         weekSchedule: {
@@ -29,15 +30,24 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
             sunday: { start: '', end: '' },
         }
     });
+
     const [projectSuggestions, setProjectSuggestions] = useState<string[]>([]);
 
+    // Инициализация начальными данными
     useEffect(() => {
-        if (employeeData.projects.includes(' ')) {
+        if (initialData) {
+            setEmployeeData(initialData);
+        }
+    }, [initialData]);
+
+    // Подсказки проектов
+    useEffect(() => {
+        if (employeeData.projects?.includes(' ')) {
             const lastProject = employeeData.projects.split(' ').pop() || '';
             setProjectSuggestions(
                 filters.projects.filter(p =>
                     p.toLowerCase().includes(lastProject.toLowerCase()) &&
-                    !employeeData.projects.includes(p)
+                    !employeeData.projects?.includes(p)
                 )
             );
         }
@@ -57,7 +67,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
             weekSchedule: {
                 ...prev.weekSchedule,
                 [day]: {
-                    ...prev.weekSchedule[day as keyof typeof prev.weekSchedule],
+                    ...prev.weekSchedule[day],
                     [type]: value
                 }
             }
