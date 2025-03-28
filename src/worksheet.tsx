@@ -153,7 +153,6 @@ const Worksheet: React.FC = () => {
             sunday: { start: '', end: '' },
         }
     });
-    const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
     const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -506,30 +505,19 @@ const Worksheet: React.FC = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleDeleteEmployee = (employeeId: string) => {
-        setEmployees(prev => {
-            const updatedEmployees = prev.filter(emp => emp.id !== employeeId);
-
-            // Обновляем фильтры после удаления
-            const remainingProjects = updatedEmployees.flatMap(emp =>
-                emp.projects?.split(' ').filter(Boolean) || []
-            );
-
-            setFilters(f => ({
-                ...f,
-                projects: [...new Set(remainingProjects)].sort()
-            }));
-
-            return updatedEmployees;
-        });
-    };
-
     const handleAddEmployee = (employeeData: typeof newEmployee) => {
         const projectsFromNewEmployee = employeeData.projects.split(' ').filter(Boolean);
 
-        // Добавляем нового сотрудника
+        // Генерируем новый ID
+        const newId = employees.length > 0
+            ? Math.max(...employees.map(e => typeof e.id === 'number' ? e.id : 0)) + 1
+            : 1;
+
+        // Создаем нового сотрудника с ID на первом месте
         const newEmployee = {
-            ...employeeData,
+            id: newId.toString(),
+            fio: employeeData.fio,
+            projects: employeeData.projects,
             weekSchedule: Object.fromEntries(
                 Object.entries(employeeData.schedule).map(([day, time]) => [
                     day,
@@ -556,6 +544,7 @@ const Worksheet: React.FC = () => {
                 ? { ...prev, projects: newProjects.sort() }
                 : prev;
         });
+
         setIsAddEmployeePopupOpen(false);
         setNewEmployee({
             id: '',
@@ -671,45 +660,22 @@ const Worksheet: React.FC = () => {
         );
     };
 
-    const DeleteConfirmationPopup = ({employee, onConfirm, onCancel}: {
-        employee: Employee;
-        onConfirm: () => void;
-        onCancel: () => void;
-    }) => (
-        <div className="popup-overlay" onClick={onCancel}>
-            <div className="confirmation-popup" onClick={e => e.stopPropagation()}>
-                <h3>Удалить сотрудника?</h3>
-                <p>Вы уверены, что хотите удалить {employee.fio}?</p>
-                <div className="popup-actions">
-                    <button onClick={onCancel}>Отмена</button>
-                    <button
-                        onClick={onConfirm}
-                        className="danger-btn"
-                    >
-                        Удалить
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+    const handleDeleteEmployee = (employeeId: string) => {
+        setEmployees(prev => {
+            const updatedEmployees = prev.filter(emp => emp.id !== employeeId);
 
-    const confirmDelete = () => {
-        if (employeeToDelete) {
-            handleDeleteEmployee(employeeToDelete.id);
-            setIsDeletePopupOpen(false);
-            setEmployeeToDelete(null);
-        }
-    };
+            // Обновляем фильтры после удаления
+            const remainingProjects = updatedEmployees.flatMap(emp =>
+                emp.projects?.split(' ').filter(Boolean) || []
+            );
 
-    const [deletedEmployee, setDeletedEmployee] = useState<Employee | null>(null);
+            setFilters(f => ({
+                ...f,
+                projects: [...new Set(remainingProjects)].sort()
+            }));
 
-    const handleDelete = (id: string) => {
-        const employee = employees.find(e => e.id === id);
-        if (employee) {
-            setDeletedEmployee(employee);
-            handleDeleteEmployee(id);
-            setTimeout(() => setDeletedEmployee(null), 5000);
-        }
+            return updatedEmployees;
+        });
     };
 
     const FiltersPanel = () => {
@@ -803,7 +769,6 @@ const Worksheet: React.FC = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             autoFocus
                         />
-                        <span className="search-icon">🔍</span>
                     </div>
 
                     <div className="employees-list">
@@ -898,7 +863,7 @@ const Worksheet: React.FC = () => {
             {isDeletePopupOpen && (
                 <DeleteEmployeePopup
                     employees={employees}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteEmployee}
                     onClose={() => {
                         setIsDeletePopupOpen(false);
                         setSearchTerm('');

@@ -979,7 +979,14 @@ html, body {
 
     .search-container {
         position: relative;
-        margin-bottom: 15px;
+        margin: 15px 0;
+    }
+
+    .search-container input {
+        width: 90%;
+        padding: 10px 35px 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
     }
 
     .search-input {
@@ -1049,7 +1056,14 @@ html, body {
 
     .search-container {
         position: relative;
-        margin-bottom: 15px;
+        margin: 15px 0;
+    }
+
+    .search-container input {
+        width: 90%;
+        padding: 10px 35px 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
     }
 
     .search-input {
@@ -1155,18 +1169,6 @@ html, body {
     max-height: 80vh;
     display: flex;
     flex-direction: column;
-}
-
-.search-container {
-    position: relative;
-    margin: 15px 0;
-}
-
-.search-container input {
-    width: 100%;
-    padding: 10px 35px 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
 }
 
 .search-icon {
