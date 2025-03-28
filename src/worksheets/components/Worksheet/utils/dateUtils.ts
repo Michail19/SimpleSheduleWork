@@ -1,3 +1,5 @@
+import translations from '../../../translations/ru';
+
 export const parseWeekRange = (weekRange: string, currentTranslation: any): { start: Date; end: Date } | null => {
     const match = weekRange.match(/(\d+)-(\d+)\s+(\S+)\s+(\d{4})/);
     if (!match) return null;
@@ -8,7 +10,7 @@ export const parseWeekRange = (weekRange: string, currentTranslation: any): { st
     const monthKey = Object.keys(currentTranslation).find(key => currentTranslation[key] === monthName);
     if (!monthKey) return null;
 
-    const monthIndex = Object.keys(translations.ru).indexOf(monthKey) - 7; // -7, т.к. первые 7 ключей - дни недели
+    const monthIndex = Object.keys(translations).indexOf(monthKey) - 7; // -7, т.к. первые 7 ключей - дни недели
     if (monthIndex < 0) return null;
 
     const startDate = new Date(parseInt(year, 10), monthIndex, parseInt(startDay, 10));
@@ -18,7 +20,7 @@ export const parseWeekRange = (weekRange: string, currentTranslation: any): { st
 };
 
 export const formatWeekRange = (start: Date, end: Date, currentTranslation: any): string => {
-    const monthKey = Object.keys(translations.ru)[start.getMonth() + 7]; // +7, т.к. первые 7 ключей - дни недели
+    const monthKey = Object.keys(translations)[start.getMonth() + 7]; // +7, т.к. первые 7 ключей - дни недели
     const monthName = currentTranslation[monthKey];
 
     return `${start.getDate()}-${end.getDate()} ${monthName} ${start.getFullYear()}`;

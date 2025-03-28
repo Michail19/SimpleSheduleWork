@@ -4,6 +4,8 @@
     "module": "ESNext",
     "jsx": "react",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "./src",
+    "moduleResolution": "node"
   }
 }
