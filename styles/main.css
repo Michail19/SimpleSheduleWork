@@ -1078,6 +1078,164 @@ html, body {
 
 /* ----------------------------------- */
 
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.add-employee-popup {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.schedule-row label {
+    min-width: 100px;
+}
+
+.popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.delete-popup {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-container {
+    position: relative;
+    margin: 15px 0;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 10px 35px 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+}
+
+.employees-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 10px 0;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.employee-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.employee-item:hover {
+    background-color: #f9f9f9;
+}
+
+.employee-item.selected {
+    background-color: #e6f7ff;
+}
+
+.projects-badge {
+    background: #646cff;
+    color: white;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 12px;
+}
+
+.no-results {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+}
+
+/* Для темной темы */
+.dark-theme .delete-popup {
+    background: #2a2a2a;
+    color: white;
+}
+
+.dark-theme .employee-item {
+    border-bottom-color: #444;
+}
+
+.dark-theme .employee-item:hover {
+    background-color: #333;
+}
+
+.dark-theme .employee-item.selected {
+    background-color: #1a3a5e;
+}
+
+/* ----------------------------------- */
+
 @media screen and (min-width: 1490px) {
 
 }

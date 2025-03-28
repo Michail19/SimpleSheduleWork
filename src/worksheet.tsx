@@ -8,16 +8,12 @@ interface Schedule {
 }
 
 interface Employee {
+    id: string;
     fio: string;
     projects?: string; // Добавьте это поле (знак ? означает необязательное поле)
     weekSchedule: {
         [day: string]: Schedule;
     };
-}
-
-interface Data {
-    currentWeek: string;
-    employees: Employee[];
 }
 
 interface FiltersState {
@@ -123,7 +119,6 @@ const translateMonth = (weekString: string, currentTranslation: any): string => 
 };
 
 const Worksheet: React.FC = () => {
-    const [data, setData] = useState<Data | null>(null);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -143,6 +138,25 @@ const Worksheet: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
     const currentTranslation = translations[language] ?? translations["ru"];
+    const [isAddEmployeePopupOpen, setIsAddEmployeePopupOpen] = useState(false);
+    const [newEmployee, setNewEmployee] = useState({
+        id: '',
+        fio: '',
+        projects: '',
+        schedule: {
+            monday: { start: '', end: '' },
+            tuesday: { start: '', end: '' },
+            wednesday: { start: '', end: '' },
+            thursday: { start: '', end: '' },
+            friday: { start: '', end: '' },
+            saturday: { start: '', end: '' },
+            sunday: { start: '', end: '' },
+        }
+    });
+    const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
+    const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
     useEffect(() => {
         const handleResize = () => {
@@ -183,8 +197,6 @@ const Worksheet: React.FC = () => {
         fetch(jsonPath)
             .then((response) => response.json())
             .then((data) => {
-                setData(data);
-
                 // Извлекаем все уникальные проекты
                 const allProjects = data.employees.flatMap((employee: { projects: string; }) =>
                     employee.projects?.split(' ') || []
@@ -494,6 +506,212 @@ const Worksheet: React.FC = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const handleDeleteEmployee = (employeeId: string) => {
+        setEmployees(prev => {
+            const updatedEmployees = prev.filter(emp => emp.id !== employeeId);
+
+            // Обновляем фильтры после удаления
+            const remainingProjects = updatedEmployees.flatMap(emp =>
+                emp.projects?.split(' ').filter(Boolean) || []
+            );
+
+            setFilters(f => ({
+                ...f,
+                projects: [...new Set(remainingProjects)].sort()
+            }));
+
+            return updatedEmployees;
+        });
+    };
+
+    const handleAddEmployee = (employeeData: typeof newEmployee) => {
+        const projectsFromNewEmployee = employeeData.projects.split(' ').filter(Boolean);
+
+        // Добавляем нового сотрудника
+        const newEmployee = {
+            ...employeeData,
+            weekSchedule: Object.fromEntries(
+                Object.entries(employeeData.schedule).map(([day, time]) => [
+                    day,
+                    { start: time.start || '', end: time.end || '' }
+                ])
+            )
+        };
+
+        setEmployees(prev => [...prev, newEmployee]);
+
+        // Обновляем список фильтров
+        setFilters(prev => {
+            const newProjects = [...prev.projects];
+            let hasUpdates = false;
+
+            projectsFromNewEmployee.forEach(project => {
+                if (!newProjects.includes(project)) {
+                    newProjects.push(project);
+                    hasUpdates = true;
+                }
+            });
+
+            return hasUpdates
+                ? { ...prev, projects: newProjects.sort() }
+                : prev;
+        });
+        setIsAddEmployeePopupOpen(false);
+        setNewEmployee({
+            id: '',
+            fio: '',
+            projects: '',
+            schedule: {
+                monday: { start: '', end: '' },
+                tuesday: { start: '', end: '' },
+                wednesday: { start: '', end: '' },
+                thursday: { start: '', end: '' },
+                friday: { start: '', end: '' },
+                saturday: { start: '', end: '' },
+                sunday: { start: '', end: '' },
+            }
+        });
+    };
+
+    const AddEmployeePopup = ({ onClose, onSave }: {
+        onClose: () => void;
+        onSave: (employee: typeof newEmployee) => void;
+    }) => {
+        const [employeeData, setEmployeeData] = useState(newEmployee);
+        const [projectSuggestions, setProjectSuggestions] = useState<string[]>([]);
+
+        useEffect(() => {
+            if (employeeData.projects.includes(' ')) {
+                const lastProject = employeeData.projects.split(' ').pop() || '';
+                setProjectSuggestions(
+                    filters.projects.filter(p =>
+                        p.toLowerCase().includes(lastProject.toLowerCase()) &&
+                        !employeeData.projects.includes(p)
+                    )
+                );
+            }
+        }, [employeeData.projects]);
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const { name, value } = e.target;
+            setEmployeeData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        };
+
+        const handleScheduleChange = (day: string, type: 'start' | 'end', value: string) => {
+            setEmployeeData(prev => ({
+                ...prev,
+                schedule: {
+                    ...prev.schedule,
+                    [day]: {
+                        ...prev.schedule[day as keyof typeof prev.schedule],
+                        [type]: value
+                    }
+                }
+            }));
+        };
+
+        return (
+            <div className="popup-overlay" onClick={onClose}>
+                <div className="add-employee-popup" onClick={e => e.stopPropagation()}>
+                    <h2>Добавить сотрудника</h2>
+                    <button className="close-btn" onClick={onClose}>×</button>
+
+                    <div className="form-group">
+                        <label>ФИО:</label>
+                        <input
+                            type="text"
+                            name="fio"
+                            value={employeeData.fio}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Проекты (через пробел):</label>
+                        <input
+                            type="text"
+                            name="projects"
+                            value={employeeData.projects}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <h3>График работы:</h3>
+                    {Object.entries(employeeData.schedule).map(([day, time]) => (
+                        <div key={day} className="schedule-row">
+                            <label>{currentTranslation[day as keyof typeof currentTranslation]}:</label>
+                            <input
+                                type="time"
+                                value={time.start}
+                                onChange={(e) => handleScheduleChange(day, 'start', e.target.value)}
+                            />
+                            <span>-</span>
+                            <input
+                                type="time"
+                                value={time.end}
+                                onChange={(e) => handleScheduleChange(day, 'end', e.target.value)}
+                            />
+                        </div>
+                    ))}
+
+                    <div className="popup-actions">
+                        <button onClick={onClose}>Отмена</button>
+                        <button
+                            onClick={() => onSave(employeeData)}
+                            disabled={!employeeData.fio.trim()}
+                        >
+                            Сохранить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const DeleteConfirmationPopup = ({employee, onConfirm, onCancel}: {
+        employee: Employee;
+        onConfirm: () => void;
+        onCancel: () => void;
+    }) => (
+        <div className="popup-overlay" onClick={onCancel}>
+            <div className="confirmation-popup" onClick={e => e.stopPropagation()}>
+                <h3>Удалить сотрудника?</h3>
+                <p>Вы уверены, что хотите удалить {employee.fio}?</p>
+                <div className="popup-actions">
+                    <button onClick={onCancel}>Отмена</button>
+                    <button
+                        onClick={onConfirm}
+                        className="danger-btn"
+                    >
+                        Удалить
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+
+    const confirmDelete = () => {
+        if (employeeToDelete) {
+            handleDeleteEmployee(employeeToDelete.id);
+            setIsDeletePopupOpen(false);
+            setEmployeeToDelete(null);
+        }
+    };
+
+    const [deletedEmployee, setDeletedEmployee] = useState<Employee | null>(null);
+
+    const handleDelete = (id: string) => {
+        const employee = employees.find(e => e.id === id);
+        if (employee) {
+            setDeletedEmployee(employee);
+            handleDeleteEmployee(id);
+            setTimeout(() => setDeletedEmployee(null), 5000);
+        }
+    };
+
     const FiltersPanel = () => {
         const filteredProjects = filters.projects.filter(project =>
             project.toLowerCase().includes(searchQuery.toLowerCase())
@@ -562,9 +780,133 @@ const Worksheet: React.FC = () => {
         );
     };
 
+    const DeleteEmployeePopup = ({employees, onDelete, onClose}: {
+        employees: Employee[];
+        onDelete: (id: string) => void;
+        onClose: () => void;
+    }) => {
+        const filteredEmployees = employees.filter(employee =>
+            employee.fio.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        return (
+            <div className="popup-overlay" onClick={onClose}>
+                <div className="delete-popup" onClick={e => e.stopPropagation()}>
+                    <h2>Удаление сотрудника</h2>
+                    <button className="close-btn" onClick={onClose}>×</button>
+
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="Поиск по ФИО..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            autoFocus
+                        />
+                        <span className="search-icon">🔍</span>
+                    </div>
+
+                    <div className="employees-list">
+                        {filteredEmployees.length > 0 ? (
+                            filteredEmployees.map(employee => (
+                                <div
+                                    key={employee.id}
+                                    className={`employee-item ${
+                                        selectedEmployee?.id === employee.id ? 'selected' : ''
+                                    }`}
+                                    onClick={() => setSelectedEmployee(employee)}
+                                >
+                                    <span>{employee.fio}</span>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="no-results">Сотрудники не найдены</div>
+                        )}
+                    </div>
+
+                    <div className="popup-actions">
+                        <button onClick={onClose}>Отмена</button>
+                        <button
+                            onClick={() => selectedEmployee && onDelete(selectedEmployee.id)}
+                            disabled={!selectedEmployee}
+                            className="danger-btn"
+                        >
+                            Удалить выбранного
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
 
     return (
         <div className="content" key={updateKey}>
+            {document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="sidebar__btn"
+                        onClick={() => setIsAddEmployeePopupOpen(true)}
+                    >
+                        Добавить <br/>
+                        сотрудника
+                    </button>,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+            {document.querySelector('.header__up-blocks__headbar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="header__headbar__up-blocks__btn"
+                        onClick={() => setIsAddEmployeePopupOpen(true)}
+                    >
+                        Добавить сотрудника
+                    </button>,
+                    document.querySelector('.header__up-blocks__headbar') as Element
+                )
+            }
+            {isAddEmployeePopupOpen && (
+                <AddEmployeePopup
+                    onClose={() => setIsAddEmployeePopupOpen(false)}
+                    onSave={handleAddEmployee}
+                />
+            )}
+
+            {document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="sidebar__btn"
+                        onClick={() => setIsDeletePopupOpen(true)}
+                    >
+                        Удалить <br/>
+                        сотрудника
+                    </button>,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+            {document.querySelector('.header__up-blocks__headbar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="header__headbar__up-blocks__btn"
+                        onClick={() => setIsDeletePopupOpen(true)}
+                    >
+                        Удалить сотрудника
+                    </button>,
+                    document.querySelector('.header__up-blocks__headbar') as Element
+                )
+            }
+            {isDeletePopupOpen && (
+                <DeleteEmployeePopup
+                    employees={employees}
+                    onDelete={handleDelete}
+                    onClose={() => {
+                        setIsDeletePopupOpen(false);
+                        setSearchTerm('');
+                        setSelectedEmployee(null);
+                    }}
+                />
+            )}
+
             {document.querySelector('.sidebar') &&
                 ReactDOM.createPortal(
                     <button
