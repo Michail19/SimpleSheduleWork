@@ -1,0 +1,21 @@
+@media screen and (min-width: 870px) {
+    .subtitle {
+        display: flex;
+        justify-items: center;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 869px) {
+    .subtitle {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@import url("./__title/subtitle__title.css");
+@import url("./__date/subtitle__date.css");

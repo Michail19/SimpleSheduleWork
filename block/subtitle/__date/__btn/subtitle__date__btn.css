@@ -1,0 +1,19 @@
+.subtitle__date__btn {
+    width: 40px;
+    height: 32px;
+    border-radius: 25%;
+    border: none;
+    font-size: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+
+    background: #ACB3FF;
+    color: #F3FFD7;
+}
+
+.dark-theme .subtitle__date__btn {
+    background: #30378B;
+    color: #EAEAEA;
+}

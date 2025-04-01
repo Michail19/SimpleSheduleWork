@@ -1,0 +1,9 @@
+.subtitle__title {
+    padding: 0 1rem;
+}
+
+@media screen and (orientation: landscape) and (max-height: 511px) and (max-width: 869px) {
+    .subtitle__title {
+        margin-bottom: 5px;
+    }
+}

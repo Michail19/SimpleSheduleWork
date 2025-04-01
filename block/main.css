@@ -5,6 +5,7 @@
 @import url("../block/page/page.css");
 @import url("../block/dark-theme/dark-theme.css");
 @import url("../block/header/header.css");
+@import url("../block/subtitle/subtitle.css");
 
 html, body {
     margin: 0;
