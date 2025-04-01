@@ -1,0 +1,24 @@
+.employee-card {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(auto, auto);
+    grid-template-areas:
+        "header header"
+        "schedule schedule";
+    gap: 10px;
+    background: white;
+    border-radius: 8px;
+    padding: 5px 15px 10px 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media screen and (orientation: landscape) {
+    .employee-card {
+        grid-template-areas:
+        "header header header header"
+        "schedule schedule schedule schedule";
+    }
+}
+
+@import url("./employee-header/employee-header.css");
+@import url("./schedule-grid/schedule-grid.css");

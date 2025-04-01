@@ -1,0 +1,18 @@
+.delete-popup {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.dark-theme .delete-popup {
+    background: #2a2a2a;
+    color: white;
+}
+
+@import url("./search-container/search-container.css");
+@import url("./employees-list/employees-list.css");

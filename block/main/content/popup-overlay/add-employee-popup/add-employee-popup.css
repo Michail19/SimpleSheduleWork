@@ -9,7 +9,6 @@
     position: relative;
 }
 
-@import url("./close-btn/close-btn.css");
 @import url("./form-group/form-group.css");
 @import url("./schedule-row/schedule-row.css");
 @import url("./popup-actions/popup-actions.css");

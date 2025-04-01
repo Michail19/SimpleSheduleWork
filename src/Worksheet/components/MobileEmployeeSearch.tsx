@@ -59,8 +59,8 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                             <div className="employee-header">
                                 <h3>{filteredEmployees[currentEmployeeIndex].fio}</h3>
                                 <span className="hours">
-                                {calculateWorkHours(filteredEmployees[currentEmployeeIndex].weekSchedule)}{translations.hour}
-                            </span>
+                                    {calculateWorkHours(filteredEmployees[currentEmployeeIndex].weekSchedule)}{translations.hour}
+                                </span>
                             </div>
 
                             <div className="schedule-grid">

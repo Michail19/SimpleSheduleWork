@@ -1,0 +1,10 @@
+.employees-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 10px 0;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+@import url("./employee-item/employee-item.css");
+@import url("./no-results/no-results.css");

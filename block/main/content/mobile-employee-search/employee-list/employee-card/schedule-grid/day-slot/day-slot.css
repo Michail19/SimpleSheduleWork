@@ -1,0 +1,11 @@
+.day-slot {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 5px;
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+@import url("./day-label/day-label.css");

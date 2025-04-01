@@ -1,0 +1,10 @@
+.employee-list {
+    grid-area: content;
+    display: grid;
+    gap: 15px;
+    grid-auto-rows: minmax(auto, 1fr); /* Позволит контенту растягиваться вниз */
+}
+
+@import url("./search-toggle/search-toggle.css");
+@import url("./employee-card/employee-card.css");
+@import url("./no-results/no-results.css");
