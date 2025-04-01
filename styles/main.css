@@ -474,66 +474,13 @@
 
 /* -------------------------------------- */
 
-.footer {
-    display: none;
-    visibility: hidden;
-}
 
-@media screen and (min-width: 1090px) {
-    .footer {
-        display: flex;
-        visibility: visible;
-        position: absolute;
-        align-items: center;
-        justify-items: center;
-        right: 0;
-        bottom: 0;
-        margin: 5px;
-        transition: opacity 0.25s ease-out;
-    }
-}
 
-@media screen and (min-width: 1090px) {
-    .footer__place {
-        display: flex;
-        align-content: center;
-        height: 20px;
-        margin: 0 1px;
-        padding: 3px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
 
-        background: #F2F2F2;
-        border: 1px solid #353535;
-    }
 
-    .dark-theme .footer__place {
-        background: #282828;
-        border: 1px solid #EAEAEA;
-    }
-}
 
-@media screen and (min-width: 1090px) {
-    .footer__btn {
-        width: 34px;
-        height: 34px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 25%;
-        border: none;
-        font-size: 30px;
-        transition: background-color 0.3s ease;
 
-        color: #353535;
-        background: #F5F7FA;
-    }
 
-    .dark-theme .footer__btn {
-        color: #EAEAEA;
-        background: #1E1E1E;
-    }
-}
 
 /* ---------------------------- */
 
