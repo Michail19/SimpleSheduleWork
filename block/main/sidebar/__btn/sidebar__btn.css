@@ -28,3 +28,9 @@
 }
 
 @import url("./_worksheet/btn_worksheet.css");
+
+@media screen and (min-width: 1490px) {
+    .sidebar__btn.active {
+        background-color: #e0e0ff;
+    }
+}

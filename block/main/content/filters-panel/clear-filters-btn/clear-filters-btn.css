@@ -1,0 +1,21 @@
+@media screen and (min-width: 1490px) {
+    .clear-filters-btn {
+        width: 100%;
+        padding: 8px;
+        background: #f0f0f0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+}
+
+@media screen and (max-width: 1489px) and (min-width: 1090px) {
+    .clear-filters-btn {
+        width: 100%;
+        padding: 8px;
+        background: #f0f0f0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+}

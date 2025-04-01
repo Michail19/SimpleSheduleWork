@@ -27,3 +27,6 @@
         margin-top: 10px;
     }
 }
+
+@import url("./filters-panel/filters-panel.css");
+@import url("./popup-overlay/popup-overlay.css");

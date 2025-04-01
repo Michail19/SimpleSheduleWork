@@ -17,3 +17,9 @@
         background: #bdbdbd;
     }
 }
+
+@media screen and (max-width: 1489px) and (min-width: 1090px) {
+    .header__up-blocks__headbar__btn.active {
+        background-color: #e0e0ff;
+    }
+}

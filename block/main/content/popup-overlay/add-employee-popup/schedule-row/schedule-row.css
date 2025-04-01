@@ -1,0 +1,10 @@
+.schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.schedule-row label {
+    min-width: 100px;
+}
