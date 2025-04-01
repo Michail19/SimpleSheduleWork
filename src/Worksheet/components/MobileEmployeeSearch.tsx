@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, {useState, useMemo, useEffect} from 'react';
 import { Employee } from '../types';
 import { calculateWorkHours } from '../utils';
 
@@ -23,6 +23,7 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                                                                           }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [currentEmployeeIndex, setCurrentEmployeeIndex] = useState(0);
 
     const filteredEmployees = useMemo(() => {
         return employees.filter(employee =>
@@ -30,16 +31,12 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
         );
     }, [employees, searchTerm]);
 
+    useEffect(() => {
+        setCurrentEmployeeIndex(0);
+    }, [filteredEmployees]);
+
     return (
         <div className="mobile-employee-search">
-            {/* Кнопка поиска */}
-            <button
-                className="search-toggle"
-                onClick={() => setIsSearchVisible(!isSearchVisible)}
-            >
-                {isSearchVisible ? '✕' : '🔍'}
-            </button>
-
             {/* Поле поиска */}
             {isSearchVisible && (
                 <div className="search-container">
@@ -56,48 +53,80 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
             {/* Результаты */}
             <div className="employee-list">
                 {filteredEmployees.length > 0 ? (
-                    filteredEmployees.map((employee, rowIndex) => (
-                        <div className="employee-card" key={employee.id}>
+                    <>
+                        {/* Отображаем только текущую карточку */}
+                        <div className="employee-card" key={filteredEmployees[currentEmployeeIndex].id}>
                             <div className="employee-header">
-                                <h3>{employee.fio}</h3>
+                                <h3>{filteredEmployees[currentEmployeeIndex].fio}</h3>
                                 <span className="hours">
-                  {calculateWorkHours(employee.weekSchedule)}{translations.hour}
-                </span>
+                                {calculateWorkHours(filteredEmployees[currentEmployeeIndex].weekSchedule)}{translations.hour}
+                            </span>
                             </div>
 
                             <div className="schedule-grid">
-                                {Object.entries(employee.weekSchedule).map(([day, schedule], dayIndex) => (
+                                {Object.entries(filteredEmployees[currentEmployeeIndex].weekSchedule).map(([day, schedule], dayIndex) => (
                                     <div className="day-slot" key={day}>
                                         <div className="day-label">{translations[day]}</div>
-                                        {editingCell?.row === rowIndex && editingCell?.day === day ? (
+                                        {editingCell?.row === currentEmployeeIndex && editingCell?.day === day ? (
                                             <div className="time-inputs">
                                                 <input
                                                     type="time"
-                                                    value={editedTime[`${rowIndex}-${dayIndex}-start`] || schedule.start}
-                                                    onChange={(e) => onEdit(rowIndex, dayIndex, day, "start", e.target.value)}
-                                                    onBlur={(e) => onBlur(rowIndex, dayIndex, day, "start", e)}
+                                                    value={editedTime[`${currentEmployeeIndex}-${dayIndex}-start`] || schedule.start}
+                                                    onChange={(e) => onEdit(currentEmployeeIndex, dayIndex, day, "start", e.target.value)}
+                                                    onBlur={(e) => onBlur(currentEmployeeIndex, dayIndex, day, "start", e)}
                                                 />
                                                 <span>-</span>
                                                 <input
                                                     type="time"
-                                                    value={editedTime[`${rowIndex}-${dayIndex}-end`] || schedule.end}
-                                                    onChange={(e) => onEdit(rowIndex, dayIndex, day, "end", e.target.value)}
-                                                    onBlur={(e) => onBlur(rowIndex, dayIndex, day, "end", e)}
+                                                    value={editedTime[`${currentEmployeeIndex}-${dayIndex}-end`] || schedule.end}
+                                                    onChange={(e) => onEdit(currentEmployeeIndex, dayIndex, day, "end", e.target.value)}
+                                                    onBlur={(e) => onBlur(currentEmployeeIndex, dayIndex, day, "end", e)}
                                                 />
                                             </div>
                                         ) : (
                                             <div
                                                 className="time-display"
-                                                onClick={() => onSetEditingCell({ row: rowIndex, day, dayIndex })}
+                                                onClick={() => onSetEditingCell({ row: currentEmployeeIndex, day, dayIndex })}
                                             >
                                                 {`${schedule.start} - ${schedule.end}`}
                                             </div>
                                         )}
                                     </div>
                                 ))}
+
+                                <div className="slot">
+                                    {/* Кнопка поиска */}
+                                    <button
+                                        className="search-toggle"
+                                        onClick={() => setIsSearchVisible(!isSearchVisible)}
+                                    >
+                                        {isSearchVisible ? '✕' : '🔍'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    ))
+
+                        {/* Навигация между карточками — ТОЛЬКО при активном поиске */}
+                        {isSearchVisible && filteredEmployees.length > 1 && (
+                            <div className="footer">
+                                <button
+                                    className="footer__btn"
+                                    disabled={currentEmployeeIndex === 0}
+                                    onClick={() => setCurrentEmployeeIndex(prev => Math.max(0, prev - 1))}
+                                >
+                                    ◄
+                                </button>
+                                <span className="footer__place">{currentEmployeeIndex + 1} / {filteredEmployees.length}</span>
+                                <button
+                                    className="footer__btn"
+                                    disabled={currentEmployeeIndex >= filteredEmployees.length - 1}
+                                    onClick={() => setCurrentEmployeeIndex(prev => Math.min(filteredEmployees.length - 1, prev + 1))}
+                                >
+                                    ►
+                                </button>
+                            </div>
+                        )}
+                    </>
                 ) : (
                     <div className="no-results">
                         {translations.noResults || "Сотрудники не найдены"}

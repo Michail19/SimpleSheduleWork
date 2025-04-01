@@ -33,7 +33,7 @@ module.exports = {
                 use: [
                     MiniCssExtractPlugin.loader,  // Извлечение стилей в отдельный файл
                     'css-loader',                 // Обработка CSS
-                    'postcss-loader'              // Работа с PostCSS (например, для БЭМ)
+                    'postcss-loader',              // Работа с PostCSS (например, для БЭМ)
                 ]
             },
             {

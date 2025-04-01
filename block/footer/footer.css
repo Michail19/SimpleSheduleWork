@@ -1,20 +1,13 @@
 .footer {
-    display: none;
-    visibility: hidden;
-}
-
-@media screen and (min-width: 1090px) {
-    .footer {
-        display: flex;
-        visibility: visible;
-        position: absolute;
-        align-items: center;
-        justify-items: center;
-        right: 0;
-        bottom: 0;
-        margin: 5px;
-        transition: opacity 0.25s ease-out;
-    }
+    display: flex;
+    visibility: visible;
+    position: absolute;
+    align-items: center;
+    justify-items: center;
+    right: 0;
+    bottom: 0;
+    margin: 5px;
+    transition: opacity 0.25s ease-out;
 }
 
 @import url("./__place/footer__place.css");

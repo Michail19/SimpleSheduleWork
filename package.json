@@ -28,6 +28,9 @@
     "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.6.3",
     "mini-css-extract-plugin": "^2.9.2",
+    "postcss": "^8.5.3",
+    "postcss-bem-linter": "^4.0.1",
+    "postcss-loader": "^8.1.1",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.2",
     "typescript": "^5.8.2",
@@ -36,7 +39,6 @@
     "webpack-dev-server": "^5.2.1"
   },
   "dependencies": {
-    "postcss-bem-linter": "^4.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.0"
