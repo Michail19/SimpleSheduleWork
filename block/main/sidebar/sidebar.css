@@ -1,0 +1,27 @@
+.sidebar {
+    display: none;
+    visibility: hidden;
+}
+
+@media screen and (min-width: 1490px) {
+    .sidebar {
+        position: relative;
+        visibility: visible;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5vh 1vw;
+        gap: 10px;
+        border-radius: 15px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+        align-self: flex-start;
+        transition: background-color 0.3s ease;
+
+        background: #E3E7ED;
+    }
+
+    .dark-theme .sidebar {
+        background: #252525;
+    }
+}
+
+@import url("./__btn/sidebar__btn.css");

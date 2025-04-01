@@ -1,0 +1,7 @@
+.main {
+    display: flex;
+    margin: 0 0.75vw 3vh 1vw;
+    gap: 15px;
+}
+
+@import url("./sidebar/sidebar.css");

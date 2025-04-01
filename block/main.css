@@ -13,5 +13,5 @@ html, body {
 @import url("../block/dark-theme/dark-theme.css");
 @import url("../block/header/header.css");
 @import url("../block/subtitle/subtitle.css");
-
+@import url("../block/main/main.css");
 @import url("../block/footer/footer.css");
