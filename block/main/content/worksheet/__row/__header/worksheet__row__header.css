@@ -1,0 +1,7 @@
+.worksheet__row__header {
+    display: grid;
+    grid-template-columns: 1fr auto repeat(7, 1fr);
+    gap: 10px;
+}
+
+@import url("./__cell/worksheet__row__header__cell.css");

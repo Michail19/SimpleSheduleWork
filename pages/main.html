@@ -15,28 +15,26 @@
     </div>
 
     <header class="header">
-        <div class="header__up-blocks_menu__wrapper">
-            <div class="header__menu-toggle">☰</div>
-            <div class="header__up-blocks_menu__wrapper__list">
-                <button class="header__up-blocks__theme-toggle_m"></button>
-                <button class="header__up-blocks__theme-toggle_lang_m"></button>
+        <div class="header__up-blocks__wrapper_menu">
+            <div class="header__up-blocks__menu-toggle">☰</div>
+            <div class="header__up-blocks__wrapper_menu__list">
+                <button class="header__up-blocks_menu__list__theme-toggle_m"></button>
+                <button class="header__up-blocks_menu__list__theme-toggle_lang_m"></button>
                 <a class="header__up-blocks__wrapper__list__btn" href="./index.html" data-key="home">На главный</a>
+                <a class="header__up-blocks__wrapper__list__btn" href="./project.html" data-key="projects">Проекты</a>
                 <div class="header__up-blocks__wrapper__list__btn" data-key="logout">Выход</div>
             </div>
         </div>
         <h1 class="header__title"><span class="mobile">SimpleScheduleWork (</span>SSW<span class="mobile">)</span></h1>
         <div class="header__up-blocks">
-            <div class="header__up-blocks__headbar">
-                <div class="header__headbar__up-blocks__btn" data-key="filters">Фильтры</div>
-<!--                <div class="header__headbar__up-blocks__btn_">Расписание</div>-->
-                <a class="header__headbar__up-blocks__btn" href="./project.html" data-key="projects">Проекты</a>
-            </div>
+            <div class="header__up-blocks__headbar"></div>
             <div class="header__up-blocks__wrapper">
                 <div class="header__up-blocks__wrapper__icon"></div>
                 <div class="header__up-blocks__wrapper__list">
-                    <button class="header__up-blocks__theme-toggle"></button>
-                    <button class="header__up-blocks__theme-toggle_lang"></button>
+                    <button class="header__up-blocks__wrapper__list__theme-toggle"></button>
+                    <button class="header__up-blocks__wrapper__list__theme-toggle_lang"></button>
                     <a class="header__up-blocks__wrapper__list__btn" href="./index.html" data-key="home">На главный</a>
+                    <a class="header__up-blocks__wrapper__list__btn" href="./project.html" data-key="projects">Проекты</a>
                     <div class="header__up-blocks__wrapper__list__btn" data-key="logout">Выход</div>
                 </div>
             </div>
@@ -46,17 +44,14 @@
     <section class="subtitle">
         <h1 class="subtitle__title" data-key="work_schedule">График работы сотрудников</h1>
         <div class="subtitle__date">
-            <!--<button class="subtitle__date__btn">◄</button>-->
-            <div class="subtitle__date__place"></div> <!--<div class="subtitle__date__place">01 - 07 января 1970</div>-->
-            <!--<button class="subtitle__date__btn">►</button>-->
+            <div class="subtitle__date__place"></div>
         </div>
     </section>
 
     <section class="main">
         <div class="sidebar">
-            <button class="sidebar__btn" data-key="sidebar_filters">Фильтры</button>
             <button class="sidebar__btn btn_worksheet btn_worksheet_enable" data-key="sidebar_schedule">Расписание</button>
-            <a class="sidebar__btn" href="./project.html" data-key="sidebar_projects">Проекты</a>
+<!--            <a class="sidebar__btn" href="./project.html" data-key="sidebar_projects">Проекты</a>-->
         </div>
 
         <div id="root" class="content">

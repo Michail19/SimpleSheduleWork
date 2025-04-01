@@ -1,0 +1,11 @@
+@import url("./__headbar/header__up-blocks__headbar.css");
+@import url("./__wrapper/header__up-blocks__wrapper.css");
+
+.header__up-blocks {
+    position: absolute;
+    right: 0;
+    margin-right: 1vw;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}

@@ -1,0 +1,18 @@
+.subtitle__date {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    margin: 0 1vw;
+    gap: 0.5rem;
+    border-radius: 20%;
+    transition: background-color 0.3s ease, opacity 0.25s ease-out;
+
+    background: #DAD5FF;
+}
+
+.dark-theme .subtitle__date {
+    background: #3E3E3E;
+}
+
+@import url("./__btn/subtitle__date__btn.css");
+@import url("./__place/subtitle__date__place.css");

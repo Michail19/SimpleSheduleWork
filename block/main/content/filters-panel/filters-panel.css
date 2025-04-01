@@ -1,0 +1,33 @@
+@media screen and (min-width: 1490px) {
+    .filters-panel {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        min-width: 250px;
+        z-index: 100;
+        color: #353535;
+    }
+}
+
+@media screen and (max-width: 1489px) and (min-width: 1090px) {
+    .filters-panel {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        min-width: 250px;
+        z-index: 100;
+        color: #353535;
+    }
+}
+
+@import url("./filters-list/filters-list.css");
+@import url("./clear-filters-btn/clear-filters-btn.css");
+@import url("./search-container/search-container.css");

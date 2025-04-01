@@ -30,13 +30,29 @@ module.exports = {
             },
             {
                 test: /\.css$/,  // Поддержка CSS
-                use: [MiniCssExtractPlugin.loader, 'css-loader'], // Заменяем style-loader на MiniCssExtractPlugin.loader
+                use: [
+                    MiniCssExtractPlugin.loader,  // Извлечение стилей в отдельный файл
+                    'css-loader',                 // Обработка CSS
+                    'postcss-loader',              // Работа с PostCSS (например, для БЭМ)
+                ]
             },
             {
-                test: /\.tsx$/, // Применять загрузчик только к TypeScript-файлам
-                use: 'ts-loader',
-                exclude: /node_modules/,
-            },
+            test: /\.(ts|tsx)$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: 'babel-loader',
+                options: {
+                  presets: [
+                    '@babel/preset-env',
+                    '@babel/preset-react',
+                    '@babel/preset-typescript'
+                  ]
+                }
+              },
+              'ts-loader'
+            ]
+          },
         ],
     },
     resolve: {

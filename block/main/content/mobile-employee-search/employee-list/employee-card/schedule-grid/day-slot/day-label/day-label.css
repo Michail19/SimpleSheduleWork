@@ -1,0 +1,6 @@
+.day-label {
+    font-weight: bold;
+}
+
+@import url("./time-inputs/time-inputs.css");
+@import url("./time-display/time-display.css");

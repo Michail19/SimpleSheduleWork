@@ -1,0 +1,15 @@
+.header__up-blocks__headbar {
+    visibility: hidden;
+    display: none;
+}
+
+@media screen and (max-width: 1489px) and (min-width: 870px) {
+    .header__up-blocks__headbar {
+        display: flex;
+        visibility: visible;
+        gap: 10px;
+        margin: 0 1vw;
+    }
+}
+
+@import url("./__btn/header__up-blocks__headbar__btn.css")

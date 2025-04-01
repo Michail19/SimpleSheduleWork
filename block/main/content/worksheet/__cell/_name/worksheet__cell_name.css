@@ -1,0 +1,15 @@
+.worksheet__cell_name {
+    text-align: center;
+    align-content: center;
+    min-height: 2rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+
+    box-shadow: 5px 5px 5px rgba(0, 206, 167, 0.75);
+    background: #DBDCB0;
+}
+
+.dark-theme .worksheet__cell_name {
+    box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+    background: #4D4E20;
+}

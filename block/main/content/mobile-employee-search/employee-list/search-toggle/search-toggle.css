@@ -1,0 +1,13 @@
+.search-toggle {
+    grid-area: search-toggle;
+    justify-self: end;
+    align-self: start;
+    background: #fff;
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+}

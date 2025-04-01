@@ -1,0 +1,17 @@
+.header__up-blocks__wrapper__list__theme-toggle {
+    background: url("/images/day.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+}
+
+.dark-theme .header__up-blocks__wrapper__list__theme-toggle {
+    background: url("/images/night.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+@import url("./_lang/header__up-blocks__wrapper__list__theme-toggle_lang.css");

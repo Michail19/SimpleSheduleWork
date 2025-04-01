@@ -1,0 +1,29 @@
+.worksheet  {
+    display: grid;
+    padding: 1.5vh 1vw 20px 1vw;
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    align-self: flex-start;
+    width: 100%;
+    gap: 10px;
+    transition: background-color 0.3s ease;
+    
+    background: #E3E7ED;
+}
+
+.dark-theme .worksheet {
+    background: #252525;
+}
+
+@import url("./__row/worksheet__row.css");
+@import url("./__cell/worksheet__cell.css");
+@import url("./current/current.css");
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .worksheet {
+        flex: 1;
+        margin-bottom: 20px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+}

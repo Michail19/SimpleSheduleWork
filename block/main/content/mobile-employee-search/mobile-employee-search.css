@@ -1,0 +1,13 @@
+.mobile-employee-search {
+    display: grid;
+    grid-template-areas:
+        "toggle"
+        "search"
+        "content";
+    max-width: 100%;
+    max-height: 65vh; /* или 100% в зависимости от контекста */
+    grid-template-rows: auto auto 1fr; /* Контент займет всё оставшееся пространство */
+}
+
+@import url("./search-container/search-container.css");
+@import url("./employee-list/employee-list.css");

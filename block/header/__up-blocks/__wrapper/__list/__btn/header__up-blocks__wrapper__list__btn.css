@@ -1,0 +1,26 @@
+.header__up-blocks__wrapper__list__btn {
+    padding: 3vh 2vw;
+    text-align: center;
+    border-radius: 10px;
+    flex: 1;
+    white-space: nowrap;
+    font-size: 1.25em;
+    text-decoration: none;
+    cursor: pointer;
+
+    background: #98ED9B;
+    color: #353535;
+}
+
+.header__up-blocks__wrapper__list__btn:hover {
+    background: #a3ffa6;
+}
+
+.dark-theme .header__up-blocks__wrapper__list__btn {
+    background: #377939;
+    color: #EAEAEA;
+}
+
+.dark-theme .header__up-blocks__wrapper__list__btn:hover {
+    background: #469a48;
+}

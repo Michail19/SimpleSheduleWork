@@ -1,0 +1,10 @@
+.current {
+    margin: -0.6vh -1vw;
+    padding: 0.6vh 1vw;
+    
+    background: #F7FF00;
+}
+
+.dark-theme .current {
+    background: #4b4b00;
+}

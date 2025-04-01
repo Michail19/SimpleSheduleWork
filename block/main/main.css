@@ -1,0 +1,18 @@
+.main {
+    display: flex;
+    margin: 0 0.75vw 3vh 1vw;
+    gap: 15px;
+}
+
+@import url("./sidebar/sidebar.css");
+@import url("./content/content.css");
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0 10px;
+    }
+}

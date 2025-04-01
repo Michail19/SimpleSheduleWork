@@ -1,0 +1,36 @@
+@media screen and (min-width: 1490px) {
+    .sidebar__btn {
+        padding: 2vh 3vw;
+        text-align: center;
+        border-radius: 10px;
+        border: none;
+        white-space: nowrap;
+        font-size: 1.25em;
+        text-decoration: none;
+        cursor: pointer;
+
+        background: #98ED9B;
+        color: #353535;
+    }
+
+    .sidebar__btn:hover {
+        background: #a3ffa6;
+    }
+
+    .dark-theme .sidebar__btn {
+        background: #377939;
+        color: #EAEAEA;
+    }
+
+    .dark-theme .sidebar__btn:hover {
+        background: #469a48;
+    }
+}
+
+@import url("./_worksheet/btn_worksheet.css");
+
+@media screen and (min-width: 1490px) {
+    .sidebar__btn.active {
+        background-color: #e0e0ff;
+    }
+}

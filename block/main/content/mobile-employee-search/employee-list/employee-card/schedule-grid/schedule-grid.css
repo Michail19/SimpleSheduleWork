@@ -1,0 +1,15 @@
+.schedule-grid {
+    grid-area: schedule;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    align-items: start;
+}
+
+@media screen and (orientation: landscape) {
+    .schedule-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@import url("./day-slot/day-slot.css");

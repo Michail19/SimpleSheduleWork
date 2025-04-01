@@ -1,0 +1,13 @@
+.cell_clock_img {
+    background: url("/images/time.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.dark-theme .cell_clock_img {
+    background: url("/images/timeN.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}

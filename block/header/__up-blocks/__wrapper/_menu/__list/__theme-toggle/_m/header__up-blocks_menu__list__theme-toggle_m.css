@@ -1,0 +1,17 @@
+@media screen and (max-width: 869px) {
+    .header__up-blocks_menu__list__theme-toggle_m {
+        background: url("/images/day.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+
+        width: 2.5rem;
+        height: 2.5rem;
+        border: none;
+    }
+
+    .dark-theme .header__up-blocks_menu__list__theme-toggle_m {
+        background: url("/images/night.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+}

@@ -1,0 +1,17 @@
+.header__up-blocks__wrapper_menu {
+    visibility: hidden;
+    display: none;
+}
+
+@media screen and (max-width: 869px) {
+    .header__up-blocks__wrapper_menu {
+        display: flex;
+        align-items: center;
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        margin-left: 2vw;
+    }
+}
+
+@import url("./__list/header__up-blocks__wrapper_menu__list.css");

@@ -1,0 +1,16 @@
+.worksheet__row__header__cell_clock {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.25rem;
+    border-radius: 5px;
+    
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+    background: #C5C1E8;
+}
+
+.dark-theme .worksheet__row__header__cell_clock {
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.75);
+    background: #413A79;
+}
+
+@import url("./_img/cell_clock_img.css");

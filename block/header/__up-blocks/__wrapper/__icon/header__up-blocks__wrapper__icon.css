@@ -1,0 +1,8 @@
+.header__up-blocks__wrapper__icon {
+    background: url("/images/account.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+}

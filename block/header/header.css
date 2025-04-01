@@ -1,0 +1,24 @@
+.header {
+    display: flex;
+    align-items: center;
+    background: #737373;
+    border-radius: 0 0 10px 10px;
+    color: #FFFFFF;
+    height: 100px;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 869px) {
+    .header {
+        height: 100px;
+        justify-content: center;
+    }
+    
+    .mobile {
+        visibility: hidden;
+        display: none;
+    }
+}
+
+@import url("./__title/header__title.css");
+@import url("./__up-blocks/header__up-blocks.css");

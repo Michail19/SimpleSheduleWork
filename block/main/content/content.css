@@ -1,0 +1,33 @@
+.hide_content {
+    opacity: 0;
+    transition: opacity 0.25s ease-in-out;
+    pointer-events: none;
+}
+
+.content  {
+    display: flex;
+    flex: 1;
+    background: none;
+    transition: opacity 0.25s ease-out;
+}
+
+@media screen and (max-width: 869px) {
+    .content  {
+        margin-top: 20px;
+    }
+}
+
+@import url("./worksheet/worksheet.css");
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+    }
+}
+
+@import url("./filters-panel/filters-panel.css");
+@import url("./popup-overlay/popup-overlay.css");
+@import url("./mobile-employee-search/mobile-employee-search.css");
