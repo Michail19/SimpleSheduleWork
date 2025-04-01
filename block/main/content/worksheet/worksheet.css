@@ -16,3 +16,14 @@
 }
 
 @import url("./__row/worksheet__row.css");
+@import url("./__cell/worksheet__cell.css");
+@import url("./current/current.css");
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .worksheet {
+        flex: 1;
+        margin-bottom: 20px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+}

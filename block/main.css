@@ -15,3 +15,12 @@ html, body {
 @import url("../block/subtitle/subtitle.css");
 @import url("../block/main/main.css");
 @import url("../block/footer/footer.css");
+
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+}

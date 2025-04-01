@@ -1,0 +1,18 @@
+.worksheet__cell {
+    text-align: center; 
+    align-content: center;
+    min-height: 2rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    
+    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+    background: #E8F0FE;
+}
+
+.dark-theme .worksheet__cell {
+    box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+    background: #323232;
+}
+
+@import url("./_name/worksheet__cell_name.css");
+@import url("./_clock/worksheet__cell_clock.css");
