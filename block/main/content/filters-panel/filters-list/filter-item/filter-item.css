@@ -1,13 +1,4 @@
-@media screen and (min-width: 1490px) {
-    .filter-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-    }
-}
-
-@media screen and (max-width: 1489px) and (min-width: 1090px) {
+@media screen and (min-width: 1090px) {
     .filter-item {
         display: flex;
         align-items: center;
