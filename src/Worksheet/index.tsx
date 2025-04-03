@@ -23,8 +23,7 @@ const Worksheet: React.FC = () => {
     const [language, setLanguage] = useState<Language>("ru");
     const [updateKey, setUpdateKey] = useState(0);
     const [showFilters, setShowFilters] = useState(false);
-    const [showFiltersH, setShowFiltersH] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQueryEmployees, setSearchQueryEmployees] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
     const currentTranslation = translations[language] ?? translations["ru"];
     const [isAddEmployeePopupOpen, setIsAddEmployeePopupOpen] = useState(false);
@@ -178,7 +177,7 @@ const Worksheet: React.FC = () => {
         }
     }, [showFilters]);
 
-    const filteredEmployees = filterEmployees(employees, filters, searchQuery);
+    const filteredEmployees = filterEmployees(employees, filters, searchQueryEmployees);
     const currentEmployee = filteredEmployees.length > 0 ? filteredEmployees[0] : null; // Фиксируем current сотрудника (первого в списке)
     const paginatedEmployees = filteredEmployees.slice(1); // Остальные сотрудники (без current) для пагинации
     const totalPages = Math.ceil(paginatedEmployees.length / rowsPerPage); // Рассчитываем общее количество страниц
@@ -497,9 +496,9 @@ const Worksheet: React.FC = () => {
                 ReactDOM.createPortal(
                     <FiltersPanel
                         filters={filters}
-                        searchQuery={searchQuery}
+                        searchQuery={searchQueryEmployees}
                         currentTranslation={currentTranslation}
-                        setSearchQuery={setSearchQuery}
+                        setSearchQuery={setSearchQueryEmployees}
                         toggleProjectFilter={toggleProjectFilter}
                         clearFilters={clearFilters}
                         setShowFilters={setShowFilters}
@@ -524,9 +523,9 @@ const Worksheet: React.FC = () => {
                 ReactDOM.createPortal(
                     <FiltersPanel
                         filters={filters}
-                        searchQuery={searchQuery}
+                        searchQuery={searchQueryEmployees}
                         currentTranslation={currentTranslation}
-                        setSearchQuery={setSearchQuery}
+                        setSearchQuery={setSearchQueryEmployees}
                         toggleProjectFilter={toggleProjectFilter}
                         clearFilters={clearFilters}
                         setShowFilters={setShowFilters}
