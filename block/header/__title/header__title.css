@@ -1,6 +1,7 @@
 .header__title {
     padding: 1rem 2vw;
     font-weight: 500;
+    user-select: none
 }
 
 @media screen and (max-width: 869px) {

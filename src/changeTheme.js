@@ -100,6 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Проверяем тему браузера
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (isDarkMode) {
+        document.body.classList.add('dark-theme');
+    }
+
     // Обработчик для переключения темы
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-theme');

@@ -46,7 +46,7 @@ export const FiltersPanel: React.FC<FiltersPanelProps> = ({
                 <input
                     ref={inputRef}
                     type="text"
-                    placeholder="Поиск..."
+                    placeholder="Поиск сотрудников..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyDown}

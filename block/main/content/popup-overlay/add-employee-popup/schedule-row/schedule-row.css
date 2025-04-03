@@ -8,3 +8,9 @@
 .schedule-row label {
     min-width: 100px;
 }
+
+.dark-theme .schedule-row input[type="time"] {
+    background: #414141;
+    color: #EAEAEA;
+    border: 1px solid #555;
+}

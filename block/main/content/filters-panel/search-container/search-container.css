@@ -10,4 +10,9 @@
         border: 1px solid #ddd;
         border-radius: 4px;
     }
+
+    .dark-theme .search-container input {
+        background: #1E1E1E;
+        color: #EAEAEA;
+    }
 }

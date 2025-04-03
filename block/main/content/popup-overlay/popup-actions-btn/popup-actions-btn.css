@@ -1,7 +1,7 @@
 .popup-actions-btn {
     width: 100%;
     padding: 8px;
-    background: #f0f0f0;
+    background: #eaeaea;
     border: none;
     border-radius: 4px;
     font-size: 1em;
@@ -13,10 +13,29 @@
 }
 
 .popup-actions-btn:disabled {
-    background-color: #f0f0f0;
+    background-color: #eaeaea;
     cursor: not-allowed;
 }
 
 .popup-actions-btn:disabled:hover {
-    background-color: #f0f0f0;
+    background-color: #eaeaea;
+}
+
+.dark-theme .popup-actions-btn {
+    background: #414141;
+    color: #EAEAEA;
+}
+
+.dark-theme .popup-actions-btn:hover {
+    background: #575757;
+}
+
+.dark-theme .popup-actions-btn:disabled {
+    background-color: #414141;
+    color: #7e7e7e;
+    cursor: not-allowed;
+}
+
+.dark-theme .popup-actions-btn:disabled:hover {
+    background-color: #414141;
 }

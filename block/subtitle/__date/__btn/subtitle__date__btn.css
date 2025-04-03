@@ -13,7 +13,17 @@
     color: #F3FFD7;
 }
 
+.subtitle__date__btn:active {
+    background: #7981ff;
+    color: #f3ffbf;
+}
+
 .dark-theme .subtitle__date__btn {
     background: #30378B;
     color: #EAEAEA;
+}
+
+.dark-theme .subtitle__date__btn:active {
+    background: #464b8d;
+    color: #fff1f1;
 }

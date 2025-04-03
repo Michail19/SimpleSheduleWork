@@ -12,4 +12,8 @@
         height: 16px;
         accent-color: #007bff; /* Синий цвет чекбокса (можно заменить) */
     }
+
+    .dark-theme .filter-item input[type="checkbox"] {
+        accent-color: #777777;
+    }
 }

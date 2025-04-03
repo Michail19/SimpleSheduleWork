@@ -14,3 +14,24 @@
 .danger-btn:disabled:hover {
     background-color: #ffb3b3;
 }
+
+.dark-theme .danger-btn {
+    background: #7c0000;
+    color: #EAEAEA;
+}
+
+.dark-theme .danger-btn:hover {
+    background: #9b0101;
+    color: #EAEAEA;
+}
+
+.dark-theme .danger-btn:disabled {
+    background-color: #260000;
+    color: #7e7e7e;
+    cursor: not-allowed;
+}
+
+.dark-theme .danger-btn:disabled:hover {
+    background-color: #260000;
+    color: #7e7e7e;
+}
