@@ -7,6 +7,7 @@
     max-height: 80vh;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .dark-theme .delete-popup {
@@ -15,3 +16,4 @@
 }
 
 @import url("./employees-list/employees-list.css");
+@import url("./danger-btn/danger-btn.css");

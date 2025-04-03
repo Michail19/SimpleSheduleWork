@@ -2,7 +2,14 @@
     .filter-item {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 8px; /* Расстояние между чекбоксом и текстом */
         cursor: pointer;
+        user-select: none; /* Запрещает выделение текста при клике */
+    }
+
+    .filter-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #007bff; /* Синий цвет чекбокса (можно заменить) */
     }
 }

@@ -1,0 +1,16 @@
+.danger-btn {
+    background: #ff2727;
+}
+
+.danger-btn:hover {
+    background: #ff0000;
+}
+
+.danger-btn:disabled {
+    background-color: #ffb3b3;
+    cursor: not-allowed;
+}
+
+.danger-btn:disabled:hover {
+    background-color: #ffb3b3;
+}

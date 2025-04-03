@@ -9,5 +9,10 @@
     position: relative;
 }
 
+.dark-theme .add-employee-popup {
+    background: #2a2a2a;
+    color: white;
+}
+
 @import url("./schedule-row/schedule-row.css");
 @import url("./popup-actions/popup-actions.css");
