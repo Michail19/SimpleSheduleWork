@@ -418,8 +418,7 @@ const Worksheet: React.FC = () => {
                         className="sidebar__btn"
                         onClick={() => setIsAddEmployeePopupOpen(true)}
                     >
-                        Добавить <br/>
-                        сотрудника
+                        {currentTranslation.addAnEmployeeBR}
                     </button>,
                     document.querySelector('.sidebar') as Element
                 )
@@ -430,7 +429,7 @@ const Worksheet: React.FC = () => {
                         className="header__up-blocks__headbar__btn"
                         onClick={() => setIsAddEmployeePopupOpen(true)}
                     >
-                        Добавить сотрудника
+                        {currentTranslation.addAnEmployee}
                     </button>,
                     document.querySelector('.header__up-blocks__headbar') as Element
                 )
@@ -451,8 +450,7 @@ const Worksheet: React.FC = () => {
                         className="sidebar__btn"
                         onClick={() => setIsDeletePopupOpen(true)}
                     >
-                        Удалить <br/>
-                        сотрудника
+                        {currentTranslation.deleteAnEmployeeBR}
                     </button>,
                     document.querySelector('.sidebar') as Element
                 )
@@ -463,7 +461,7 @@ const Worksheet: React.FC = () => {
                         className="header__up-blocks__headbar__btn"
                         onClick={() => setIsDeletePopupOpen(true)}
                     >
-                        Удалить сотрудника
+                        {currentTranslation.deleteAnEmployee}
                     </button>,
                     document.querySelector('.header__up-blocks__headbar') as Element
                 )
@@ -477,6 +475,7 @@ const Worksheet: React.FC = () => {
                         setSearchTerm('');
                         setSelectedEmployee(null);
                     }}
+                    currentTranslation={currentTranslation}
                 />
             )}
 
