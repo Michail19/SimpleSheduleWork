@@ -54,11 +54,11 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
                 </div>
 
                 <div className="popup-actions">
-                    <button onClick={onClose}>Отмена</button>
+                    <button className="popup-actions-btn" onClick={onClose}>Отмена</button>
                     <button
                         onClick={() => selectedEmployee && onDelete(selectedEmployee.id)}
                         disabled={!selectedEmployee}
-                        className="danger-btn"
+                        className="popup-actions-btn danger-btn"
                     >
                         Удалить выбранного
                     </button>

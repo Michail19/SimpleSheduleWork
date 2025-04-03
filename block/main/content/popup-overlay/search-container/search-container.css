@@ -1,0 +1,17 @@
+@media screen and (min-width: 1090px) {
+    .search-container {
+        position: relative;
+        margin: 15px 0;
+    }
+
+    .search-container input {
+        width: 90%;
+        padding: 10px 35px 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .search-container label {
+        margin-bottom: 5px;
+    }
+}

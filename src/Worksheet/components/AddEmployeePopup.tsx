@@ -80,7 +80,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 <h2>Добавить сотрудника</h2>
                 <button className="close-btn" onClick={onClose}>×</button>
 
-                <div className="form-group">
+                <div className="search-container">
                     <label>ФИО:</label>
                     <input
                         type="text"
@@ -90,7 +90,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                     />
                 </div>
 
-                <div className="form-group">
+                <div className="search-container">
                     <label>Проекты (через пробел):</label>
                     <input
                         type="text"
@@ -119,8 +119,9 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 ))}
 
                 <div className="popup-actions">
-                    <button onClick={onClose}>Отмена</button>
+                    <button className="popup-actions-btn" onClick={onClose}>Отмена</button>
                     <button
+                        className="popup-actions-btn"
                         onClick={() => onSave(employeeData)}
                         disabled={!employeeData.fio.trim()}
                     >

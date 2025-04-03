@@ -7,4 +7,9 @@
         border-radius: 4px;
         cursor: pointer;
     }
+
+    .clear-filters-btn:disabled {
+        background-color: #f0f0f0;
+        cursor: inherit;
+    }
 }

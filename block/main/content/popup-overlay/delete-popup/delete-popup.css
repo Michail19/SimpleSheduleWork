@@ -14,5 +14,4 @@
     color: white;
 }
 
-@import url("./search-container/search-container.css");
 @import url("./employees-list/employees-list.css");

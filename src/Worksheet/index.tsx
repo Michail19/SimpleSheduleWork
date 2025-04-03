@@ -23,6 +23,7 @@ const Worksheet: React.FC = () => {
     const [language, setLanguage] = useState<Language>("ru");
     const [updateKey, setUpdateKey] = useState(0);
     const [showFilters, setShowFilters] = useState(false);
+    const [showFiltersH, setShowFiltersH] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
     const currentTranslation = translations[language] ?? translations["ru"];
@@ -331,7 +332,7 @@ const Worksheet: React.FC = () => {
             const target = e.target as HTMLElement;
             if (!target.closest('.filters-panel') &&
                 !target.closest('.sidebar__btn[data-key="sidebar_filters"]') &&
-                !target.closest('.header__headbar__up-blocks__btn')) {
+                !target.closest('.header__up-blocks__headbar__btn')) {
                 setShowFilters(false);
             }
         };
