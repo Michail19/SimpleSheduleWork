@@ -16,3 +16,4 @@ npm install --save-dev ts-loader typescript @babel/preset-typescript
 npm install --save-dev postcss-loader postcss
 npm install --save-dev css-loader autoprefixer
 npm install --save-dev postcss-loader postcss postcss-bem-linter
+npm install @octokit/core --save-dev
