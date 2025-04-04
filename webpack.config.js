@@ -75,6 +75,11 @@ module.exports = {
             filename: "project.html",
             chunks: ["project"],
         }),
+        new HtmlWebpackPlugin({
+            template: "./pages/404.html",
+            filename: "404.html",
+            chunks: ["404"],
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 { from: './images/icon.png', to: 'icon.png' }, // Копируем иконку в dist
@@ -85,10 +90,15 @@ module.exports = {
         }),
     ],
     devServer: {
-        historyApiFallback: true, // ВАЖНО! Позволяет перезагружать страницы без 404
+        // historyApiFallback: true, // ВАЖНО! Позволяет перезагружать страницы без 404
         static: path.join(__dirname, "public"),
         compress: true,
         port: 3000,
         hot: true,
+        historyApiFallback: {
+            rewrites: [
+                { from: /.*/, to: '/404.html' } // Перенаправляет все несуществующие маршруты на 404.html
+            ]
+        }
     },
 };
