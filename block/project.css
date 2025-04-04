@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+@import url("../block/loader/loader.css");
+@import url("../block/preloader/preloader.css");
+@import url("../block/page/page.css");
+@import url("../block/dark-theme/dark-theme.css");
+@import url("../block/header/header.css");
+@import url("../block/subtitle/subtitle.css");
+@import url("../block/main/main.css");
+@import url("../block/footer/footer.css");
+
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+}

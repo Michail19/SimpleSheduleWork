@@ -2,24 +2,28 @@ const translations = {
     ru: {
         loading: "Загрузка...",
         filters: "Фильтры",
+        schedule: "Расписание",
         projects: "Проекты",
         home: "На главный",
         logout: "Выход",
         login: "Вход",
         work_schedule: "График работы сотрудников",
         sidebar_filters: "Фильтры",
+        sidebar_search: "Поиск",
         sidebar_schedule: "Расписание",
         sidebar_projects: "Проекты"
     },
     en: {
         loading: "Loading...",
         filters: "Filters",
+        schedule: "Schedule",
         projects: "Projects",
         home: "Home",
         logout: "Logout",
         login: "Login",
         work_schedule: "Employee Work Schedule",
         sidebar_filters: "Filters",
+        sidebar_search: "Search",
         sidebar_schedule: "Schedule",
         sidebar_projects: "Projects"
     }

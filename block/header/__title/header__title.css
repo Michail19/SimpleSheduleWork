@@ -1,6 +1,9 @@
 .header__title {
     padding: 1rem 2vw;
     font-weight: 500;
+    user-select: none;
+    cursor: default;
+    color: #FFFFFF;
 }
 
 .header__title_logo {

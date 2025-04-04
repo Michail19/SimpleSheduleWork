@@ -1,13 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 //import Worksheet from "./Worksheet";
-import "../styles/main.css";
+import "../styles/project.css";
 
-const pageElement = document.getElementById("root");
+// const pageElement = document.getElementById("root");
+//
+// if (!pageElement) {
+//     throw new Error("Элемент с id='page' не найден в DOM");
+// }
 
-if (!pageElement) {
-    throw new Error("Элемент с id='page' не найден в DOM");
-}
-
-const root = createRoot(pageElement);
+// const root = createRoot(pageElement);
 //root.render(<Worksheet />);
