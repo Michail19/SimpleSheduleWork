@@ -300,6 +300,22 @@ const Worksheet: React.FC = () => {
         // TODO: отправить обновленные данные в API
     };
 
+    const handleClearTime = (row: number, dayIndex: number, day: string) => {
+        setEmployees((prev) =>
+            prev.map((employee, index) =>
+                index === row
+                    ? {
+                        ...employee,
+                        weekSchedule: {
+                            ...employee.weekSchedule,
+                            [day]: { start: "", end: "" }, // Полностью очищаем расписание
+                        },
+                    }
+                    : employee
+            )
+        );
+    };
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape" && editingCell !== null) {
@@ -632,6 +648,21 @@ const Worksheet: React.FC = () => {
                                                             }
                                                         }}
                                                     />
+                                                    <button
+                                                        className="clear-time-btn"
+                                                        onClick={() => handleClearTime(index, dayIndex, day)}
+                                                        title="Очистить время"
+                                                        style={{
+                                                            marginLeft: "0.5em",
+                                                            cursor: "pointer",
+                                                            background: "none",
+                                                            border: "none",
+                                                            fontSize: "1em",
+                                                            color: "#888"
+                                                        }}
+                                                    >
+                                                        🗑️
+                                                    </button>
                                                 </>
                                             ) : (
                                                 <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
