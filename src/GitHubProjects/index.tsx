@@ -2,9 +2,10 @@ import React, {useState, useEffect, useRef, useMemo} from 'react';
 import { Octokit } from '@octokit/core';
 import ReactDOM from "react-dom";
 import {translations} from "./translations";
-import {Employee, Language, Project} from "./types";
+import {Employee, Language} from "./types";
 import {SearchProjectPopup} from "./components/SearchProjectPopup";
 import ProjectDetailsPopup from "./components/ProjectDetailsPopup";
+import EmployeeManagementPopup from "./components/EmployeeManagementPopup";
 
 interface GitHubRepo {
   id: number;
@@ -21,10 +22,7 @@ interface GitHubRepo {
 }
 
 interface MergedProject extends GitHubRepo {
-  employees: {
-    id: number;
-    fio: string;
-  }[];
+  employees: Employee[]; // Используем единый тип Employee
 }
 
 const GitHubProjects: React.FC = () => {
@@ -41,8 +39,9 @@ const GitHubProjects: React.FC = () => {
   const [isProjectSearchOpen, setIsProjectSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  // const [activeProject, setActiveProject] = useState<Project | null>(null);
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [isEmployeePopupOpen, setIsEmployeePopupOpen] = useState(false);
+  const [currentProjectForEdit, setCurrentProjectForEdit] = useState<MergedProject | null>(null);
+  const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -174,41 +173,57 @@ const GitHubProjects: React.FC = () => {
     });
   };
 
-  // Загрузка сотрудников из JSON
+  // Загрузка всех сотрудников
   useEffect(() => {
-    const jsonPath =
+    const employeesJsonPath =
         process.env.NODE_ENV === "production"
             ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_fios.json"
-            : "/public/data/data_fios.json";
-    fetch(jsonPath)
-        .then(res => res.json())
-        .then(data => setEmployees(data.employees))
-        .catch(console.error);
+            : "/data/data_fios.json";
+
+    fetch(employeesJsonPath)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          // Преобразуем id в number на случай если в JSON они строковые
+          const formattedEmployees = data.employees.map((emp: any) => ({
+            id: Number(emp.id),
+            fio: emp.fio
+          }));
+          setAllEmployees(formattedEmployees);
+        })
+        .catch(err => {
+          console.error("Error loading employees:", err);
+          setError("Failed to load employees data");
+        });
   }, []);
 
-  const handleAddEmployeeToProject = (employeeId: number) => {
-    if (!activeProject) return;
+  const handleSaveEmployees = (updatedEmployees: Employee[]) => {
+    if (!currentProjectForEdit) return;
 
-    const employeeToAdd = employees.find(emp => emp.id === employeeId);
-    if (!employeeToAdd) return;
+    // Обновляем проект в основном списке
+    setRepos(prevRepos =>
+        prevRepos.map(repo =>
+            repo.id === currentProjectForEdit.id
+                ? { ...repo, employees: updatedEmployees }
+                : repo
+        )
+    );
 
-    setActiveProject(prev => {
-      if (!prev) return null;
+    // TODO Здесь можно добавить вызов API для сохранения на сервере
+    console.log('Сохраненные изменения:', updatedEmployees);
 
-      // Явно приводим тип к Employee
-      const newEmployee: Employee = {
-        id: employeeToAdd.id,
-        fio: employeeToAdd.fio
-      };
+    setIsEmployeePopupOpen(false);
+  };
 
-      return {
-        ...prev,
-        employees: [
-          ...prev.employees,
-          newEmployee
-        ]
-      };
-    });
+
+  // Открытие попапа
+  const openEmployeePopup = (project: MergedProject | null) => {
+    setCurrentProjectForEdit(project);
+    setIsEmployeePopupOpen(true);
   };
 
 
@@ -275,13 +290,21 @@ const GitHubProjects: React.FC = () => {
           ))}
         </div>
 
-        {isEmployeePopupOpen && currentProject && (
-  <EmployeeManagementPopup
-    project={currentProject}
-    allEmployees={allEmployees}
-    onClose={handleSaveEmployees}
-  />
-)}
+        {activeProject && (
+            <ProjectDetailsPopup
+                project={activeProject}
+                onClose={() => setActiveProject(null)}
+                onEditEmployees={() => openEmployeePopup(activeProject)}
+            />
+        )}
+
+        {isEmployeePopupOpen && currentProjectForEdit && (
+            <EmployeeManagementPopup
+                project={currentProjectForEdit}
+                allEmployees={allEmployees}
+                onClose={handleSaveEmployees}
+            />
+        )}
 
         {document.querySelector(".footer") &&
             ReactDOM.createPortal(
