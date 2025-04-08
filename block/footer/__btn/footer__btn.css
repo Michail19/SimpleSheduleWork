@@ -13,7 +13,17 @@
     background: #F5F7FA;
 }
 
+.footer__btn:active {
+    color: #171717;
+    background: #c3c4cc;
+}
+
 .dark-theme .footer__btn {
     color: #EAEAEA;
     background: #1E1E1E;
+}
+
+.dark-theme .footer__btn:active {
+    color: #fff6f6;
+    background: #3a3a3a;
 }

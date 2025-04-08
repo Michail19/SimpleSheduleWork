@@ -10,6 +10,9 @@ module.exports = {
         main: "./src/main.tsx",
         project: "./src/project.tsx",
         changeTheme: './src/changeTheme.js',
+        indexStyles: "./styles/index.css",  // CSS для index.html
+        mainStyles: "./styles/main.css",    // CSS для main.html
+        projectStyles: "./styles/project.css",  // CSS для project.html
     },  // Точка входа
     output: {
         filename: '[name].bundle.js',  // Имя итогового файла
@@ -37,21 +40,21 @@ module.exports = {
                 ]
             },
             {
-            test: /\.(ts|tsx)$/,
-            exclude: /node_modules/,
-            use: [
-              {
-                loader: 'babel-loader',
-                options: {
-                  presets: [
-                    '@babel/preset-env',
-                    '@babel/preset-react',
-                    '@babel/preset-typescript'
-                  ]
-                }
-              },
-              'ts-loader'
-            ]
+                test: /\.(ts|tsx)$/,
+                exclude: /node_modules/,
+                use: [
+                  {
+                    loader: 'babel-loader',
+                    options: {
+                      presets: [
+                        '@babel/preset-env',
+                        '@babel/preset-react',
+                        '@babel/preset-typescript'
+                      ]
+                    }
+                  },
+                  'ts-loader'
+                ]
           },
         ],
     },
@@ -63,17 +66,22 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./pages/index.html",
             filename: "index.html",
-            chunks: ["index"],
+            chunks: ["index", "indexStyles"], // Подключаем index.css
         }),
         new HtmlWebpackPlugin({
             template: "./pages/main.html",
             filename: "main.html",
-            chunks: ["main"],
+            chunks: ["main", "mainStyles"], // Подключаем main.css
         }),
         new HtmlWebpackPlugin({
             template: "./pages/project.html",
             filename: "project.html",
-            chunks: ["project"],
+            chunks: ["project", "projectStyles"], // Подключаем project.css
+        }),
+        new HtmlWebpackPlugin({
+            template: "./pages/404.html",
+            filename: "404.html",
+            chunks: ["404"],
         }),
         new CopyWebpackPlugin({
             patterns: [
@@ -81,14 +89,19 @@ module.exports = {
             ],
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].css', // Имя выходного CSS-файла
+            filename: '[name].css',
+            chunkFilename: '[id].css',
         }),
     ],
     devServer: {
-        historyApiFallback: true, // ВАЖНО! Позволяет перезагружать страницы без 404
         static: path.join(__dirname, "public"),
         compress: true,
         port: 3000,
         hot: true,
+        historyApiFallback: {
+            rewrites: [
+                { from: /.*/, to: '/404.html' } // Перенаправляет все несуществующие маршруты на 404.html
+            ]
+        }
     },
 };

@@ -14,5 +14,11 @@
     background: #323232;
 }
 
+.dark-theme .worksheet__cell input[type="time"] {
+    background: #414141;
+    color: #EAEAEA;
+    border: 1px solid #555;
+}
+
 @import url("./_name/worksheet__cell_name.css");
 @import url("./_clock/worksheet__cell_clock.css");

@@ -1,5 +1,4 @@
 .delete-popup {
-    background: white;
     padding: 20px;
     border-radius: 8px;
     width: 90%;
@@ -7,12 +6,16 @@
     max-height: 80vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    background: #F5F7FA;
 }
 
 .dark-theme .delete-popup {
     background: #2a2a2a;
-    color: white;
+    color: #EAEAEA;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.25);
 }
 
-@import url("./search-container/search-container.css");
 @import url("./employees-list/employees-list.css");
+@import url("./danger-btn/danger-btn.css");

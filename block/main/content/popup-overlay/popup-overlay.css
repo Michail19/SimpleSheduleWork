@@ -11,6 +11,8 @@
     z-index: 1000;
 }
 
+@import url("./popup-actions-btn/popup-actions-btn.css");
 @import url("./add-employee-popup/add-employee-popup.css");
 @import url("./close-btn/close-btn.css");
 @import url("./delete-popup/delete-popup.css");
+@import url("./search-container/search-container.css");

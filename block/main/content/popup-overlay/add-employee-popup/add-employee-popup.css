@@ -1,5 +1,4 @@
 .add-employee-popup {
-    background: white;
     padding: 20px;
     border-radius: 8px;
     width: 90%;
@@ -7,8 +6,15 @@
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
+
+    background: #F5F7FA;
 }
 
-@import url("./form-group/form-group.css");
+.dark-theme .add-employee-popup {
+    background: #2a2a2a;
+    color: #EAEAEA;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.25);
+}
+
 @import url("./schedule-row/schedule-row.css");
 @import url("./popup-actions/popup-actions.css");

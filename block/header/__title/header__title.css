@@ -1,6 +1,16 @@
 .header__title {
     padding: 1rem 2vw;
     font-weight: 500;
+    user-select: none;
+    cursor: default;
+    color: #FFFFFF;
+}
+
+.header__title_logo {
+    text-decoration: none;
+    user-select: none;
+    color: #FFFFFF;
+    cursor: default;
 }
 
 @media screen and (max-width: 869px) {

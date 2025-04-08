@@ -77,30 +77,32 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
     return (
         <div className="popup-overlay" onClick={onClose}>
             <div className="add-employee-popup" onClick={e => e.stopPropagation()}>
-                <h2>Добавить сотрудника</h2>
+                <h2>{currentTranslation.addEmployee}</h2>
                 <button className="close-btn" onClick={onClose}>×</button>
 
-                <div className="form-group">
-                    <label>ФИО:</label>
+                <div className="search-container">
+                    <label>{currentTranslation.fullName}</label>
                     <input
                         type="text"
                         name="fio"
+                        placeholder={currentTranslation.enterName}
                         value={employeeData.fio}
                         onChange={handleChange}
                     />
                 </div>
 
-                <div className="form-group">
-                    <label>Проекты (через пробел):</label>
+                <div className="search-container">
+                    <label>{currentTranslation.projects}</label>
                     <input
                         type="text"
                         name="projects"
+                        placeholder={currentTranslation.enterProjects}
                         value={employeeData.projects}
                         onChange={handleChange}
                     />
                 </div>
 
-                <h3>График работы:</h3>
+                <h3>{currentTranslation.workSchedule}</h3>
                 {Object.entries(employeeData.weekSchedule).map(([day, time]) => (
                     <div key={day} className="schedule-row">
                         <label>{currentTranslation[day as keyof typeof currentTranslation]}:</label>
@@ -119,12 +121,13 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 ))}
 
                 <div className="popup-actions">
-                    <button onClick={onClose}>Отмена</button>
+                    <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
                     <button
+                        className="popup-actions-btn"
                         onClick={() => onSave(employeeData)}
                         disabled={!employeeData.fio.trim()}
                     >
-                        Сохранить
+                        {currentTranslation.save}
                     </button>
                 </div>
             </div>

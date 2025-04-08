@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import { FiltersState, Language } from '../types';
 import { translations } from '../translations';
 
@@ -21,8 +21,10 @@ export const FiltersPanel: React.FC<FiltersPanelProps> = ({
                                                               clearFilters,
                                                               setShowFilters
                                                           }) => {
+    const [searchQueryProjects, setSearchQueryProjects] = useState('');
+
     const filteredProjects = filters.projects.filter(project =>
-        project.toLowerCase().includes(searchQuery.toLowerCase())
+        project.toLowerCase().includes(searchQueryProjects.toLowerCase())
     );
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +46,7 @@ export const FiltersPanel: React.FC<FiltersPanelProps> = ({
                 <input
                     ref={inputRef}
                     type="text"
-                    placeholder="Поиск..."
+                    placeholder={currentTranslation.searchByName}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyDown}

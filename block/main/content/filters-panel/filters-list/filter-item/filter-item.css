@@ -1,17 +1,19 @@
-@media screen and (min-width: 1490px) {
+@media screen and (min-width: 1090px) {
     .filter-item {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 8px; /* Расстояние между чекбоксом и текстом */
         cursor: pointer;
+        user-select: none; /* Запрещает выделение текста при клике */
     }
-}
 
-@media screen and (max-width: 1489px) and (min-width: 1090px) {
-    .filter-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
+    .filter-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #007bff; /* Синий цвет чекбокса (можно заменить) */
+    }
+
+    .dark-theme .filter-item input[type="checkbox"] {
+        accent-color: #777777;
     }
 }

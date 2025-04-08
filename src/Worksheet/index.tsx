@@ -23,7 +23,7 @@ const Worksheet: React.FC = () => {
     const [language, setLanguage] = useState<Language>("ru");
     const [updateKey, setUpdateKey] = useState(0);
     const [showFilters, setShowFilters] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQueryEmployees, setSearchQueryEmployees] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
     const currentTranslation = translations[language] ?? translations["ru"];
     const [isAddEmployeePopupOpen, setIsAddEmployeePopupOpen] = useState(false);
@@ -177,7 +177,7 @@ const Worksheet: React.FC = () => {
         }
     }, [showFilters]);
 
-    const filteredEmployees = filterEmployees(employees, filters, searchQuery);
+    const filteredEmployees = filterEmployees(employees, filters, searchQueryEmployees);
     const currentEmployee = filteredEmployees.length > 0 ? filteredEmployees[0] : null; // Фиксируем current сотрудника (первого в списке)
     const paginatedEmployees = filteredEmployees.slice(1); // Остальные сотрудники (без current) для пагинации
     const totalPages = Math.ceil(paginatedEmployees.length / rowsPerPage); // Рассчитываем общее количество страниц
@@ -300,6 +300,22 @@ const Worksheet: React.FC = () => {
         // TODO: отправить обновленные данные в API
     };
 
+    const handleClearTime = (row: number, dayIndex: number, day: string) => {
+        setEmployees((prev) =>
+            prev.map((employee, index) =>
+                index === row
+                    ? {
+                        ...employee,
+                        weekSchedule: {
+                            ...employee.weekSchedule,
+                            [day]: { start: "", end: "" }, // Полностью очищаем расписание
+                        },
+                    }
+                    : employee
+            )
+        );
+    };
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape" && editingCell !== null) {
@@ -331,7 +347,7 @@ const Worksheet: React.FC = () => {
             const target = e.target as HTMLElement;
             if (!target.closest('.filters-panel') &&
                 !target.closest('.sidebar__btn[data-key="sidebar_filters"]') &&
-                !target.closest('.header__headbar__up-blocks__btn')) {
+                !target.closest('.header__up-blocks__headbar__btn')) {
                 setShowFilters(false);
             }
         };
@@ -409,6 +425,7 @@ const Worksheet: React.FC = () => {
         });
     };
 
+
     return (
         <div className="content" key={updateKey}>
             {/* Рендеринг порталов и компонентов */}
@@ -418,8 +435,7 @@ const Worksheet: React.FC = () => {
                         className="sidebar__btn"
                         onClick={() => setIsAddEmployeePopupOpen(true)}
                     >
-                        Добавить <br/>
-                        сотрудника
+                        {currentTranslation.addAnEmployeeBR}
                     </button>,
                     document.querySelector('.sidebar') as Element
                 )
@@ -430,7 +446,7 @@ const Worksheet: React.FC = () => {
                         className="header__up-blocks__headbar__btn"
                         onClick={() => setIsAddEmployeePopupOpen(true)}
                     >
-                        Добавить сотрудника
+                        {currentTranslation.addAnEmployee}
                     </button>,
                     document.querySelector('.header__up-blocks__headbar') as Element
                 )
@@ -451,8 +467,7 @@ const Worksheet: React.FC = () => {
                         className="sidebar__btn"
                         onClick={() => setIsDeletePopupOpen(true)}
                     >
-                        Удалить <br/>
-                        сотрудника
+                        {currentTranslation.deleteAnEmployeeBR}
                     </button>,
                     document.querySelector('.sidebar') as Element
                 )
@@ -463,7 +478,7 @@ const Worksheet: React.FC = () => {
                         className="header__up-blocks__headbar__btn"
                         onClick={() => setIsDeletePopupOpen(true)}
                     >
-                        Удалить сотрудника
+                        {currentTranslation.deleteAnEmployee}
                     </button>,
                     document.querySelector('.header__up-blocks__headbar') as Element
                 )
@@ -477,6 +492,7 @@ const Worksheet: React.FC = () => {
                         setSearchTerm('');
                         setSelectedEmployee(null);
                     }}
+                    currentTranslation={currentTranslation}
                 />
             )}
 
@@ -496,9 +512,9 @@ const Worksheet: React.FC = () => {
                 ReactDOM.createPortal(
                     <FiltersPanel
                         filters={filters}
-                        searchQuery={searchQuery}
+                        searchQuery={searchQueryEmployees}
                         currentTranslation={currentTranslation}
-                        setSearchQuery={setSearchQuery}
+                        setSearchQuery={setSearchQueryEmployees}
                         toggleProjectFilter={toggleProjectFilter}
                         clearFilters={clearFilters}
                         setShowFilters={setShowFilters}
@@ -523,9 +539,9 @@ const Worksheet: React.FC = () => {
                 ReactDOM.createPortal(
                     <FiltersPanel
                         filters={filters}
-                        searchQuery={searchQuery}
+                        searchQuery={searchQueryEmployees}
                         currentTranslation={currentTranslation}
-                        setSearchQuery={setSearchQuery}
+                        setSearchQuery={setSearchQueryEmployees}
                         toggleProjectFilter={toggleProjectFilter}
                         clearFilters={clearFilters}
                         setShowFilters={setShowFilters}
@@ -633,6 +649,21 @@ const Worksheet: React.FC = () => {
                                                             }
                                                         }}
                                                     />
+                                                    <button
+                                                        className="clear-time-btn"
+                                                        onClick={() => handleClearTime(index, dayIndex, day)}
+                                                        title="Очистить время"
+                                                        style={{
+                                                            marginLeft: "0.5em",
+                                                            cursor: "pointer",
+                                                            background: "none",
+                                                            border: "none",
+                                                            fontSize: "1em",
+                                                            color: "#888"
+                                                        }}
+                                                    >
+                                                        🗑️
+                                                    </button>
                                                 </>
                                             ) : (
                                                 <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>

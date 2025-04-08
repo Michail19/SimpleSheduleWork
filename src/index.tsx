@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 //import Worksheet from "./Worksheet";
-import "../styles/main.css";
+import "../styles/index.css";
 
 const pageElement = document.getElementById("root");
 

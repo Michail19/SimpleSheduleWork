@@ -9,76 +9,62 @@
     <title>SSW - Projects</title>
 </head>
 
-<body>
+<body class="page">
+    <div id="preloader">
+        <div class="loader"></div>
+        <p data-key="loading">Загрузка...</p>
+    </div>
+
     <header class="header">
-        <button class="header__menu-toggle">☰</button>
-        <h1 class="header__title">SimpleScheduleWork (SSW)</h1>
-        <button class="header__theme-toggle"></button>
-        <div class="header__headbar">
-            <div class="header__headbar__btn">Поиск</div>
-            <div class="header__headbar__btn">Расписание</div>
-            <div class="header__headbar__btn">Проекты</div>
+        <div class="header__up-blocks__wrapper_menu">
+            <div class="header__up-blocks__menu-toggle">☰</div>
+            <div class="header__up-blocks__wrapper_menu__list">
+                <button class="header__up-blocks_menu__list__theme-toggle_m"></button>
+                <button class="header__up-blocks_menu__list__theme-toggle_lang_m"></button>
+                <a class="header__up-blocks__wrapper__list__btn" href="./index.html" data-key="home">На главный</a>
+                <a class="header__up-blocks__wrapper__list__btn" href="./main.html" data-key="schedule">Расписание</a>
+                <div class="header__up-blocks__wrapper__list__btn" data-key="logout">Выход</div>
+            </div>
         </div>
-        <div class="header__icon"></div>
-        <div class="header__list">
-            <a class="header__list__btn" href="./index.html">На главный</a>
-            <div class="header__list__btn">Выход</div>
+        <a class="header__title_logo" href="./index.html"><h1 class="header__title"><span class="mobile">SimpleScheduleWork (</span>SSW<span class="mobile">)</span></h1></a>
+        <div class="header__up-blocks">
+            <div class="header__up-blocks__headbar"></div>
+            <div class="header__up-blocks__wrapper">
+                <div class="header__up-blocks__wrapper__icon"></div>
+                <div class="header__up-blocks__wrapper__list">
+                    <button class="header__up-blocks__wrapper__list__theme-toggle"></button>
+                    <button class="header__up-blocks__wrapper__list__theme-toggle_lang"></button>
+                    <a class="header__up-blocks__wrapper__list__btn" href="./index.html" data-key="home">На главный</a>
+                    <a class="header__up-blocks__wrapper__list__btn" href="./main.html" data-key="schedule">Расписание</a>
+                    <div class="header__up-blocks__wrapper__list__btn" data-key="logout">Выход</div>
+                </div>
+            </div>
         </div>
     </header>
 
     <section class="subtitle">
         <h1 class="subtitle__title">Список проектов</h1>
+        <div class="subtitle__date"></div>
     </section>
 
-    <section class="sidebar">
-        <button class="sidebar__btn">Поиск</button>
-        <a class="sidebar__btn" href="./main.html">Расписание</a>
-        <button class="sidebar__btn">Проекты</button>
-    </section>
+    <section class="main">
+        <div class="sidebar">
+            <button class="sidebar__btn" data-key="sidebar_search">Поиск</button>
+            <a class="sidebar__btn" href="./main.html" data-key="sidebar_schedule">Расписание</a>
+            <button class="sidebar__btn btn_worksheet btn_worksheet_enable" data-key="sidebar_projects">Проекты</button>
+        </div>
 
-    <section class="worksheet">
-        <div class="worksheet__row">
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-        </div>
-        <div class="worksheet__row">
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-        </div>
-        <div class="worksheet__row">
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-        </div>
-        <div class="worksheet__row">
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
-            <div class="worksheet__cell"></div>
+        <div id="root" class="content">
+            
         </div>
     </section>
 
     <footer class="footer">
-        <button class="footer__btn">◄</button>
-        <div class="footer__place">Лист 1 из 1</div>
-        <button class="footer__btn">►</button>
+<!--        <button class="footer__btn">◄</button>-->
+<!--        <div class="footer__place">Лист 1 из 1</div>-->
+<!--        <button class="footer__btn">►</button>-->
     </footer>
 
+    <script src="changeTheme.bundle.js"></script>
 </body>
-
 </html>
