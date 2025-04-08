@@ -1,8 +1,9 @@
 import React, {useState, useEffect, useRef, useMemo} from 'react';
 import { Octokit } from '@octokit/core';
 import ReactDOM from "react-dom";
-import {translations} from "../Worksheet/translations";
-import {Language} from "../Worksheet/types";
+import {translations} from "./translations";
+import {Language} from "./types";
+import {SearchProjectPopup} from "./components/SearchProjectPopup";
 
 interface GitHubRepo {
   id: number;
@@ -36,6 +37,10 @@ const GitHubProjects: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [language, setLanguage] = useState<Language>("ru");
   const currentTranslation = translations[language] ?? translations["ru"];
+  const [isProjectSearchOpen, setIsProjectSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,13 +117,52 @@ const GitHubProjects: React.FC = () => {
 
   // Формируем список для отображения
   const displayedRepos = useMemo(() => {
-    return repos.slice(
+    const filtered = searchQuery
+        ? repos.filter((repo) =>
+            repo.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        : repos;
+
+    return filtered.slice(
         (currentPage - 1) * rowsPerPage,
         currentPage * rowsPerPage
     );
-  }, [repos, currentPage, rowsPerPage]);
+  }, [repos, searchQuery, currentPage, rowsPerPage]);
 
-  const totalPages = Math.ceil(repos.length / rowsPerPage); // Рассчитываем общее количество страниц
+  // Закрытие попапа при клике вне
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+          !target.closest('.popup-content') &&
+          !target.closest('.sidebar__btn') &&
+          !target.closest('.header__up-blocks__headbar__btn')
+      ) {
+        setIsProjectSearchOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Фокус на input
+  useEffect(() => {
+    if (isProjectSearchOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isProjectSearchOpen]);
+
+  // Сброс страницы при поиске
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const filteredProjects = repos.filter(project =>
+      project.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredProjects.length / rowsPerPage); // Рассчитываем общее количество страниц
 
   const changePage = (direction: "next" | "previous") => {
     setCurrentPage((prev) => {
@@ -127,10 +171,40 @@ const GitHubProjects: React.FC = () => {
       return prev;
     });
   };
-
+  
 
   return (
       <div className="worksheet">
+        {document.querySelector('.sidebar') &&
+            ReactDOM.createPortal(
+                <button
+                    className="sidebar__btn"
+                    onClick={() => setIsProjectSearchOpen(true)}
+                >
+                  {currentTranslation.searchProject}
+                </button>,
+                document.querySelector('.sidebar') as Element
+            )}
+
+        {document.querySelector('.header__up-blocks__headbar') &&
+            ReactDOM.createPortal(
+                <button
+                    className="header__up-blocks__headbar__btn"
+                    onClick={() => setIsProjectSearchOpen(true)}
+                >
+                  {currentTranslation.searchProject}
+                </button>,
+                document.querySelector('.header__up-blocks__headbar') as Element
+            )}
+        {isProjectSearchOpen && (
+            <SearchProjectPopup
+                currentTranslation={currentTranslation}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                setIsOpen={setIsProjectSearchOpen}
+            />
+        )}
+
         {loading && <div className="loader">Загрузка...</div>}
 
         {error && <div className="error-message">Ошибка: {error}</div>}

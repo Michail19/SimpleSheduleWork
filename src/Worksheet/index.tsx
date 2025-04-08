@@ -425,6 +425,7 @@ const Worksheet: React.FC = () => {
         });
     };
 
+
     return (
         <div className="content" key={updateKey}>
             {/* Рендеринг порталов и компонентов */}
