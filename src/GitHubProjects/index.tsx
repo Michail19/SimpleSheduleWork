@@ -275,14 +275,13 @@ const GitHubProjects: React.FC = () => {
           ))}
         </div>
 
-        {activeProject && (
-            <ProjectDetailsPopup
-                project={activeProject}
-                onClose={() => setActiveProject(null)}
-                onAddEmployee={handleAddEmployeeToProject}
-                employeesList={employees}
-            />
-        )}
+        {isEmployeePopupOpen && currentProject && (
+  <EmployeeManagementPopup
+    project={currentProject}
+    allEmployees={allEmployees}
+    onClose={handleSaveEmployees}
+  />
+)}
 
         {document.querySelector(".footer") &&
             ReactDOM.createPortal(

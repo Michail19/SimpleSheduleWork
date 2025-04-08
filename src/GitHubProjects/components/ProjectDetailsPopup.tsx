@@ -1,100 +1,128 @@
-import React, { useState } from 'react';
-import { Employee, Project } from '../types';
+import React, { useState, useEffect, useRef } from 'react';
 
-interface ProjectDetailsPopupProps {
-    project: Project;
-    onClose: () => void;
-    onAddEmployee: (employeeId: number) => void; // Функция для добавления сотрудника
-    employeesList: Employee[]; // Список всех сотрудников из JSON
+interface Employee {
+  id: number;
+  fio: string;
 }
 
-const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
-                                                                     project,
-                                                                     onClose,
-                                                                     onAddEmployee,
-                                                                     employeesList
-                                                                 }) => {
-    const [isAddingEmployee, setIsAddingEmployee] = useState(false);
-    const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
+interface Project {
+  id: number;
+  name: string;
+  employees: Employee[];
+}
 
-    const handleAddEmployee = () => {
-        if (selectedEmployeeId) {
-            onAddEmployee(selectedEmployeeId);
-            setIsAddingEmployee(false);
-            setSelectedEmployeeId(null);
-        }
-    };
+interface EmployeeManagementPopupProps {
+  project: Project;
+  allEmployees: Employee[];
+  onClose: (updatedEmployees: Employee[]) => void;
+}
 
-    return (
-        <div className="popup-overlay" onClick={onClose}>
-            <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                <h2>{project.name}</h2>
-                <p><strong>Описание:</strong> {project.description || 'Нет описания'}</p>
+const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
+  project,
+  allEmployees,
+  onClose,
+}) => {
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentAttached, setCurrentAttached] = useState<Employee[]>(project.employees);
+  const [availableEmployees, setAvailableEmployees] = useState<Employee[]>([]);
 
-                <div className="employees-section">
-                    <div className="employees-header">
-                        <strong>Сотрудники:</strong>
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsAddingEmployee(true);
-                            }}
-                            className="add-employee-btn"
-                        >
-                            + Добавить
-                        </button>
-                    </div>
-
-                    <ul className="employees-list">
-                        {project.employees?.length ? (
-                            project.employees.map((emp, idx) => (
-                                <li key={`${emp.id}-${idx}`}>{emp.fio}</li>
-                            ))
-                        ) : (
-                            <li>Нет назначенных сотрудников</li>
-                        )}
-                    </ul>
-                </div>
-
-                {isAddingEmployee && (
-                    <div className="add-employee-popup">
-                        <h3>Выберите сотрудника</h3>
-                        <select
-                            value={selectedEmployeeId || ''}
-                            onChange={(e) => setSelectedEmployeeId(Number(e.target.value))}
-                            className="employee-select"
-                        >
-                            <option value="">-- Выберите --</option>
-                            {employeesList.map(emp => (
-                                <option key={emp.id} value={emp.id}>
-                                    {emp.fio}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="popup-buttons">
-                            <button
-                                onClick={() => setIsAddingEmployee(false)}
-                                className="cancel-btn"
-                            >
-                                Отмена
-                            </button>
-                            <button
-                                onClick={handleAddEmployee}
-                                disabled={!selectedEmployeeId}
-                                className="confirm-btn"
-                            >
-                                Добавить
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                <button onClick={onClose} className="close-btn">
-                    Закрыть
-                </button>
-            </div>
-        </div>
+  // Фильтрация сотрудников
+  useEffect(() => {
+    const filtered = allEmployees.filter(emp => 
+      emp.fio.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !currentAttached.some(attached => attached.id === emp.id)
     );
+    setAvailableEmployees(filtered);
+  }, [searchQuery, currentAttached, allEmployees]);
+
+  const handleAttach = (employee: Employee) => {
+    setCurrentAttached(prev => [...prev, employee]);
+    setSearchQuery('');
+    searchInputRef.current?.focus();
+  };
+
+  const handleDetach = (employeeId: number) => {
+    setCurrentAttached(prev => prev.filter(emp => emp.id !== employeeId));
+  };
+
+  const handleSave = () => {
+    onClose(currentAttached);
+  };
+
+  return (
+    <div className="popup-overlay">
+      <div className="employee-management-popup">
+        <h2>Управление сотрудниками: {project.name}</h2>
+        
+        <div className="search-section">
+          <input
+            type="text"
+            ref={searchInputRef}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Поиск сотрудников..."
+            className="search-input"
+          />
+        </div>
+
+        <div className="employees-lists">
+          <div className="attached-section">
+            <h3>Прикрепленные сотрудники</h3>
+            {currentAttached.length === 0 ? (
+              <p className="empty-message">Нет прикрепленных сотрудников</p>
+            ) : (
+              <ul className="employees-list">
+                {currentAttached.map(emp => (
+                  <li key={`attached-${emp.id}`}>
+                    <span>{emp.fio}</span>
+                    <button 
+                      onClick={() => handleDetach(emp.id)}
+                      className="action-btn detach-btn"
+                    >
+                      −
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="available-section">
+            <h3>Доступные сотрудники</h3>
+            {availableEmployees.length === 0 ? (
+              <p className="empty-message">
+                {searchQuery ? 'Ничего не найдено' : 'Нет доступных сотрудников'}
+              </p>
+            ) : (
+              <ul className="employees-list">
+                {availableEmployees.map(emp => (
+                  <li key={`available-${emp.id}`}>
+                    <span>{emp.fio}</span>
+                    <button
+                      onClick={() => handleAttach(emp)}
+                      className="action-btn attach-btn"
+                    >
+                      +
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        <div className="popup-actions">
+          <button onClick={handleSave} className="save-btn">
+            Сохранить изменения
+          </button>
+          <button onClick={() => onClose(project.employees)} className="cancel-btn">
+            Закрыть
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default ProjectDetailsPopup;
+export default EmployeeManagementPopup;
