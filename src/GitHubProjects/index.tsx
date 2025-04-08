@@ -2,8 +2,9 @@ import React, {useState, useEffect, useRef, useMemo} from 'react';
 import { Octokit } from '@octokit/core';
 import ReactDOM from "react-dom";
 import {translations} from "./translations";
-import {Language} from "./types";
+import {Employee, Language, Project} from "./types";
 import {SearchProjectPopup} from "./components/SearchProjectPopup";
+import ProjectDetailsPopup from "./components/ProjectDetailsPopup";
 
 interface GitHubRepo {
   id: number;
@@ -40,7 +41,8 @@ const GitHubProjects: React.FC = () => {
   const [isProjectSearchOpen, setIsProjectSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-
+  // const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [employees, setEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -171,7 +173,44 @@ const GitHubProjects: React.FC = () => {
       return prev;
     });
   };
-  
+
+  // Загрузка сотрудников из JSON
+  useEffect(() => {
+    const jsonPath =
+        process.env.NODE_ENV === "production"
+            ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_fios.json"
+            : "/public/data/data_fios.json";
+    fetch(jsonPath)
+        .then(res => res.json())
+        .then(data => setEmployees(data.employees))
+        .catch(console.error);
+  }, []);
+
+  const handleAddEmployeeToProject = (employeeId: number) => {
+    if (!activeProject) return;
+
+    const employeeToAdd = employees.find(emp => emp.id === employeeId);
+    if (!employeeToAdd) return;
+
+    setActiveProject(prev => {
+      if (!prev) return null;
+
+      // Явно приводим тип к Employee
+      const newEmployee: Employee = {
+        id: employeeToAdd.id,
+        fio: employeeToAdd.fio
+      };
+
+      return {
+        ...prev,
+        employees: [
+          ...prev.employees,
+          newEmployee
+        ]
+      };
+    });
+  };
+
 
   return (
       <div className="worksheet">
@@ -237,19 +276,12 @@ const GitHubProjects: React.FC = () => {
         </div>
 
         {activeProject && (
-            <div className="popup-overlay" onClick={() => setActiveProject(null)}>
-              <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                <h2>{activeProject.name}</h2>
-                <p><strong>Описание:</strong> {activeProject.description}</p>
-                <p><strong>Сотрудники:</strong></p>
-                <ul>
-                  {activeProject.employees.map((emp, idx) => (
-                      <li key={idx}>{emp.fio}</li>
-                  ))}
-                </ul>
-                <button onClick={() => setActiveProject(null)}>Закрыть</button>
-              </div>
-            </div>
+            <ProjectDetailsPopup
+                project={activeProject}
+                onClose={() => setActiveProject(null)}
+                onAddEmployee={handleAddEmployeeToProject}
+                employeesList={employees}
+            />
         )}
 
         {document.querySelector(".footer") &&

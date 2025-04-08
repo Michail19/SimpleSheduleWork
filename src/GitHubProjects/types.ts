@@ -5,17 +5,19 @@ export interface Schedule {
 }
 
 export interface Employee {
-    id: string;
+    id: number;  // Важно: только number
     fio: string;
-    projects?: string; // Добавьте это поле (знак ? означает необязательное поле)
-    weekSchedule: {
-        [day: string]: Schedule;
-    };
 }
 
-export interface FiltersState {
-    projects: string[];
-    activeProjects: string[];
+export interface Project {
+    id: number;
+    name: string;
+    html_url: string;
+    description: string | null;
+    updated_at: string;
+    language: string | null;
+    stargazers_count: number;
+    employees: Employee[];  // Массив строго типизированных Employee
 }
 
 export type Language = "ru" | "en";
