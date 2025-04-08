@@ -49,7 +49,7 @@ const GitHubProjects: React.FC = () => {
       const octokit = new Octokit();
       const jsonPath =
           process.env.NODE_ENV === "production"
-              ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_example_projects.json"
+              ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_example_projects.json"
               : "/data/data_example_projects.json";
 
       try {
@@ -178,7 +178,7 @@ const GitHubProjects: React.FC = () => {
   useEffect(() => {
     const jsonPath =
         process.env.NODE_ENV === "production"
-            ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_fios.json"
+            ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_fios.json"
             : "/public/data/data_fios.json";
     fetch(jsonPath)
         .then(res => res.json())
