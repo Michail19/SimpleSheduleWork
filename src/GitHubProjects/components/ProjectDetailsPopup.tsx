@@ -20,7 +20,7 @@ const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
 
           <div className="employees-section">
             <div className="employees-header">
-              <strong>Сотрудники:</strong>
+              <strong className="employees-header-text">Сотрудники:</strong>
               <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -35,10 +35,10 @@ const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
             <ul className="employees-list">
               {project.employees?.length ? (
                   project.employees.map((emp) => (
-                      <li key={emp.id}>{emp.fio}</li>
+                      <li className="employees-element" key={emp.id}>{emp.fio}</li>
                   ))
               ) : (
-                  <li>Нет назначенных сотрудников</li>
+                  <li className="employees-element">Нет назначенных сотрудников</li>
               )}
             </ul>
           </div>
