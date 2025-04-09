@@ -9,6 +9,7 @@
     flex: 1;
     background: none;
     transition: opacity 0.25s ease-out;
+    min-height: 50vh;
 }
 
 @media screen and (max-width: 869px) {
