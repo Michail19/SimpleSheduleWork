@@ -42,6 +42,7 @@ const GitHubProjects: React.FC = () => {
   const [isEmployeePopupOpen, setIsEmployeePopupOpen] = useState(false);
   const [currentProjectForEdit, setCurrentProjectForEdit] = useState<MergedProject | null>(null);
   const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
+  const [updateKey, setUpdateKey] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,6 +91,19 @@ const GitHubProjects: React.FC = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const handleLanguageChange = (event: Event) => {
+      const newLang = (event as CustomEvent<string>).detail as Language; // Приведение типа
+      if (newLang) {
+        setLanguage(newLang);
+        setUpdateKey((prev) => prev + 1);
+      }
+    };
+
+    window.addEventListener("languageUpdateEvent", handleLanguageChange);
+    return () => window.removeEventListener("languageUpdateEvent", handleLanguageChange);
+  }, []);
+
   // Рассчитываем количество строк, которые умещаются в контейнер
   useEffect(() => {
     if (loading || repos.length === 0) return; // Не рассчитываем при загрузке или пустых данных
@@ -101,7 +115,7 @@ const GitHubProjects: React.FC = () => {
       const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
       const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
       const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-      const otherElementsHeight = 110; // Если есть отступы, доп. элементы
+      const otherElementsHeight = 140; // Если есть отступы, доп. элементы
 
       const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
       const rowHeight = document.querySelector(".repo-card")?.clientHeight || 20;
@@ -131,13 +145,17 @@ const GitHubProjects: React.FC = () => {
   }, [repos, searchQuery, currentPage, rowsPerPage]);
 
   // Закрытие попапа при клике вне
+  const popupRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
       if (
-          !target.closest('.popup-content') &&
-          !target.closest('.sidebar__btn') &&
-          !target.closest('.header__up-blocks__headbar__btn')
+          popupRef.current &&
+          !popupRef.current.contains(e.target as Node) &&
+          !e.composedPath().some((el) =>
+              (el as HTMLElement).classList?.contains('sidebar__btn') ||
+              (el as HTMLElement).classList?.contains('header__up-blocks__headbar__btn')
+          )
       ) {
         setIsProjectSearchOpen(false);
       }
@@ -219,16 +237,35 @@ const GitHubProjects: React.FC = () => {
     setIsEmployeePopupOpen(false);
   };
 
-
   // Открытие попапа
   const openEmployeePopup = (project: MergedProject | null) => {
     setCurrentProjectForEdit(project);
     setIsEmployeePopupOpen(true);
   };
 
+  const [isHeader, setIsHeader] = useState(false);
+  const mobileBreakpoint = 1490;
+
+  useEffect(() => {
+    const checkWidth = () => {
+      setIsHeader(window.innerWidth <= mobileBreakpoint);
+    };
+
+    checkWidth(); // установить при монтировании
+    window.addEventListener('resize', checkWidth);
+
+    return () => window.removeEventListener('resize', checkWidth);
+  }, []);
+
+  const container = isHeader
+      ? document.querySelector('.header__up-blocks__headbar')
+      : document.querySelector('.sidebar');
+
+  if (!container) return null;
+  
 
   return (
-      <div className="worksheet">
+      <div className="content" key={updateKey}>
         {document.querySelector('.sidebar') &&
             ReactDOM.createPortal(
                 <button
@@ -251,61 +288,66 @@ const GitHubProjects: React.FC = () => {
                 document.querySelector('.header__up-blocks__headbar') as Element
             )}
         {isProjectSearchOpen && (
-            <SearchProjectPopup
-                currentTranslation={currentTranslation}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                setIsOpen={setIsProjectSearchOpen}
-            />
+            ReactDOM.createPortal(
+                <SearchProjectPopup
+                    currentTranslation={currentTranslation}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    setIsOpen={setIsProjectSearchOpen}
+                    popupRef={popupRef}
+                />,
+                container
+            )
         )}
 
-        {loading && <div className="loader">Загрузка...</div>}
+        <div className="worksheet">
+          {loading && <div className="loader">Загрузка...</div>}
 
-        {error && <div className="error-message">Ошибка: {error}</div>}
+          {error && <div className="error-message">Ошибка: {error}</div>}
 
-        <div ref={containerRef} className="repos__grid">
-          {displayedRepos.map((repo) => (
-              <div
-                  key={repo.id}
-                  className="repo-card"
-                  onClick={() => setActiveProject(repo)}
-                  style={{ cursor: 'pointer' }}
-              >
-                <a
-                    href={repo.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="repo-link"
-                    onClick={(e) => e.stopPropagation()}
+          <div ref={containerRef} className="repos__grid">
+            {displayedRepos.map((repo) => (
+                <div
+                    key={repo.id}
+                    className="repo-card"
+                    onClick={() => setActiveProject(repo)}
+                    style={{ cursor: 'pointer' }}
                 >
-                  <h3 className="repo-name">{repo.name}</h3>
-                </a>
-                {repo.description && <p>{repo.description}</p>}
-                <div className="repo-meta">
-                  {repo.language && <span className="repo-text">{repo.language}</span>}
-                  <span className="repo-text">⭐ {repo.stargazers_count}</span>
-                  <span className="repo-text">Обновлено: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                  <a
+                      href={repo.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="repo-link"
+                      onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 className="repo-name">{repo.name}</h3>
+                  </a>
+                  {repo.description && <p>{repo.description}</p>}
+                  <div className="repo-meta">
+                    {repo.language && <span className="repo-text">{repo.language}</span>}
+                    <span className="repo-text">⭐ {repo.stargazers_count}</span>
+                    <span className="repo-text">Обновлено: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                  </div>
                 </div>
-              </div>
-          ))}
+            ))}
+          </div>
+
+          {activeProject && (
+              <ProjectDetailsPopup
+                  project={activeProject}
+                  onClose={() => setActiveProject(null)}
+                  onEditEmployees={() => openEmployeePopup(activeProject)}
+              />
+          )}
+
+          {isEmployeePopupOpen && currentProjectForEdit && (
+              <EmployeeManagementPopup
+                  project={currentProjectForEdit}
+                  allEmployees={allEmployees}
+                  onClose={handleSaveEmployees}
+              />
+          )}
         </div>
-
-        {activeProject && (
-            <ProjectDetailsPopup
-                project={activeProject}
-                onClose={() => setActiveProject(null)}
-                onEditEmployees={() => openEmployeePopup(activeProject)}
-            />
-        )}
-
-        {isEmployeePopupOpen && currentProjectForEdit && (
-            <EmployeeManagementPopup
-                project={currentProjectForEdit}
-                allEmployees={allEmployees}
-                onClose={handleSaveEmployees}
-            />
-        )}
-
         {document.querySelector(".footer") &&
             ReactDOM.createPortal(
                 <>

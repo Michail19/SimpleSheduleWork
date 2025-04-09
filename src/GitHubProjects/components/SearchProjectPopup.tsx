@@ -7,41 +7,28 @@ interface SearchProjectPopupProps {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     setIsOpen: (open: boolean) => void;
+    popupRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const SearchProjectPopup: React.FC<SearchProjectPopupProps> = ({
                                                                           currentTranslation,
                                                                           searchQuery,
                                                                           setSearchQuery,
-                                                                          setIsOpen
+                                                                          setIsOpen,
+                                                                          popupRef
                                                                       }) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        inputRef.current?.focus();
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                setIsOpen(false);
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [setIsOpen]);
-
     return (
-        <div className="popup-overlay" onClick={() => setIsOpen(false)}>
-            <div
-                className="popup-content popup-search"
-                onClick={(e) => e.stopPropagation()}
-            >
+        <div className="popup-search" ref={popupRef}>
+            <h3>Поиск</h3>
+            <div className="search-container">
                 <input
                     ref={inputRef}
                     type="text"
                     placeholder={currentTranslation.searchByName}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    className="search-container"
                 />
             </div>
         </div>

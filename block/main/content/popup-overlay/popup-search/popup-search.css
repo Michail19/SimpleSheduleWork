@@ -1,0 +1,35 @@
+.popup-search {
+    position: absolute;
+    border-radius: 8px;
+    z-index: 1000;
+    padding: 10px;
+
+    background: #F5F7FA;
+    color: #353535;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dark-theme .popup-search {
+    background: #2a2a2a;
+    color: #EAEAEA;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.25);
+}
+
+@media screen and (min-width: 1490px) {
+    .popup-search {
+        left: 100%;
+        top: 0;
+        margin-top: 16.5vh;
+        margin-left: -15.5vw;
+        min-width: 15vw;
+    }
+}
+
+@media screen and (max-width: 1489px) and (min-width: 1090px) {
+    .popup-search {
+        top: 100%;
+        right: 0;
+        margin-right: 5vw;
+        min-width: 250px;
+    }
+}

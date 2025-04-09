@@ -43,9 +43,7 @@ const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
             </ul>
           </div>
 
-          <button onClick={onClose} className="close-btn">
-            Закрыть
-          </button>
+          <button onClick={onClose} className="close-btn">×</button>
         </div>
       </div>
   );
