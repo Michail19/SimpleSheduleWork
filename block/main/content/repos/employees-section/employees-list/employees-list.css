@@ -1,1 +1,11 @@
-@import url("./employees-element/employees-element.css");
+/*@import url("./employees-element/employees-element.css");*/
+
+.employees-list {
+    list-style-type: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+}
