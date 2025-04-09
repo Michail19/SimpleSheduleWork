@@ -41,6 +41,7 @@ export const SearchProjectPopup: React.FC<SearchProjectPopupProps> = ({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.stopPropagation()}
+                    className="search-container"
                 />
             </div>
         </div>
