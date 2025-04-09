@@ -263,7 +263,7 @@ const GitHubProjects: React.FC = () => {
 
         {error && <div className="error-message">Ошибка: {error}</div>}
 
-        <div ref={containerRef} className="repos-grid">
+        <div ref={containerRef} className="repos__grid">
           {displayedRepos.map((repo) => (
               <div
                   key={repo.id}
@@ -278,13 +278,13 @@ const GitHubProjects: React.FC = () => {
                     className="repo-link"
                     onClick={(e) => e.stopPropagation()}
                 >
-                  <h3>{repo.name}</h3>
+                  <h3 className="repo-name">{repo.name}</h3>
                 </a>
                 {repo.description && <p>{repo.description}</p>}
                 <div className="repo-meta">
-                  {repo.language && <span>{repo.language}</span>}
-                  <span>⭐ {repo.stargazers_count}</span>
-                  <span>Обновлено: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                  {repo.language && <span className="repo-text">{repo.language}</span>}
+                  <span className="repo-text">⭐ {repo.stargazers_count}</span>
+                  <span className="repo-text">Обновлено: {new Date(repo.updated_at).toLocaleDateString()}</span>
                 </div>
               </div>
           ))}
