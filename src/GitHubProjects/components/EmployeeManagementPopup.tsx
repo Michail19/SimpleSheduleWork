@@ -53,7 +53,7 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
     return (
         <div className="popup-overlay">
             <div className="employee-management-popup">
-                <h2 className="popup-header>Управление сотрудниками: {project.name}</h2>
+                <h2 className="popup-header">Управление сотрудниками: {project.name}</h2>
 
                 <div className="search-section">
                     <input
@@ -62,7 +62,6 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Поиск сотрудников..."
-                        className="search-input"
                     />
                 </div>
 
@@ -113,11 +112,11 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
                 </div>
 
                 <div className="popup-actions">
-                    <button onClick={handleSave} className="save-btn popup-actions-btn">
-                        Сохранить изменения
-                    </button>
                     <button onClick={() => onClose(project.employees)} className="cancel-btn popup-actions-btn">
                         Закрыть
+                    </button>
+                    <button onClick={handleSave} className="save-btn popup-actions-btn">
+                        Сохранить изменения
                     </button>
                 </div>
             </div>
