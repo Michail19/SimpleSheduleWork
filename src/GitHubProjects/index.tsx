@@ -262,7 +262,7 @@ const GitHubProjects: React.FC = () => {
       : document.querySelector('.sidebar');
 
   if (!container) return null;
-  
+
 
   return (
       <div className="content" key={updateKey}>
