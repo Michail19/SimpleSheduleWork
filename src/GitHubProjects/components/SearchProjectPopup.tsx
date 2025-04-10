@@ -21,7 +21,6 @@ export const SearchProjectPopup: React.FC<SearchProjectPopupProps> = ({
 
     return (
         <div className="popup-search" ref={popupRef}>
-            <h3>Поиск</h3>
             <div className="search-container">
                 <input
                     ref={inputRef}

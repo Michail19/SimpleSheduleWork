@@ -107,22 +107,39 @@ const GitHubProjects: React.FC = () => {
   // Рассчитываем количество строк, которые умещаются в контейнер
   useEffect(() => {
     if (loading || repos.length === 0) return; // Не рассчитываем при загрузке или пустых данных
+    
+    const getCardsPerRow = () => {
+      if (!containerRef.current) return 1;
+
+      const containerWidth = containerRef.current.clientWidth;
+      const card = containerRef.current.querySelector(".repo-card");
+
+      if (!card) return 1;
+
+      const cardWidth = card.clientWidth;
+      const gap = 24; // например, если gap: 1.5rem
+
+      return Math.max(1, Math.floor(containerWidth / (cardWidth + gap)));
+    };
 
     const calculateRowsPerPage = () => {
       if (!containerRef.current) return;
 
-      const viewportHeight = window.innerHeight; // Высота всего окна браузера
-      const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
+      const viewportHeight = window.innerHeight;
+      const headerHeight = document.querySelector(".header")?.clientHeight || 0;
       const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
       const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-      const otherElementsHeight = 140; // Если есть отступы, доп. элементы
+      const otherElementsHeight = 140;
 
       const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
-      const rowHeight = document.querySelector(".repo-card")?.clientHeight || 20;
+      const rowHeight = containerRef.current.querySelector(".repo-card")?.clientHeight || 20;
 
-      const newRowsPerPage = Math.floor(availableHeight / rowHeight) || 10;
+      const rows = Math.floor(availableHeight / rowHeight) || 1;
+      const cardsPerRow = getCardsPerRow();
 
-      setRowsPerPage(newRowsPerPage);
+      const totalCards = rows * cardsPerRow;
+
+      setRowsPerPage(totalCards);
     };
 
     window.addEventListener("resize", calculateRowsPerPage);
@@ -257,47 +274,36 @@ const GitHubProjects: React.FC = () => {
     return () => window.removeEventListener('resize', checkWidth);
   }, []);
 
-  const container = isHeader
-      ? document.querySelector('.header__up-blocks__headbar')
-      : document.querySelector('.sidebar');
+const sidebar = document.querySelector('.sidebar');
+const headbar = document.querySelector('.header__up-blocks__headbar');
 
+const container = window.innerWidth < 1490 ? headbar : sidebar; // например, выбор контейнера по ширине
+const buttonClassName = window.innerWidth < 1490
+  ? 'header__up-blocks__headbar__btn'
+  : 'sidebar__btn';
   if (!container) return null;
 
 
   return (
       <div className="content" key={updateKey}>
-        {document.querySelector('.sidebar') &&
-            ReactDOM.createPortal(
-                <button
-                    className="sidebar__btn"
-                    onClick={() => setIsProjectSearchOpen(true)}
-                >
-                  {currentTranslation.searchProject}
-                </button>,
-                document.querySelector('.sidebar') as Element
-            )}
-
-        {document.querySelector('.header__up-blocks__headbar') &&
-            ReactDOM.createPortal(
-                <button
-                    className="header__up-blocks__headbar__btn"
-                    onClick={() => setIsProjectSearchOpen(true)}
-                >
-                  {currentTranslation.searchProject}
-                </button>,
-                document.querySelector('.header__up-blocks__headbar') as Element
-            )}
-        {isProjectSearchOpen && (
-            ReactDOM.createPortal(
+        {ReactDOM.createPortal(
+            isProjectSearchOpen ? (
                 <SearchProjectPopup
                     currentTranslation={currentTranslation}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     setIsOpen={setIsProjectSearchOpen}
                     popupRef={popupRef}
-                />,
-                container
-            )
+                />
+            ) : (
+                <button
+                    className={buttonClassName}
+                    onClick={() => setIsProjectSearchOpen(true)}
+                >
+                    {currentTranslation.searchProject}
+                </button>
+            ),
+            container
         )}
 
         <div className="worksheet">
