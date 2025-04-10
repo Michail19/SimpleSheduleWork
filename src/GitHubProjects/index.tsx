@@ -129,7 +129,7 @@ const GitHubProjects: React.FC = () => {
       const headerHeight = document.querySelector(".header")?.clientHeight || 0;
       const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
       const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-      const otherElementsHeight = 140;
+      const otherElementsHeight = 150;
 
       const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
       const rowHeight = containerRef.current.querySelector(".repo-card")?.clientHeight || 20;
@@ -282,6 +282,17 @@ const buttonClassName = window.innerWidth < 1490
   ? 'header__up-blocks__headbar__btn'
   : 'sidebar__btn';
   if (!container) return null;
+  
+  const [btnSize, setBtnSize] = useState({ width: 0, height: 0 });
+    const btnRef = useRef<HTMLButtonElement | null>(null);
+
+    // Получаем размер кнопки при монтировании
+    useEffect(() => {
+      if (btnRef.current) {
+        const { width, height } = btnRef.current.getBoundingClientRect();
+        setBtnSize({ width, height });
+      }
+    }, [isProjectSearchOpen === false]); // пересчитываем, когда кнопка показывается
 
 
   return (
@@ -289,6 +300,8 @@ const buttonClassName = window.innerWidth < 1490
         {ReactDOM.createPortal(
             isProjectSearchOpen ? (
                 <SearchProjectPopup
+                    width={btnSize.width}
+                    height={btnSize.height}
                     currentTranslation={currentTranslation}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
@@ -297,6 +310,7 @@ const buttonClassName = window.innerWidth < 1490
                 />
             ) : (
                 <button
+                    ref={btnRef}
                     className={buttonClassName}
                     onClick={() => setIsProjectSearchOpen(true)}
                 >

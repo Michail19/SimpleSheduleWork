@@ -3,6 +3,8 @@ import { Language } from '../types';
 import { translations } from '../translations';
 
 interface SearchProjectPopupProps {
+    width: number, 
+    height: number,
     currentTranslation: typeof translations[Language];
     searchQuery: string;
     setSearchQuery: (query: string) => void;
@@ -11,6 +13,8 @@ interface SearchProjectPopupProps {
 }
 
 export const SearchProjectPopup: React.FC<SearchProjectPopupProps> = ({
+                                                                            width, 
+                                                                            height,
                                                                           currentTranslation,
                                                                           searchQuery,
                                                                           setSearchQuery,
@@ -20,7 +24,14 @@ export const SearchProjectPopup: React.FC<SearchProjectPopupProps> = ({
     const inputRef = useRef<HTMLInputElement>(null);
 
     return (
-        <div className="popup-search" ref={popupRef}>
+        <div 
+            className="popup-search" 
+            ref={popupRef} 
+            style={{
+            width: `${width}px`,
+            height: `${height}px`, // можно использовать, а можно нет
+      }}
+        >
             <div className="search-container">
                 <input
                     ref={inputRef}
