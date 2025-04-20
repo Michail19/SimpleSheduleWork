@@ -47,42 +47,89 @@ const GitHubProjects: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const octokit = new Octokit();
-      const jsonPath =
+      const token = localStorage.getItem('authToken'); // 🔐 Получаем токен
+
+      const jsonFallbackPath =
           process.env.NODE_ENV === "production"
               ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_example_projects.json"
               : "/data/data_example_projects.json";
 
       try {
-        const [repoResponse, employeesResponse] = await Promise.all([
+        // 1. Пробуем получить данные с сервера с авторизацией
+        const [repoResponse, serverResponse] = await Promise.all([
           octokit.request('GET /users/{username}/repos', {
             username: 'Michail19',
             sort: 'updated',
             per_page: 100,
           }),
-          fetch(jsonPath),
+          fetch('https://ssw-backend.onrender.com/schedule/weekly', {
+            headers: {
+              Authorization: token ? `Bearer ${token}` : '', // 🔐 токен добавляется
+            },
+          }),
         ]);
 
+        if (!serverResponse.ok) throw new Error('Server responded with error');
+
         const gitRepos = repoResponse.data as GitHubRepo[];
-        const employeeData = await employeesResponse.json();
+        const employeeData = await serverResponse.json();
         const projects = employeeData?.projects ?? {};
 
         const filteredRepos = gitRepos.filter(
             (repo) =>
-                repo.name.toLowerCase() !== username.toLowerCase() &&
+                repo.name.toLowerCase() !== 'michail19' &&
                 repo.name.toLowerCase() !== 'readme'
         );
 
         const merged = filteredRepos.map((repo) => {
-          const matchedEmployees = projects[repo.name] || []; // название из GitHub должно совпадать
+          const matchedEmployees = projects[repo.name] || [];
           return {
             ...repo,
             employees: matchedEmployees,
           };
         });
 
-        setRepos(merged); // теперь в repos хранятся не просто репы, а репы + сотрудники
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        setRepos(merged);
+      } catch (error) {
+        console.warn('Ошибка при получении с сервера, fallback на JSON-файл', error);
+
+        try {
+          // 2. Если сервер не доступен — fallback на JSON
+          const [repoResponse, fallbackResponse] = await Promise.all([
+            octokit.request('GET /users/{username}/repos', {
+              username: 'Michail19',
+              sort: 'updated',
+              per_page: 100,
+            }),
+            fetch(jsonFallbackPath),
+          ]);
+
+          const gitRepos = repoResponse.data as GitHubRepo[];
+          const employeeData = await fallbackResponse.json();
+          const projects = employeeData?.projects ?? {};
+
+          const filteredRepos = gitRepos.filter(
+              (repo) =>
+                  repo.name.toLowerCase() !== 'michail19' &&
+                  repo.name.toLowerCase() !== 'readme'
+          );
+
+          const merged = filteredRepos.map((repo) => {
+            const matchedEmployees = projects[repo.name] || [];
+            return {
+              ...repo,
+              employees: matchedEmployees,
+            };
+          });
+
+          setRepos(merged);
+        } catch (fallbackErr) {
+          setError(
+              fallbackErr instanceof Error
+                  ? fallbackErr.message
+                  : 'Unknown error during fallback'
+          );
+        }
       } finally {
         setLoading(false);
       }
