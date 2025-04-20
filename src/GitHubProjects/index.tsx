@@ -49,11 +49,6 @@ const GitHubProjects: React.FC = () => {
       const octokit = new Octokit();
       const token = localStorage.getItem('authToken'); // 🔐 Получаем токен
 
-      const jsonFallbackPath =
-          process.env.NODE_ENV === "production"
-              ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_example_projects.json"
-              : "/data/data_example_projects.json";
-
       try {
         // 1. Пробуем получить данные с сервера с авторизацией
         const [repoResponse, serverResponse] = await Promise.all([
@@ -62,7 +57,7 @@ const GitHubProjects: React.FC = () => {
             sort: 'updated',
             per_page: 100,
           }),
-          fetch('https://ssw-backend.onrender.com/schedule/weekly', {
+          fetch('https://ssw-backend.onrender.com/projects/all', {
             headers: {
               Authorization: token ? `Bearer ${token}` : '', // 🔐 токен добавляется
             },
@@ -92,6 +87,11 @@ const GitHubProjects: React.FC = () => {
         setRepos(merged);
       } catch (error) {
         console.warn('Ошибка при получении с сервера, fallback на JSON-файл', error);
+
+        const jsonFallbackPath =
+            process.env.NODE_ENV === "production"
+                ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_example_projects.json"
+                : "/data/data_example_projects.json";
 
         try {
           // 2. Если сервер не доступен — fallback на JSON

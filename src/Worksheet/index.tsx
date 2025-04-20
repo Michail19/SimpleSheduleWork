@@ -81,16 +81,24 @@ const Worksheet: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const jsonPath = process.env.NODE_ENV === "production"
-            ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_example.json"
-            : "/data/data_example.json";
+        const fetchData = async () => {
+            const token = localStorage.getItem("token"); // предполагается, что ты сохраняешь токен после логина
 
-        fetch(jsonPath)
-            .then((response) => response.json())
-            .then((data) => {
-                // Извлекаем все уникальные проекты
-                const allProjects = data.employees.flatMap((employee: { projects: string; }) =>
-                    employee.projects?.split(' ') || []
+            try {
+                const response = await fetch("https://ssw-backend.onrender.com/schedule/weekly", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Ошибка при загрузке с сервера");
+                }
+
+                const data = await response.json();
+
+                const allProjects = data.employees.flatMap((employee: { projects: string }) =>
+                    employee.projects?.split(" ") || []
                 ).filter(Boolean);
 
                 const uniqueProjects = [...new Set(allProjects)];
@@ -104,9 +112,41 @@ const Worksheet: React.FC = () => {
                 setEmployees(data.employees);
                 const translatedWeek = translateMonth(data.currentWeek, currentTranslation);
                 setCurrentWeek(translatedWeek);
-            })
-            .catch((error) => console.error("Ошибка при загрузке данных:", error));
+            } catch (error) {
+                console.warn("Сервер недоступен, используем JSON-файл", error);
+
+                const jsonPath = process.env.NODE_ENV === "production"
+                    ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_example.json"
+                    : "/data/data_example.json";
+
+                try {
+                    const fallbackResponse = await fetch(jsonPath);
+                    const data = await fallbackResponse.json();
+
+                    const allProjects = data.employees.flatMap((employee: { projects: string }) =>
+                        employee.projects?.split(" ") || []
+                    ).filter(Boolean);
+
+                    const uniqueProjects = [...new Set(allProjects)];
+
+                    // @ts-ignore
+                    setFilters(prev => ({
+                        ...prev,
+                        projects: uniqueProjects
+                    }));
+
+                    setEmployees(data.employees);
+                    const translatedWeek = translateMonth(data.currentWeek, currentTranslation);
+                    setCurrentWeek(translatedWeek);
+                } catch (fallbackErr) {
+                    console.error("Ошибка при загрузке fallback JSON:", fallbackErr);
+                }
+            }
+        };
+
+        fetchData();
     }, [language]);
+
 
     // Рассчитываем количество строк, которые умещаются в контейнер
     useEffect(() => {
