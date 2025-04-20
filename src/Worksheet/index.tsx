@@ -82,9 +82,10 @@ const Worksheet: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const token = localStorage.getItem("token"); // предполагается, что ты сохраняешь токен после логина
+            const token = localStorage.getItem("authToken"); // предполагается, что ты сохраняешь токен после логина
 
             try {
+                // console.log(token);
                 const response = await fetch("https://ssw-backend.onrender.com/schedule/weekly", {
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -618,6 +619,18 @@ const Worksheet: React.FC = () => {
                     document.querySelector(".subtitle__date") as Element
                 )}
 
+            {document.querySelector('.header__up-blocks__wrapper__list') &&
+                ReactDOM.createPortal(
+                    <button
+                        className="header__up-blocks__wrapper__list__btn"
+                        onClick={() => localStorage.removeItem("authToken")}
+                    >
+                        Выход
+                    </button>,
+                    document.querySelector('.header__up-blocks__wrapper__list') as Element
+                )
+            }
+
             {/* Остальной JSX */}
             {isMobile ? (
                 <>
@@ -656,6 +669,7 @@ const Worksheet: React.FC = () => {
                                 <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
                                 {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
                                     const schedule = employee.weekSchedule[day];
+                                    console.log(schedule);
                                     return (
                                         <div key={dayIndex} className="worksheet__cell">
                                             {editingCell?.row === index && editingCell?.day === day ? (
@@ -707,7 +721,7 @@ const Worksheet: React.FC = () => {
                                                 </>
                                             ) : (
                                                 <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
-                                                    {`${schedule.start} - ${schedule.end}`}
+                                                    {`${schedule?.start} - ${schedule?.end}`}
                                                 </div>
                                             )}
                                         </div>

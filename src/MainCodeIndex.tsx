@@ -4,6 +4,7 @@ import LoginPopup from "./LoginPopup";
 const MainCodeIndex: React.FC = () => {
     const [showLogin, setShowLogin] = useState(false);
     const [authToken, setAuthToken] = useState<string | null>(localStorage.getItem('authToken'));
+    console.log(authToken);
 
     return (
         <>

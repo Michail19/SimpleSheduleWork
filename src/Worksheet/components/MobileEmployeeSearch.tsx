@@ -88,7 +88,7 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                                                 className="time-display"
                                                 onClick={() => onSetEditingCell({ row: currentEmployeeIndex, day, dayIndex })}
                                             >
-                                                {`${schedule.start} - ${schedule.end}`}
+                                                {`${schedule?.start} - ${schedule?.end}`}
                                             </div>
                                         )}
                                     </div>
