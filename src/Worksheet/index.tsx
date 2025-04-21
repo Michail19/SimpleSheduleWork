@@ -158,7 +158,7 @@ const Worksheet: React.FC = () => {
             const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
             const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-            const otherElementsHeight = 140; // Если есть отступы, доп. элементы
+            const otherElementsHeight = 160; // Если есть отступы, доп. элементы
 
             const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
             const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
@@ -173,7 +173,7 @@ const Worksheet: React.FC = () => {
         return () => window.removeEventListener("resize", calculateRowsPerPage);
     }, [employees]);
 
-    const changeWeek = (direction: "next" | "previous") => {
+    const changeWeek = async (direction: "next" | "previous") => {
         const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
         if (!parsedWeek) return;
 
@@ -189,7 +189,66 @@ const Worksheet: React.FC = () => {
             newEnd.setDate(newEnd.getDate() - 7);
         }
 
-        setCurrentWeek(formatWeekRange(newStart, newEnd, currentTranslation));
+        // Форматируем дату вручную для гарантии правильного формата
+        const formatDate = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() - 3).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const formattedDate = formatDate(newStart);
+        const newWeekRange = formatWeekRange(newStart, newEnd, currentTranslation);
+
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                throw new Error("Токен авторизации не найден");
+            }
+
+            const url = `https://ssw-backend.onrender.com/schedule/weekly?date=${formattedDate}`;
+            console.log("Отправка запроса на:", url); // Логируем URL для отладки
+
+            const response = await fetch(url, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Cache-Control": "no-cache" // Отключаем кеширование
+                },
+            });
+
+            console.log("Статус ответа:", response.status); // Логируем статус ответа
+
+            if (!response.ok) {
+                throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log("Полученные данные:", data); // Логируем полученные данные
+
+            if (!data?.employees) {
+                throw new Error("Получены пустые данные от сервера");
+            }
+
+            const allProjects: string[] = data.employees.flatMap(
+                (employee: { projects: string }) => employee.projects?.split(" ") || []
+            ).filter(Boolean);
+
+            const uniqueProjects: string[] = [...new Set(allProjects)];
+
+            setFilters(prev => ({
+                ...prev,
+                projects: uniqueProjects,
+                activeProjects: prev.activeProjects
+            }));
+
+            setEmployees(data.employees);
+            setCurrentWeek(newWeekRange);
+
+        } catch (error) {
+            console.error("Ошибка при загрузке данных:", error);
+            // Можно добавить уведомление пользователю об ошибке
+            setCurrentWeek(newWeekRange);
+        }
     };
 
     const toggleProjectFilter = (project: string) => {
