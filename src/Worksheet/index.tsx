@@ -466,6 +466,11 @@ const Worksheet: React.FC = () => {
         });
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("authToken");
+        window.location.href = '/index.html';
+    };
+
 
     return (
         <div className="content" key={updateKey}>
@@ -623,7 +628,7 @@ const Worksheet: React.FC = () => {
                 ReactDOM.createPortal(
                     <button
                         className="header__up-blocks__wrapper__list__btn"
-                        onClick={() => localStorage.removeItem("authToken")}
+                        onClick={() => handleLogout()}
                     >
                         Выход
                     </button>,
