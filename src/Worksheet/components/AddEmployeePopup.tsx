@@ -96,10 +96,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
             if (!response.ok) {
                 throw new Error("Ошибка при добавлении сотрудника");
             }
-
-            const result = await response.json();
-            console.log("Сотрудник добавлен:", result);
-            // при необходимости обнови список сотрудников
+            
             onClose();
         } catch (error) {
             console.error(error);
