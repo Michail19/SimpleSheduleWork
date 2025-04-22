@@ -154,24 +154,37 @@ const Worksheet: React.FC = () => {
         const calculateRowsPerPage = () => {
             if (!containerRef.current) return;
 
+            const rowElements = containerRef.current.querySelectorAll(".worksheet__row");
+            let maxHeight = 0;
+
+            rowElements.forEach(row => {
+                const height = (row as HTMLElement).offsetHeight;
+                if (height > maxHeight) {
+                    maxHeight = height;
+                }
+            });
+
+            // Если нет строк, fallback
+            const finalRowHeight = maxHeight || 40;
+
+            // const containerTop = containerRef.current.getBoundingClientRect().top;
             const viewportHeight = window.innerHeight; // Высота всего окна браузера
             const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
             const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-            const otherElementsHeight = 160; // Если есть отступы, доп. элементы
-
+            const otherElementsHeight = 48; // Если есть отступы, доп. элементы
             const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
-            const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
 
-            const newRowsPerPage = Math.floor(availableHeight / rowHeight) || 10;
+            const newRowsPerPage = Math.floor(availableHeight / finalRowHeight) || 1;
 
-            setRowsPerPage(newRowsPerPage);
+            setRowsPerPage(newRowsPerPage - 1);
         };
 
         window.addEventListener("resize", calculateRowsPerPage);
         calculateRowsPerPage();
         return () => window.removeEventListener("resize", calculateRowsPerPage);
-    }, [employees]);
+    }, [employees]); // или employees, если до фильтрации
+
 
     const changeWeek = async (direction: "next" | "previous") => {
         const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
@@ -684,6 +697,7 @@ const Worksheet: React.FC = () => {
                 )}
 
             {document.querySelector('.header__up-blocks__wrapper__list') &&
+                (localStorage.getItem("authToken") != null) &&
                 ReactDOM.createPortal(
                     <button
                         className="header__up-blocks__wrapper__list__btn"
@@ -711,90 +725,100 @@ const Worksheet: React.FC = () => {
             ) : (
                 <>
                     <div ref={containerRef} className="worksheet">
-                        <div className="worksheet__row__header">
-                            <div className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
-                            <div className="worksheet__row__header__cell_clock">
-                                <div className="cell_clock_img"></div>
-                            </div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.monday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.tuesday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.wednesday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.thursday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.friday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.saturday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.sunday}</div>
-                        </div>
-                        {displayedEmployees.map((employee, index) => (
-                            <div
-                                key={index}
-                                className={`worksheet__row ${employee === employees[0] ? "current" : ""}`}
-                            >
-                                <div className="worksheet__cell_name">{employee.fio}</div>
-                                <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
-                                {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
-                                    const schedule = employee.weekSchedule[day];
-                                    console.log(schedule);
-                                    return (
-                                        <div key={dayIndex} className="worksheet__cell">
-                                            {editingCell?.row === index && editingCell?.day === day ? (
-                                                <>
-                                                    <input
-                                                        type="time"
-                                                        value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
-                                                        onChange={(e) => handleEdit(index, dayIndex, day, "start", e.target.value)}
-                                                        onBlur={(e) => handleBlur(index, dayIndex, day, "start", e)}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Escape") {
-                                                                setEditingCell(null); // Отмена редактирования
-                                                            }
-                                                            if (e.key === "Enter") {
-                                                                handleBlur(index, dayIndex, day, "start", null);
-                                                            }
-                                                        }}
-                                                    />
-                                                    -
-                                                    <input
-                                                        type="time"
-                                                        value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
-                                                        onChange={(e) => handleEdit(index, dayIndex, day, "end", e.target.value)}
-                                                        onBlur={(e) => handleBlur(index, dayIndex, day, "end", e)}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Escape") {
-                                                                setEditingCell(null); // Отмена редактирования
-                                                            }
-                                                            if (e.key === "Enter") {
-                                                                handleBlur(index, dayIndex, day, "end", null);
-                                                            }
-                                                        }}
-                                                    />
-                                                    <button
-                                                        className="clear-time-btn"
-                                                        onClick={() => handleClearTime(index, dayIndex, day)}
-                                                        title="Очистить время"
-                                                        style={{
-                                                            marginLeft: "0.5em",
-                                                            cursor: "pointer",
-                                                            background: "none",
-                                                            border: "none",
-                                                            fontSize: "1em",
-                                                            color: "#888"
-                                                        }}
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
-                                                    {`${schedule?.start} - ${schedule?.end}`}
+                        {filteredEmployees.length > 0 ? (
+                            <>
+                                <div className="worksheet__row__header">
+                                    <div className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
+                                    <div className="worksheet__row__header__cell_clock">
+                                        <div className="cell_clock_img"></div>
+                                    </div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.monday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.tuesday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.wednesday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.thursday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.friday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.saturday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.sunday}</div>
+                                </div>
+                                {displayedEmployees.map((employee, index) => (
+                                    <div
+                                        key={index}
+                                        className={`worksheet__row ${employee === employees[0] ? "current" : ""}`}
+                                        // style={{ height: `${maxRowHeight}px` }}
+                                    >
+                                        <div className="worksheet__cell_name">{employee.fio}</div>
+                                        <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
+                                        {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
+                                            const schedule = employee.weekSchedule[day];
+                                            console.log(schedule);
+                                            return (
+                                                <div key={dayIndex} className="worksheet__cell">
+                                                    {editingCell?.row === index && editingCell?.day === day ? (
+                                                        <>
+                                                            <input
+                                                                type="time"
+                                                                value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
+                                                                onChange={(e) => handleEdit(index, dayIndex, day, "start", e.target.value)}
+                                                                onBlur={(e) => handleBlur(index, dayIndex, day, "start", e)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === "Escape") {
+                                                                        setEditingCell(null); // Отмена редактирования
+                                                                    }
+                                                                    if (e.key === "Enter") {
+                                                                        handleBlur(index, dayIndex, day, "start", null);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            -
+                                                            <input
+                                                                type="time"
+                                                                value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
+                                                                onChange={(e) => handleEdit(index, dayIndex, day, "end", e.target.value)}
+                                                                onBlur={(e) => handleBlur(index, dayIndex, day, "end", e)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === "Escape") {
+                                                                        setEditingCell(null); // Отмена редактирования
+                                                                    }
+                                                                    if (e.key === "Enter") {
+                                                                        handleBlur(index, dayIndex, day, "end", null);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <button
+                                                                className="clear-time-btn"
+                                                                onClick={() => handleClearTime(index, dayIndex, day)}
+                                                                title="Очистить время"
+                                                                style={{
+                                                                    marginLeft: "0.5em",
+                                                                    cursor: "pointer",
+                                                                    background: "none",
+                                                                    border: "none",
+                                                                    fontSize: "1em",
+                                                                    color: "#888"
+                                                                }}
+                                                            >
+                                                                🗑️
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
+                                                            {`${schedule?.start} - ${schedule?.end}`}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
+                                            );
+                                        })}
+                                    </div>
+                                ))}
+                            </>
+                        ) : (
+                            <div className="no-results">
+                                {currentTranslation.noResults}
                             </div>
-                        ))}
+                        )}
                     </div>
                     {document.querySelector(".footer") &&
+                        (totalPages > 1) &&
                         ReactDOM.createPortal(
                             <>
                                 <button
