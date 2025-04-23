@@ -187,6 +187,9 @@ const Worksheet: React.FC = () => {
 
     // Смена недели
     const changeWeek = async (direction: "next" | "previous") => {
+        // Сначала сохраняем все ожидающие изменения
+        await flushChanges();
+
         const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
         if (!parsedWeek) return;
 
@@ -202,7 +205,6 @@ const Worksheet: React.FC = () => {
             newEnd.setDate(newEnd.getDate() - 7);
         }
 
-        // Форматируем дату вручную для гарантии правильного формата
         const formatDate = (date: Date) => {
             const year = date.getFullYear();
             const month = String(date.getMonth() - 3).padStart(2, '0');
@@ -220,28 +222,48 @@ const Worksheet: React.FC = () => {
             }
 
             const url = `https://ssw-backend.onrender.com/schedule/weekly?date=${formattedDate}`;
-            console.log("Отправка запроса на:", url); // Логируем URL для отладки
-            flushChanges();
-
             const response = await fetch(url, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
-                    "Cache-Control": "no-cache" // Отключаем кеширование
+                    "Cache-Control": "no-cache"
                 },
             });
-
-            console.log("Статус ответа:", response.status); // Логируем статус ответа
 
             if (!response.ok) {
                 throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
             }
 
             const data = await response.json();
-            console.log("Полученные данные:", data); // Логируем полученные данные
 
-            if (!data?.employees) {
-                throw new Error("Получены пустые данные от сервера");
-            }
+            // Сохраняем текущие локальные изменения перед обновлением
+            const localChanges = pendingChangesRef.current;
+
+            // Обновляем сотрудников с сервера
+            setEmployees(prevEmployees => {
+                const newEmployees = data.employees.map((serverEmployee: Employee) => {
+                    // Находим соответствующего сотрудника в предыдущем состоянии
+                    const prevEmployee = prevEmployees.find(e => e.id === serverEmployee.id);
+
+                    // Если есть локальные изменения для этого сотрудника, применяем их
+                    if (prevEmployee) {
+                        const employeeChanges = localChanges.find(c => c.employeeId === serverEmployee.id);
+
+                        if (employeeChanges) {
+                            return {
+                                ...serverEmployee,
+                                weekSchedule: {
+                                    ...serverEmployee.weekSchedule,
+                                    ...employeeChanges.schedule
+                                }
+                            };
+                        }
+                    }
+
+                    return serverEmployee;
+                });
+
+                return newEmployees;
+            });
 
             const allProjects: string[] = data.employees.flatMap(
                 (employee: { projects: string }) => employee.projects?.split(" ") || []
@@ -255,11 +277,11 @@ const Worksheet: React.FC = () => {
                 activeProjects: prev.activeProjects
             }));
 
-            setEmployees(data.employees);
             setCurrentWeek(newWeekRange);
+            setPendingChanges([]);
+            pendingChangesRef.current = [];
         } catch (error) {
             console.error("Ошибка при загрузке данных:", error);
-            // Можно добавить уведомление пользователю об ошибке
             setCurrentWeek(newWeekRange);
         }
     };
@@ -902,7 +924,7 @@ const Worksheet: React.FC = () => {
 
                                             return (
                                                 <div key={dayIndex} className="worksheet__cell">
-                                                    {editingCell?.employeeId === employees[index].id && editingCell?.day === day ? (
+                                                    {editingCell?.employeeId === employee.id && editingCell?.day === day ? (
                                                         <>
                                                             <input
                                                                 type="time"
