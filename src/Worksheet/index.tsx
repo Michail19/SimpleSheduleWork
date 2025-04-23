@@ -15,7 +15,7 @@ const Worksheet: React.FC = () => {
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-    const [editingCell, setEditingCell] = useState<{ row: number; day: string; dayIndex: number } | null>(null);
+    const [editingCell, setEditingCell] = useState<{ employeeId: string; day: string; dayIndex: number } | null>(null);
     const [editedTime, setEditedTime] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement | null>(null);
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -322,50 +322,55 @@ const Worksheet: React.FC = () => {
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
     const pendingChangesRef = useRef<any[]>([]);
 
-    const handleEdit = (row: number, dayIndex: number, day: string, type: string, value: string) => {
+    const handleEdit = (employeeId: string, dayIndex: number, day: string, type: string, value: string) => {
         setEditedTime((prev) => ({
             ...prev,
-            [`${row}-${dayIndex}-${type}`]: value,
+            [`${employeeId}-${dayIndex}-${type}`]: value,
         }));
     };
 
-    const handleBlur = (employeeIndex: number, dayIndex: number, day: string, type: "start" | "end", event?: React.FocusEvent<HTMLInputElement> | null) => {
+    const handleBlur = (
+        employeeId: string,
+        dayIndex: number,
+        day: string,
+        type: "start" | "end",
+        event?: React.FocusEvent<HTMLInputElement> | null
+    ) => {
         const relatedTarget = event?.relatedTarget as HTMLInputElement | null;
-
         if (relatedTarget && relatedTarget.tagName === "INPUT") {
             return; // Не сбрасываем состояние, если переходим на другой input
         }
 
-        const editedStart = editedTime[`${employeeIndex}-${dayIndex}-start`] || "";
-        const editedEnd = editedTime[`${employeeIndex}-${dayIndex}-end`] || "";
+        const editedStart = editedTime[`${employeeId}-${dayIndex}-start`] || "";
+        const editedEnd = editedTime[`${employeeId}-${dayIndex}-end`] || "";
 
-        const oldValue = employees[employeeIndex].weekSchedule[day] || { start: "", end: "" };
-        const hadOldValues = oldValue.start !== "" || oldValue.end !== ""; // Было ли что-то в старых данных
-        const hasNewValues = editedStart !== "" || editedEnd !== ""; // Есть ли новые данные
+        const employee = employees.find(emp => emp.id === employeeId);
+        if (!employee) return;
+
+        const oldValue = employee.weekSchedule[day] || { start: "", end: "" };
+        const hadOldValues = oldValue.start !== "" || oldValue.end !== "";
+        const hasNewValues = editedStart !== "" || editedEnd !== "";
 
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
         const isStartValid = editedStart === "" || timeRegex.test(editedStart);
         const isEndValid = editedEnd === "" || timeRegex.test(editedEnd);
 
-        // Если оба поля пустые и раньше не было значений — не сохраняем
-        if (!hadOldValues && !hasNewValues) {
-            return;
-        }
+        if (!hadOldValues && !hasNewValues) return;
 
         // Если раньше было значение, но пользователь удалил всё — откатываем к старым данным
         if (hadOldValues && !hasNewValues) {
-            setEmployees((prev) =>
-                prev.map((employee, index) =>
-                    index === employeeIndex
+            setEmployees(prev =>
+                prev.map(emp =>
+                    emp.id === employeeId
                         ? {
-                            ...employee,
+                            ...emp,
                             weekSchedule: {
-                                ...employee.weekSchedule,
-                                [day]: oldValue, // Восстанавливаем предыдущие данные
+                                ...emp.weekSchedule,
+                                [day]: oldValue,
                             },
                         }
-                        : employee
+                        : emp
                 )
             );
             setEditingCell(null);
@@ -374,43 +379,41 @@ const Worksheet: React.FC = () => {
 
         // Если хотя бы одно поле некорректное — откатываем
         if (!isStartValid || !isEndValid) {
-            setEmployees((prev) =>
-                prev.map((employee, index) =>
-                    index === employeeIndex
+            setEmployees(prev =>
+                prev.map(emp =>
+                    emp.id === employeeId
                         ? {
-                            ...employee,
+                            ...emp,
                             weekSchedule: {
-                                ...employee.weekSchedule,
+                                ...emp.weekSchedule,
                                 [day]: oldValue,
                             },
                         }
-                        : employee
+                        : emp
                 )
             );
             setEditingCell(null);
             return;
         }
 
-        // Если в старых данных пусто — требуем заполнения обоих полей
-        if (!hadOldValues && (editedStart === "" || editedEnd === "")) {
-            return;
-        }
+        // Если оба поля пустые, а раньше было пусто — ничего не делаем
+        if (!hadOldValues && (editedStart === "" || editedEnd === "")) return;
 
-        // Если оба поля заполнены корректно, обновляем
-        setEmployees((prev) =>
-            prev.map((employee, index) =>
-                index === employeeIndex
+        // Обновляем данные
+        setEmployees(prev =>
+            prev.map(emp =>
+                emp.id === employeeId
                     ? {
-                        ...employee,
+                        ...emp,
                         weekSchedule: {
-                            ...employee.weekSchedule,
+                            ...emp.weekSchedule,
                             [day]: {
                                 start: editedStart || oldValue.start,
                                 end: editedEnd || oldValue.end,
                             },
                         },
                     }
-                    : employee
+                    : emp
             )
         );
 
@@ -422,7 +425,7 @@ const Worksheet: React.FC = () => {
         const { start, end } = parsedWeek;
         const newStart = new Date(start);
 
-        // Форматируем дату вручную для гарантии правильного формата
+        // Костыль по месяцам сохраняем
         const formatDate = (date: Date) => {
             const year = date.getFullYear();
             const month = String(date.getMonth() - 3).padStart(2, '0');
@@ -433,8 +436,8 @@ const Worksheet: React.FC = () => {
         const formattedDate = formatDate(newStart);
 
         enqueueChange(
-            employees[employeeIndex].id, // employeeId
-            formattedDate,                   // начальная дата недели
+            employeeId,
+            formattedDate,
             day,
             editedStart || oldValue.start,
             editedEnd || oldValue.end
@@ -505,10 +508,7 @@ const Worksheet: React.FC = () => {
         }
     };
 
-    const handleClearTime = (row: number, dayIndex: number, day: string) => {
-        const employee = employees[row];
-        const employeeId = employee.id;
-
+    const handleClearTime = (employeeId: string, dayIndex: number, day: string) => {
         const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
         if (!parsedWeek) return;
 
@@ -526,8 +526,8 @@ const Worksheet: React.FC = () => {
         const formattedDate = formatDate(newStart);
 
         setEmployees((prev) =>
-            prev.map((employee, index) =>
-                index === row
+            prev.map((employee) =>
+                employee.id === employeeId
                     ? {
                         ...employee,
                         weekSchedule: {
@@ -553,29 +553,56 @@ const Worksheet: React.FC = () => {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && editingCell !== null) {
-                setEditingCell(null); // Отключаем редактирование
+            if (!editingCell) return;
+
+            if (e.key === "Escape") {
+                setEditingCell(null);
             }
-            if (e.key === "Enter" && editingCell !== null) {
-                const inputElement = document.querySelector("input"); // Находим input
-                if (inputElement) {
-                    const value = inputElement.value; // Получаем значение
-                    handleEdit(editingCell.row, editingCell.dayIndex, editingCell.day, "start", value); // Сохраняем значение
-                    const nextInput = inputRefs.current[1]; // Следующий input
-                    if (nextInput) {
-                        nextInput.focus(); // Переключаем фокус на следующий input
-                    }
-                    setEditingCell(null); // Завершаем редактирование
+
+            if (e.key === "Enter") {
+                const inputs = Array.from(document.querySelectorAll("input[type='time']")) as HTMLInputElement[];
+                if (inputs.length === 0) return;
+
+                const [startInput, endInput] = inputs;
+                const { employeeId, dayIndex, day } = editingCell;
+
+                if (startInput) {
+                    const startValue = startInput.value;
+                    handleEdit(employeeId, dayIndex, day, "start", startValue);
                 }
+
+                if (endInput) {
+                    const endValue = endInput.value;
+                    handleEdit(employeeId, dayIndex, day, "end", endValue);
+                }
+
+                setEditingCell(null);
+
+
+                // if (e.key === "Enter") {
+                //     const inputElement = document.querySelector("input"); // Находим input
+                //     if (inputElement) {
+                //         const value = inputElement.value; // Получаем значение
+                //
+                //         handleEdit(editingCell.employeeId, editingCell.dayIndex, editingCell.day, "start", value); // Сохраняем значение
+                //
+                //         const nextInput = inputRefs.current[1]; // Следующий input
+                //
+                //         if (nextInput) {
+                //             nextInput.focus(); // Переключаем фокус на следующий input
+                //         }
+                //
+                //         setEditingCell(null); // Завершаем редактирование
+                //     }
+                // }
             }
         };
 
         document.addEventListener("keydown", handleKeyDown);
-
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [editingCell]); // Добавляем editingCell в зависимости
+    }, [editingCell]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -872,43 +899,57 @@ const Worksheet: React.FC = () => {
                                         <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
                                         {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
                                             const schedule = employee.weekSchedule[day];
-                                            console.log(schedule);
+
                                             return (
                                                 <div key={dayIndex} className="worksheet__cell">
-                                                    {editingCell?.row === index && editingCell?.day === day ? (
+                                                    {editingCell?.employeeId === employees[index].id && editingCell?.day === day ? (
                                                         <>
                                                             <input
                                                                 type="time"
-                                                                value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
-                                                                onChange={(e) => handleEdit(index, dayIndex, day, "start", e.target.value)}
-                                                                onBlur={(e) => handleBlur(index, dayIndex, day, "start", e)}
+                                                                value={
+                                                                    editedTime[`${employee.id}-${dayIndex}-start`] || schedule.start
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleEdit(employee.id, dayIndex, day, "start", e.target.value)
+                                                                }
+                                                                onBlur={(e) =>
+                                                                    handleBlur(employee.id, dayIndex, day, "start", e)
+                                                                }
                                                                 onKeyDown={(e) => {
                                                                     if (e.key === "Escape") {
-                                                                        setEditingCell(null); // Отмена редактирования
+                                                                        setEditingCell(null);
                                                                     }
                                                                     if (e.key === "Enter") {
-                                                                        handleBlur(index, dayIndex, day, "start", null);
+                                                                        handleBlur(employee.id, dayIndex, day, "start", null);
                                                                     }
                                                                 }}
                                                             />
                                                             -
                                                             <input
                                                                 type="time"
-                                                                value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
-                                                                onChange={(e) => handleEdit(index, dayIndex, day, "end", e.target.value)}
-                                                                onBlur={(e) => handleBlur(index, dayIndex, day, "end", e)}
+                                                                value={
+                                                                    editedTime[`${employee.id}-${dayIndex}-end`] || schedule.end
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleEdit(employee.id, dayIndex, day, "end", e.target.value)
+                                                                }
+                                                                onBlur={(e) =>
+                                                                    handleBlur(employee.id, dayIndex, day, "end", e)
+                                                                }
                                                                 onKeyDown={(e) => {
                                                                     if (e.key === "Escape") {
-                                                                        setEditingCell(null); // Отмена редактирования
+                                                                        setEditingCell(null);
                                                                     }
                                                                     if (e.key === "Enter") {
-                                                                        handleBlur(index, dayIndex, day, "end", null);
+                                                                        handleBlur(employee.id, dayIndex, day, "end", null);
                                                                     }
                                                                 }}
                                                             />
                                                             <button
                                                                 className="clear-time-btn"
-                                                                onClick={() => handleClearTime(index, dayIndex, day)}
+                                                                onClick={() =>
+                                                                    handleClearTime(employee.id, dayIndex, day)
+                                                                }
                                                                 title="Очистить время"
                                                                 style={{
                                                                     marginLeft: "0.5em",
@@ -923,7 +964,15 @@ const Worksheet: React.FC = () => {
                                                             </button>
                                                         </>
                                                     ) : (
-                                                        <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
+                                                        <div
+                                                            onClick={() =>
+                                                                setEditingCell({
+                                                                    employeeId: employee.id,
+                                                                    day: day,
+                                                                    dayIndex: dayIndex,
+                                                                })
+                                                            }
+                                                        >
                                                             {`${schedule?.start} - ${schedule?.end}`}
                                                         </div>
                                                     )}
