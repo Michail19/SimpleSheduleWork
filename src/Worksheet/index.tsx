@@ -185,7 +185,7 @@ const Worksheet: React.FC = () => {
         return () => window.removeEventListener("resize", calculateRowsPerPage);
     }, [employees]); // или employees, если до фильтрации
 
-
+    // Смена недели
     const changeWeek = async (direction: "next" | "previous") => {
         const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
         if (!parsedWeek) return;
@@ -221,6 +221,7 @@ const Worksheet: React.FC = () => {
 
             const url = `https://ssw-backend.onrender.com/schedule/weekly?date=${formattedDate}`;
             console.log("Отправка запроса на:", url); // Логируем URL для отладки
+            flushChanges();
 
             const response = await fetch(url, {
                 headers: {
@@ -256,7 +257,6 @@ const Worksheet: React.FC = () => {
 
             setEmployees(data.employees);
             setCurrentWeek(newWeekRange);
-
         } catch (error) {
             console.error("Ошибка при загрузке данных:", error);
             // Можно добавить уведомление пользователю об ошибке
@@ -316,6 +316,11 @@ const Worksheet: React.FC = () => {
             return prev;
         });
     };
+
+    // Изменение времени в ячейке
+    const [pendingChanges, setPendingChanges] = useState<any[]>([]);
+    const debounceRef = useRef<NodeJS.Timeout | null>(null);
+    const pendingChangesRef = useRef<any[]>([]);
 
     const handleEdit = (row: number, dayIndex: number, day: string, type: string, value: string) => {
         setEditedTime((prev) => ({
@@ -410,10 +415,116 @@ const Worksheet: React.FC = () => {
         );
 
         setEditingCell(null);
-        // TODO: отправить обновленные данные в API
+
+        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
+        if (!parsedWeek) return;
+
+        const { start, end } = parsedWeek;
+        const newStart = new Date(start);
+
+        // Форматируем дату вручную для гарантии правильного формата
+        const formatDate = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() - 3).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const formattedDate = formatDate(newStart);
+
+        enqueueChange(
+            employees[employeeIndex].id, // employeeId
+            formattedDate,                   // начальная дата недели
+            day,
+            editedStart || oldValue.start,
+            editedEnd || oldValue.end
+        );
+    };
+
+    const enqueueChange = (employeeId: string, weekStart: string, day: string, start: string | null, end: string | null) => {
+        setPendingChanges((prev) => {
+            const updated = [...prev];
+            const existing = updated.find(item => item.employeeId === employeeId && item.weekStart === weekStart);
+
+            if (existing) {
+                existing.schedule[day] = { start, end };
+            } else {
+                updated.push({
+                    employeeId,
+                    weekStart,
+                    schedule: {
+                        [day]: { start, end },
+                    },
+                });
+            }
+
+            pendingChangesRef.current = updated; // Сохраняем актуальное значение
+            return updated;
+        });
+
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
+
+        debounceRef.current = setTimeout(() => {
+            flushChanges();
+        }, 2000);
+    };
+
+
+    const flushChanges = async () => {
+        if (pendingChangesRef.current.length === 0) return;
+
+        const payload = pendingChangesRef.current.map(change => ({
+            employeeId: change.employeeId,
+            weekStart: change.weekStart,
+            schedule: change.schedule
+        }));
+
+        pendingChangesRef.current = []; // очистка ref
+        setPendingChanges([]); // очистка state (для рендера)
+
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) throw new Error("Токен авторизации не найден");
+
+            const response = await fetch("https://ssw-backend.onrender.com/schedule/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                console.error("Ошибка при отправке:", await response.text());
+            }
+        } catch (error) {
+            console.error("Ошибка при отправке расписания:", error);
+        }
     };
 
     const handleClearTime = (row: number, dayIndex: number, day: string) => {
+        const employee = employees[row];
+        const employeeId = employee.id;
+
+        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
+        if (!parsedWeek) return;
+
+        const { start, end } = parsedWeek;
+        const newStart = new Date(start);
+
+        // Форматируем дату вручную для гарантии правильного формата
+        const formatDate = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() - 3).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const formattedDate = formatDate(newStart);
+
         setEmployees((prev) =>
             prev.map((employee, index) =>
                 index === row
@@ -421,13 +532,24 @@ const Worksheet: React.FC = () => {
                         ...employee,
                         weekSchedule: {
                             ...employee.weekSchedule,
-                            [day]: { start: "", end: "" }, // Полностью очищаем расписание
+                            [day]: { start: "", end: "" },
                         },
                     }
                     : employee
             )
         );
+
+        enqueueChange(employeeId, formattedDate, day, null, null);
     };
+
+    useEffect(() => {
+        const handleUnload = () => {
+            flushChanges();
+        };
+
+        window.addEventListener("beforeunload", handleUnload);
+        return () => window.removeEventListener("beforeunload", handleUnload);
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
