@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Employee, FiltersState, Language} from '../types';
 import { translations } from '../translations';
 
@@ -17,9 +17,15 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                                                                       filters,
                                                                       initialData
                                                                   }) => {
-    const [employeeData, setEmployeeData] = useState<Omit<Employee, 'id'> & { id?: string }>({
+    const [employeeData, setEmployeeData] = useState<Omit<Employee, 'id'> & { id?: string } & {
+        username: string;
+        password: string;
+        role: 'USER' | 'OWNER';
+    }>({
         fio: '',
-        projects: '',
+        username: '',
+        password: '',
+        role: 'USER',
         weekSchedule: {
             monday: { start: '', end: '' },
             tuesday: { start: '', end: '' },
@@ -31,29 +37,24 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
         }
     });
 
-    const [projectSuggestions, setProjectSuggestions] = useState<string[]>([]);
+    const popupRef = useRef<HTMLDivElement>(null);
 
-    // Инициализация начальными данными
     useEffect(() => {
-        if (initialData) {
-            setEmployeeData(initialData);
-        }
-    }, [initialData]);
+        const handleClickOutside = (event: MouseEvent) => {
+            if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+                onClose();
+            }
+        };
 
-    // Подсказки проектов
-    useEffect(() => {
-        if (employeeData.projects?.includes(' ')) {
-            const lastProject = employeeData.projects.split(' ').pop() || '';
-            setProjectSuggestions(
-                filters.projects.filter(p =>
-                    p.toLowerCase().includes(lastProject.toLowerCase()) &&
-                    !employeeData.projects?.includes(p)
-                )
-            );
-        }
-    }, [employeeData.projects, filters.projects]);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [onClose]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         const { name, value } = e.target;
         setEmployeeData(prev => ({
             ...prev,
@@ -74,9 +75,51 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
         }));
     };
 
+    const handleSave = async (employee: typeof employeeData) => {
+        const token = localStorage.getItem("authToken");
+        try {
+            const response = await fetch("https://ssw-backend.onrender.com/schedule/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    fio: employee.fio,
+                    username: employee.username,
+                    password: employee.password,
+                    role: employee.role,
+                    schedule: employee.weekSchedule,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка при добавлении сотрудника");
+            }
+            
+            onClose();
+        } catch (error) {
+            console.error(error);
+            alert("Не удалось добавить сотрудника.");
+        }
+    };
+
+    // Инициализация начальными данными
+    useEffect(() => {
+        if (initialData) {
+            setEmployeeData(prev => ({
+                username: '',
+                password: '',
+                role: 'USER',
+                ...initialData,
+            }));
+        }
+    }, [initialData]);
+
+
     return (
-        <div className="popup-overlay" onClick={onClose}>
-            <div className="add-employee-popup" onClick={e => e.stopPropagation()}>
+        <div className="popup-overlay">
+            <div className="add-employee-popup" ref={popupRef}>
                 <h2>{currentTranslation.addEmployee}</h2>
                 <button className="close-btn" onClick={onClose}>×</button>
 
@@ -92,14 +135,37 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 </div>
 
                 <div className="search-container">
-                    <label>{currentTranslation.projects}</label>
+                    <label>Username</label>
                     <input
                         type="text"
-                        name="projects"
-                        placeholder={currentTranslation.enterProjects}
-                        value={employeeData.projects}
+                        name="username"
+                        placeholder="Введите username"
+                        value={employeeData.username}
                         onChange={handleChange}
                     />
+                </div>
+
+                <div className="search-container">
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Введите пароль"
+                        value={employeeData.password}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div className="search-container">
+                    <label>Role</label>
+                    <select
+                        name="role"
+                        value={employeeData.role}
+                        onChange={handleChange}
+                    >
+                        <option value="USER">USER</option>
+                        <option value="OWNER">OWNER</option>
+                    </select>
                 </div>
 
                 <h3>{currentTranslation.workSchedule}</h3>
@@ -124,8 +190,15 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                     <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
                     <button
                         className="popup-actions-btn"
-                        onClick={() => onSave(employeeData)}
-                        disabled={!employeeData.fio.trim()}
+                        onClick={() => {
+                            handleSave(employeeData);
+                            onSave(employeeData);
+                        }}
+                        disabled={
+                            !employeeData.fio.trim() ||
+                            !employeeData.username.trim() ||
+                            !employeeData.password.trim()
+                        }
                     >
                         {currentTranslation.save}
                     </button>

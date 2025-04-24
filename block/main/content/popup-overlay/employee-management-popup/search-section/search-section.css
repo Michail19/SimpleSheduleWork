@@ -1,0 +1,15 @@
+.search-section {
+    position: relative;
+    margin: 15px 0;
+}
+
+.search-section input {
+    width: 93.5%;
+    padding: 10px 35px 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.search-section label {
+    margin-bottom: 5px;
+}

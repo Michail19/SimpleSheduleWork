@@ -3,44 +3,42 @@ import { Language } from '../types';
 import { translations } from '../translations';
 
 interface SearchProjectPopupProps {
+    width: number, 
+    height: number,
     currentTranslation: typeof translations[Language];
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     setIsOpen: (open: boolean) => void;
+    popupRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const SearchProjectPopup: React.FC<SearchProjectPopupProps> = ({
+                                                                            width, 
+                                                                            height,
                                                                           currentTranslation,
                                                                           searchQuery,
                                                                           setSearchQuery,
-                                                                          setIsOpen
+                                                                          setIsOpen,
+                                                                          popupRef
                                                                       }) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        inputRef.current?.focus();
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                setIsOpen(false);
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [setIsOpen]);
-
     return (
-        <div className="popup-overlay" onClick={() => setIsOpen(false)}>
-            <div
-                className="popup-content popup-search"
-                onClick={(e) => e.stopPropagation()}
-            >
+        <div 
+            className="popup-search" 
+            ref={popupRef} 
+            style={{
+            width: `${width}px`,
+            height: `${height}px`, // можно использовать, а можно нет
+      }}
+        >
+            <div className="search-container">
                 <input
                     ref={inputRef}
                     type="text"
                     placeholder={currentTranslation.searchByName}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.stopPropagation()}
                 />
             </div>
         </div>

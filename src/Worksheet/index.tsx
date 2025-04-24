@@ -15,7 +15,7 @@ const Worksheet: React.FC = () => {
     const [currentWeek, setCurrentWeek] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-    const [editingCell, setEditingCell] = useState<{ row: number; day: string; dayIndex: number } | null>(null);
+    const [editingCell, setEditingCell] = useState<{ employeeId: string; day: string; dayIndex: number } | null>(null);
     const [editedTime, setEditedTime] = useState<Record<string, string>>({});
     const containerRef = useRef<HTMLDivElement | null>(null);
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -81,16 +81,25 @@ const Worksheet: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const jsonPath = process.env.NODE_ENV === "production"
-            ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_example.json"
-            : "/data/data_example.json";
+        const fetchData = async () => {
+            const token = localStorage.getItem("authToken"); // предполагается, что ты сохраняешь токен после логина
 
-        fetch(jsonPath)
-            .then((response) => response.json())
-            .then((data) => {
-                // Извлекаем все уникальные проекты
-                const allProjects = data.employees.flatMap((employee: { projects: string; }) =>
-                    employee.projects?.split(' ') || []
+            try {
+                // console.log(token);
+                const response = await fetch("https://ssw-backend.onrender.com/schedule/weekly", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Ошибка при загрузке с сервера");
+                }
+
+                const data = await response.json();
+
+                const allProjects = data.employees.flatMap((employee: { projects: string }) =>
+                    employee.projects?.split(" ") || []
                 ).filter(Boolean);
 
                 const uniqueProjects = [...new Set(allProjects)];
@@ -104,51 +113,158 @@ const Worksheet: React.FC = () => {
                 setEmployees(data.employees);
                 const translatedWeek = translateMonth(data.currentWeek, currentTranslation);
                 setCurrentWeek(translatedWeek);
-            })
-            .catch((error) => console.error("Ошибка при загрузке данных:", error));
+            } catch (error) {
+                console.warn("Сервер недоступен, используем JSON-файл", error);
+
+                const jsonPath = process.env.NODE_ENV === "production"
+                    ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/master/public/data/data_example.json"
+                    : "/data/data_example.json";
+
+                try {
+                    const fallbackResponse = await fetch(jsonPath);
+                    const data = await fallbackResponse.json();
+
+                    const allProjects = data.employees.flatMap((employee: { projects: string }) =>
+                        employee.projects?.split(" ") || []
+                    ).filter(Boolean);
+
+                    const uniqueProjects = [...new Set(allProjects)];
+
+                    // @ts-ignore
+                    setFilters(prev => ({
+                        ...prev,
+                        projects: uniqueProjects
+                    }));
+
+                    setEmployees(data.employees);
+                    const translatedWeek = translateMonth(data.currentWeek, currentTranslation);
+                    setCurrentWeek(translatedWeek);
+                } catch (fallbackErr) {
+                    console.error("Ошибка при загрузке fallback JSON:", fallbackErr);
+                }
+            }
+        };
+
+        fetchData();
     }, [language]);
+
 
     // Рассчитываем количество строк, которые умещаются в контейнер
     useEffect(() => {
         const calculateRowsPerPage = () => {
             if (!containerRef.current) return;
 
+            const rowElements = containerRef.current.querySelectorAll(".worksheet__row");
+            let maxHeight = 0;
+
+            rowElements.forEach(row => {
+                const height = (row as HTMLElement).offsetHeight;
+                if (height > maxHeight) {
+                    maxHeight = height;
+                }
+            });
+
+            // Если нет строк, fallback
+            const finalRowHeight = maxHeight || 40;
+
+            // const containerTop = containerRef.current.getBoundingClientRect().top;
             const viewportHeight = window.innerHeight; // Высота всего окна браузера
             const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
             const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-            const otherElementsHeight = 140; // Если есть отступы, доп. элементы
-
+            const otherElementsHeight = 48; // Если есть отступы, доп. элементы
             const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
-            const rowHeight = document.querySelector(".worksheet__row")?.clientHeight || 40;
 
-            const newRowsPerPage = Math.floor(availableHeight / rowHeight) || 10;
+            const newRowsPerPage = Math.floor(availableHeight / finalRowHeight) || 1;
 
-            setRowsPerPage(newRowsPerPage);
+            setRowsPerPage(newRowsPerPage - 1);
         };
 
         window.addEventListener("resize", calculateRowsPerPage);
         calculateRowsPerPage();
         return () => window.removeEventListener("resize", calculateRowsPerPage);
-    }, [employees]);
+    }, [employees]); // или employees, если до фильтрации
 
-    const changeWeek = (direction: "next" | "previous") => {
-        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
-        if (!parsedWeek) return;
 
-        const { start, end } = parsedWeek;
-        const newStart = new Date(start);
-        const newEnd = new Date(end);
+    // Смена недели
+    function getWeekRangeByOffset(offset: number): { start: Date; end: Date } {
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 (воскресенье) до 6 (суббота)
+        const diffToMonday = (currentDay + 6) % 7; // Преобразуем: понедельник — 0, вторник — 1, ..., воскресенье — 6
 
-        if (direction === "next") {
-            newStart.setDate(newStart.getDate() + 7);
-            newEnd.setDate(newEnd.getDate() + 7);
-        } else {
-            newStart.setDate(newStart.getDate() - 7);
-            newEnd.setDate(newEnd.getDate() - 7);
+        const monday = new Date(now);
+        monday.setDate(monday.getDate() - diffToMonday + offset * 7);
+        monday.setHours(0, 0, 0, 0);
+
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+
+        return { start: monday, end: sunday };
+    }
+
+    const changeWeek = async (direction: "next" | "previous") => {
+        await flushChanges();
+
+        const offsetChange = direction === "next" ? 1 : -1;
+
+        // Подсчёт смещения недели (можно хранить в useState или useRef)
+        setCurrentOffset(prev => {
+            const newOffset = prev + offsetChange;
+
+            const { start, end } = getWeekRangeByOffset(newOffset);
+
+            const formatDate = (date: Date) =>
+                new Intl.DateTimeFormat("ru-RU", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    timeZone: "Europe/Moscow"
+                })
+                    .format(date)
+                    .split(".")
+                    .reverse()
+                    .join("-");
+            const formattedDate = formatDate(start);
+            console.log(start, end);
+            console.log(formattedDate);
+
+            const newWeekRange = formatWeekRange(start, end, currentTranslation); // остаётся та же функция
+
+            fetchWeekData(formattedDate, newWeekRange);
+
+            return newOffset;
+        });
+    };
+
+    const [currentOffset, setCurrentOffset] = useState(0);
+
+    const fetchWeekData = async (formattedDate: string, newWeekRange: string) => {
+        try {
+            const token = localStorage.getItem("authToken");
+            const url = `https://ssw-backend.onrender.com/schedule/weekly?date=${formattedDate}`;
+            const response = await fetch(url, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Cache-Control": "no-cache"
+                },
+            });
+
+            if (!response.ok) throw new Error("Ошибка сервера");
+
+            const data = await response.json();
+
+            const allProjects = data.employees.flatMap(
+                (e: { projects: string }) => e.projects?.split(" ") || []
+            ).filter(Boolean);
+
+            setEmployees(data.employees);
+            setCurrentWeek(newWeekRange);
+            setPendingChanges([]);
+            pendingChangesRef.current = [];
+        } catch (err) {
+            console.error("Ошибка при загрузке данных:", err);
+            setCurrentWeek(newWeekRange);
         }
-
-        setCurrentWeek(formatWeekRange(newStart, newEnd, currentTranslation));
     };
 
     const toggleProjectFilter = (project: string) => {
@@ -204,50 +320,60 @@ const Worksheet: React.FC = () => {
         });
     };
 
-    const handleEdit = (row: number, dayIndex: number, day: string, type: string, value: string) => {
+    // Изменение времени в ячейке
+    const [pendingChanges, setPendingChanges] = useState<any[]>([]);
+    const debounceRef = useRef<NodeJS.Timeout | null>(null);
+    const pendingChangesRef = useRef<any[]>([]);
+
+    const handleEdit = (employeeId: string, dayIndex: number, day: string, type: string, value: string) => {
         setEditedTime((prev) => ({
             ...prev,
-            [`${row}-${dayIndex}-${type}`]: value,
+            [`${employeeId}-${dayIndex}-${type}`]: value,
         }));
     };
 
-    const handleBlur = (employeeIndex: number, dayIndex: number, day: string, type: "start" | "end", event?: React.FocusEvent<HTMLInputElement> | null) => {
+    const handleBlur = (
+        employeeId: string,
+        dayIndex: number,
+        day: string,
+        type: "start" | "end",
+        event?: React.FocusEvent<HTMLInputElement> | null
+    ) => {
         const relatedTarget = event?.relatedTarget as HTMLInputElement | null;
-
         if (relatedTarget && relatedTarget.tagName === "INPUT") {
             return; // Не сбрасываем состояние, если переходим на другой input
         }
 
-        const editedStart = editedTime[`${employeeIndex}-${dayIndex}-start`] || "";
-        const editedEnd = editedTime[`${employeeIndex}-${dayIndex}-end`] || "";
+        const editedStart = editedTime[`${employeeId}-${dayIndex}-start`] || "";
+        const editedEnd = editedTime[`${employeeId}-${dayIndex}-end`] || "";
 
-        const oldValue = employees[employeeIndex].weekSchedule[day] || { start: "", end: "" };
-        const hadOldValues = oldValue.start !== "" || oldValue.end !== ""; // Было ли что-то в старых данных
-        const hasNewValues = editedStart !== "" || editedEnd !== ""; // Есть ли новые данные
+        const employee = employees.find(emp => emp.id === employeeId);
+        if (!employee) return;
+
+        const oldValue = employee.weekSchedule[day] || { start: "", end: "" };
+        const hadOldValues = oldValue.start !== "" || oldValue.end !== "";
+        const hasNewValues = editedStart !== "" || editedEnd !== "";
 
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
         const isStartValid = editedStart === "" || timeRegex.test(editedStart);
         const isEndValid = editedEnd === "" || timeRegex.test(editedEnd);
 
-        // Если оба поля пустые и раньше не было значений — не сохраняем
-        if (!hadOldValues && !hasNewValues) {
-            return;
-        }
+        if (!hadOldValues && !hasNewValues) return;
 
         // Если раньше было значение, но пользователь удалил всё — откатываем к старым данным
         if (hadOldValues && !hasNewValues) {
-            setEmployees((prev) =>
-                prev.map((employee, index) =>
-                    index === employeeIndex
+            setEmployees(prev =>
+                prev.map(emp =>
+                    emp.id === employeeId
                         ? {
-                            ...employee,
+                            ...emp,
                             weekSchedule: {
-                                ...employee.weekSchedule,
-                                [day]: oldValue, // Восстанавливаем предыдущие данные
+                                ...emp.weekSchedule,
+                                [day]: oldValue,
                             },
                         }
-                        : employee
+                        : emp
                 )
             );
             setEditingCell(null);
@@ -256,91 +382,236 @@ const Worksheet: React.FC = () => {
 
         // Если хотя бы одно поле некорректное — откатываем
         if (!isStartValid || !isEndValid) {
-            setEmployees((prev) =>
-                prev.map((employee, index) =>
-                    index === employeeIndex
+            setEmployees(prev =>
+                prev.map(emp =>
+                    emp.id === employeeId
                         ? {
-                            ...employee,
+                            ...emp,
                             weekSchedule: {
-                                ...employee.weekSchedule,
+                                ...emp.weekSchedule,
                                 [day]: oldValue,
                             },
                         }
-                        : employee
+                        : emp
                 )
             );
             setEditingCell(null);
             return;
         }
 
-        // Если в старых данных пусто — требуем заполнения обоих полей
-        if (!hadOldValues && (editedStart === "" || editedEnd === "")) {
-            return;
-        }
+        // Если оба поля пустые, а раньше было пусто — ничего не делаем
+        if (!hadOldValues && (editedStart === "" || editedEnd === "")) return;
 
-        // Если оба поля заполнены корректно, обновляем
-        setEmployees((prev) =>
-            prev.map((employee, index) =>
-                index === employeeIndex
+        // Обновляем данные
+        setEmployees(prev =>
+            prev.map(emp =>
+                emp.id === employeeId
                     ? {
-                        ...employee,
+                        ...emp,
                         weekSchedule: {
-                            ...employee.weekSchedule,
+                            ...emp.weekSchedule,
                             [day]: {
                                 start: editedStart || oldValue.start,
                                 end: editedEnd || oldValue.end,
                             },
                         },
                     }
-                    : employee
+                    : emp
             )
         );
 
         setEditingCell(null);
-        // TODO: отправить обновленные данные в API
+
+        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
+        if (!parsedWeek) return;
+
+        const { start, end } = parsedWeek;
+        const newStart = new Date(start);
+
+        // Костыль по месяцам сохраняем
+        const formatDate = (date: Date) =>
+            new Intl.DateTimeFormat("ru-RU", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                timeZone: "Europe/Moscow"
+            })
+                .format(date)
+                .split(".")
+                .reverse()
+                .join("-");
+        const formattedDate = formatDate(start);
+
+        enqueueChange(
+            employeeId,
+            formattedDate,
+            day,
+            editedStart || oldValue.start,
+            editedEnd || oldValue.end
+        );
     };
 
-    const handleClearTime = (row: number, dayIndex: number, day: string) => {
+    const enqueueChange = (employeeId: string, weekStart: string, day: string, start: string | null, end: string | null) => {
+        setPendingChanges((prev) => {
+            const updated = [...prev];
+            const existing = updated.find(item => item.employeeId === employeeId && item.weekStart === weekStart);
+
+            if (existing) {
+                existing.schedule[day] = { start, end };
+            } else {
+                updated.push({
+                    employeeId,
+                    weekStart,
+                    schedule: {
+                        [day]: { start, end },
+                    },
+                });
+            }
+
+            pendingChangesRef.current = updated; // Сохраняем актуальное значение
+            return updated;
+        });
+
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
+
+        debounceRef.current = setTimeout(() => {
+            flushChanges();
+        }, 2000);
+    };
+
+
+    const flushChanges = async () => {
+        if (pendingChangesRef.current.length === 0) return;
+
+        const payload = pendingChangesRef.current.map(change => ({
+            employeeId: change.employeeId,
+            weekStart: change.weekStart,
+            schedule: change.schedule
+        }));
+
+        pendingChangesRef.current = []; // очистка ref
+        setPendingChanges([]); // очистка state (для рендера)
+
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) throw new Error("Токен авторизации не найден");
+
+            const response = await fetch("https://ssw-backend.onrender.com/schedule/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                console.error("Ошибка при отправке:", await response.text());
+            }
+        } catch (error) {
+            console.error("Ошибка при отправке расписания:", error);
+        }
+    };
+
+    const handleClearTime = (employeeId: string, dayIndex: number, day: string) => {
+        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
+        if (!parsedWeek) return;
+
+        const { start, end } = parsedWeek;
+
+        const formatDate = (date: Date) =>
+            new Intl.DateTimeFormat("ru-RU", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                timeZone: "Europe/Moscow"
+            })
+                .format(date)
+                .split(".")
+                .reverse()
+                .join("-");
+        const formattedDate = formatDate(start);
+
         setEmployees((prev) =>
-            prev.map((employee, index) =>
-                index === row
+            prev.map((employee) =>
+                employee.id === employeeId
                     ? {
                         ...employee,
                         weekSchedule: {
                             ...employee.weekSchedule,
-                            [day]: { start: "", end: "" }, // Полностью очищаем расписание
+                            [day]: { start: "", end: "" },
                         },
                     }
                     : employee
             )
         );
+
+        enqueueChange(employeeId, formattedDate, day, null, null);
     };
 
     useEffect(() => {
+        const handleUnload = () => {
+            flushChanges();
+        };
+
+        window.addEventListener("beforeunload", handleUnload);
+        return () => window.removeEventListener("beforeunload", handleUnload);
+    }, []);
+
+    useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && editingCell !== null) {
-                setEditingCell(null); // Отключаем редактирование
+            if (!editingCell) return;
+
+            if (e.key === "Escape") {
+                setEditingCell(null);
             }
-            if (e.key === "Enter" && editingCell !== null) {
-                const inputElement = document.querySelector("input"); // Находим input
-                if (inputElement) {
-                    const value = inputElement.value; // Получаем значение
-                    handleEdit(editingCell.row, editingCell.dayIndex, editingCell.day, "start", value); // Сохраняем значение
-                    const nextInput = inputRefs.current[1]; // Следующий input
-                    if (nextInput) {
-                        nextInput.focus(); // Переключаем фокус на следующий input
-                    }
-                    setEditingCell(null); // Завершаем редактирование
+
+            if (e.key === "Enter") {
+                const inputs = Array.from(document.querySelectorAll("input[type='time']")) as HTMLInputElement[];
+                if (inputs.length === 0) return;
+
+                const [startInput, endInput] = inputs;
+                const { employeeId, dayIndex, day } = editingCell;
+
+                if (startInput) {
+                    const startValue = startInput.value;
+                    handleEdit(employeeId, dayIndex, day, "start", startValue);
                 }
+
+                if (endInput) {
+                    const endValue = endInput.value;
+                    handleEdit(employeeId, dayIndex, day, "end", endValue);
+                }
+
+                setEditingCell(null);
+
+
+                // if (e.key === "Enter") {
+                //     const inputElement = document.querySelector("input"); // Находим input
+                //     if (inputElement) {
+                //         const value = inputElement.value; // Получаем значение
+                //
+                //         handleEdit(editingCell.employeeId, editingCell.dayIndex, editingCell.day, "start", value); // Сохраняем значение
+                //
+                //         const nextInput = inputRefs.current[1]; // Следующий input
+                //
+                //         if (nextInput) {
+                //             nextInput.focus(); // Переключаем фокус на следующий input
+                //         }
+                //
+                //         setEditingCell(null); // Завершаем редактирование
+                //     }
+                // }
             }
         };
 
         document.addEventListener("keydown", handleKeyDown);
-
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [editingCell]); // Добавляем editingCell в зависимости
+    }, [editingCell]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -423,6 +694,11 @@ const Worksheet: React.FC = () => {
 
             return updatedEmployees;
         });
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("authToken");
+        window.location.href = '/index.html';
     };
 
 
@@ -578,6 +854,19 @@ const Worksheet: React.FC = () => {
                     document.querySelector(".subtitle__date") as Element
                 )}
 
+            {document.querySelector('.header__up-blocks__wrapper__list') &&
+                (localStorage.getItem("authToken") != null) &&
+                ReactDOM.createPortal(
+                    <button
+                        className="header__up-blocks__wrapper__list__btn"
+                        onClick={() => handleLogout()}
+                    >
+                        Выход
+                    </button>,
+                    document.querySelector('.header__up-blocks__wrapper__list') as Element
+                )
+            }
+
             {/* Остальной JSX */}
             {isMobile ? (
                 <>
@@ -594,89 +883,122 @@ const Worksheet: React.FC = () => {
             ) : (
                 <>
                     <div ref={containerRef} className="worksheet">
-                        <div className="worksheet__row__header">
-                            <div className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
-                            <div className="worksheet__row__header__cell_clock">
-                                <div className="cell_clock_img"></div>
-                            </div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.monday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.tuesday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.wednesday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.thursday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.friday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.saturday}</div>
-                            <div className="worksheet__row__header__cell">{currentTranslation.sunday}</div>
-                        </div>
-                        {displayedEmployees.map((employee, index) => (
-                            <div
-                                key={index}
-                                className={`worksheet__row ${employee === employees[0] ? "current" : ""}`}
-                            >
-                                <div className="worksheet__cell_name">{employee.fio}</div>
-                                <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
-                                {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
-                                    const schedule = employee.weekSchedule[day];
-                                    return (
-                                        <div key={dayIndex} className="worksheet__cell">
-                                            {editingCell?.row === index && editingCell?.day === day ? (
-                                                <>
-                                                    <input
-                                                        type="time"
-                                                        value={editedTime[`${index}-${dayIndex}-start`] || schedule.start}
-                                                        onChange={(e) => handleEdit(index, dayIndex, day, "start", e.target.value)}
-                                                        onBlur={(e) => handleBlur(index, dayIndex, day, "start", e)}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Escape") {
-                                                                setEditingCell(null); // Отмена редактирования
+                        {filteredEmployees.length > 0 ? (
+                            <>
+                                <div className="worksheet__row__header">
+                                    <div className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
+                                    <div className="worksheet__row__header__cell_clock">
+                                        <div className="cell_clock_img"></div>
+                                    </div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.monday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.tuesday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.wednesday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.thursday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.friday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.saturday}</div>
+                                    <div className="worksheet__row__header__cell">{currentTranslation.sunday}</div>
+                                </div>
+                                {displayedEmployees.map((employee, index) => (
+                                    <div
+                                        key={index}
+                                        className={`worksheet__row ${employee === employees[0] ? "current" : ""}`}
+                                        // style={{ height: `${maxRowHeight}px` }}
+                                    >
+                                        <div className="worksheet__cell_name">{employee.fio}</div>
+                                        <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
+                                        {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
+                                            const schedule = employee.weekSchedule[day];
+
+                                            return (
+                                                <div key={dayIndex} className="worksheet__cell">
+                                                    {editingCell?.employeeId === employee.id && editingCell?.day === day ? (
+                                                        <>
+                                                            <input
+                                                                type="time"
+                                                                value={
+                                                                    editedTime[`${employee.id}-${dayIndex}-start`] || schedule.start
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleEdit(employee.id, dayIndex, day, "start", e.target.value)
+                                                                }
+                                                                onBlur={(e) =>
+                                                                    handleBlur(employee.id, dayIndex, day, "start", e)
+                                                                }
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === "Escape") {
+                                                                        setEditingCell(null);
+                                                                    }
+                                                                    if (e.key === "Enter") {
+                                                                        handleBlur(employee.id, dayIndex, day, "start", null);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            -
+                                                            <input
+                                                                type="time"
+                                                                value={
+                                                                    editedTime[`${employee.id}-${dayIndex}-end`] || schedule.end
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleEdit(employee.id, dayIndex, day, "end", e.target.value)
+                                                                }
+                                                                onBlur={(e) =>
+                                                                    handleBlur(employee.id, dayIndex, day, "end", e)
+                                                                }
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === "Escape") {
+                                                                        setEditingCell(null);
+                                                                    }
+                                                                    if (e.key === "Enter") {
+                                                                        handleBlur(employee.id, dayIndex, day, "end", null);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <button
+                                                                className="clear-time-btn"
+                                                                onClick={() =>
+                                                                    handleClearTime(employee.id, dayIndex, day)
+                                                                }
+                                                                title="Очистить время"
+                                                                style={{
+                                                                    marginLeft: "0.5em",
+                                                                    cursor: "pointer",
+                                                                    background: "none",
+                                                                    border: "none",
+                                                                    fontSize: "1em",
+                                                                    color: "#888"
+                                                                }}
+                                                            >
+                                                                🗑️
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <div
+                                                            onClick={() =>
+                                                                setEditingCell({
+                                                                    employeeId: employee.id,
+                                                                    day: day,
+                                                                    dayIndex: dayIndex,
+                                                                })
                                                             }
-                                                            if (e.key === "Enter") {
-                                                                handleBlur(index, dayIndex, day, "start", null);
-                                                            }
-                                                        }}
-                                                    />
-                                                    -
-                                                    <input
-                                                        type="time"
-                                                        value={editedTime[`${index}-${dayIndex}-end`] || schedule.end}
-                                                        onChange={(e) => handleEdit(index, dayIndex, day, "end", e.target.value)}
-                                                        onBlur={(e) => handleBlur(index, dayIndex, day, "end", e)}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Escape") {
-                                                                setEditingCell(null); // Отмена редактирования
-                                                            }
-                                                            if (e.key === "Enter") {
-                                                                handleBlur(index, dayIndex, day, "end", null);
-                                                            }
-                                                        }}
-                                                    />
-                                                    <button
-                                                        className="clear-time-btn"
-                                                        onClick={() => handleClearTime(index, dayIndex, day)}
-                                                        title="Очистить время"
-                                                        style={{
-                                                            marginLeft: "0.5em",
-                                                            cursor: "pointer",
-                                                            background: "none",
-                                                            border: "none",
-                                                            fontSize: "1em",
-                                                            color: "#888"
-                                                        }}
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <div onClick={() => setEditingCell({ row: index, day: day, dayIndex: dayIndex })}>
-                                                    {`${schedule.start} - ${schedule.end}`}
+                                                        >
+                                                            {`${schedule?.start} - ${schedule?.end}`}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
+                                            );
+                                        })}
+                                    </div>
+                                ))}
+                            </>
+                        ) : (
+                            <div className="no-results">
+                                {currentTranslation.noResults}
                             </div>
-                        ))}
+                        )}
                     </div>
                     {document.querySelector(".footer") &&
+                        (totalPages > 1) &&
                         ReactDOM.createPortal(
                             <>
                                 <button

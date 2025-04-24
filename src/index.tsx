@@ -1,13 +1,14 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-//import Worksheet from "./Worksheet";
 import "../styles/index.css";
+import MainCodeIndex from "./MainCodeIndex";
 
-const pageElement = document.getElementById("root");
+const pageElement = document.getElementById("head");
 
 if (!pageElement) {
-    throw new Error("Элемент с id='page' не найден в DOM");
+    throw new Error("Элемент с id='head' не найден в DOM");
 }
 
-const root = createRoot(pageElement);
-//root.render(<Worksheet1 />);
+const head = createRoot(pageElement);
+head.render(<MainCodeIndex />);
+

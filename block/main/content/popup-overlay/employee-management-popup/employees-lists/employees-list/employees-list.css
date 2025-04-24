@@ -1,0 +1,7 @@
+@import url("./employees-element/employees-element.css");
+
+.employees-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}

@@ -5,11 +5,11 @@ import { calculateWorkHours } from '../utils';
 interface MobileEmployeeSearchProps {
     employees: Employee[];
     translations: Record<string, string>;
-    editingCell: { row: number; day: string; dayIndex: number } | null;
+    editingCell: { employeeId: string; day: string; dayIndex: number } | null;
     editedTime: Record<string, string>;
-    onEdit: (row: number, dayIndex: number, day: string, type: string, value: string) => void;
-    onBlur: (row: number, dayIndex: number, day: string, type: "start" | "end", event?: React.FocusEvent<HTMLInputElement> | null) => void;
-    onSetEditingCell: (cell: { row: number; day: string; dayIndex: number } | null) => void;
+    onEdit: (employeeId: string, dayIndex: number, day: string, type: string, value: string) => void;
+    onBlur: (employeeId: string, dayIndex: number, day: string, type: "start" | "end", event?: React.FocusEvent<HTMLInputElement> | null) => void;
+    onSetEditingCell: (cell: { employeeId: string; day: string; dayIndex: number } | null) => void;
 }
 
 export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
@@ -34,6 +34,8 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
     useEffect(() => {
         setCurrentEmployeeIndex(0);
     }, [filteredEmployees]);
+
+    const currentEmployee = filteredEmployees[currentEmployeeIndex];
 
     return (
         <div className="mobile-employee-search">
@@ -67,28 +69,32 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                                 {Object.entries(filteredEmployees[currentEmployeeIndex].weekSchedule).map(([day, schedule], dayIndex) => (
                                     <div className="day-slot" key={day}>
                                         <div className="day-label">{translations[day]}</div>
-                                        {editingCell?.row === currentEmployeeIndex && editingCell?.day === day ? (
+                                        {editingCell?.employeeId === currentEmployee.id && editingCell?.day === day ? (
                                             <div className="time-inputs">
                                                 <input
                                                     type="time"
-                                                    value={editedTime[`${currentEmployeeIndex}-${dayIndex}-start`] || schedule.start}
-                                                    onChange={(e) => onEdit(currentEmployeeIndex, dayIndex, day, "start", e.target.value)}
-                                                    onBlur={(e) => onBlur(currentEmployeeIndex, dayIndex, day, "start", e)}
+                                                    value={editedTime[`${currentEmployee.id}-${dayIndex}-start`] || schedule.start}
+                                                    onChange={(e) => onEdit(currentEmployee.id, dayIndex, day, "start", e.target.value)}
+                                                    onBlur={(e) => onBlur(currentEmployee.id, dayIndex, day, "start", e)}
                                                 />
                                                 <span>-</span>
                                                 <input
                                                     type="time"
-                                                    value={editedTime[`${currentEmployeeIndex}-${dayIndex}-end`] || schedule.end}
-                                                    onChange={(e) => onEdit(currentEmployeeIndex, dayIndex, day, "end", e.target.value)}
-                                                    onBlur={(e) => onBlur(currentEmployeeIndex, dayIndex, day, "end", e)}
+                                                    value={editedTime[`${currentEmployee.id}-${dayIndex}-end`] || schedule.end}
+                                                    onChange={(e) => onEdit(currentEmployee.id, dayIndex, day, "end", e.target.value)}
+                                                    onBlur={(e) => onBlur(currentEmployee.id, dayIndex, day, "end", e)}
                                                 />
                                             </div>
                                         ) : (
                                             <div
                                                 className="time-display"
-                                                onClick={() => onSetEditingCell({ row: currentEmployeeIndex, day, dayIndex })}
+                                                onClick={() => onSetEditingCell({
+                                                    employeeId: currentEmployee.id,
+                                                    day: day,
+                                                    dayIndex: dayIndex
+                                                })}
                                             >
-                                                {`${schedule.start} - ${schedule.end}`}
+                                                {`${schedule?.start} - ${schedule?.end}`}
                                             </div>
                                         )}
                                     </div>
