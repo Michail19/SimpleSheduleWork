@@ -30,7 +30,7 @@ const GitHubProjects: React.FC = () => {
   const [username] = useState<string>('Michail19');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeProject, setActiveProject] = useState<MergedProject | null>(null);
+  const [activeProject, setActiveProject] = useState<MergedProject | null>(null); // Для DetailsPopup
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -40,7 +40,7 @@ const GitHubProjects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const [isEmployeePopupOpen, setIsEmployeePopupOpen] = useState(false);
-  const [currentProjectForEdit, setCurrentProjectForEdit] = useState<MergedProject | null>(null);
+  const [currentProjectForEdit, setCurrentProjectForEdit] = useState<MergedProject | null>(null); // Для EmployeePopup
   const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
   const [updateKey, setUpdateKey] = useState(0);
 
@@ -317,7 +317,7 @@ const GitHubProjects: React.FC = () => {
   const handleSaveEmployees = (updatedEmployees: Employee[]) => {
     if (!currentProjectForEdit) return;
 
-    // Обновляем проект в основном списке
+    // Обновляем repos (основное состояние)
     setRepos(prevRepos =>
         prevRepos.map(repo =>
             repo.id === currentProjectForEdit.id
@@ -326,8 +326,10 @@ const GitHubProjects: React.FC = () => {
         )
     );
 
-    // TODO Здесь можно добавить вызов API для сохранения на сервере
-    console.log('Сохраненные изменения:', updatedEmployees);
+    // Обновляем activeProject, если он сейчас открыт
+    if (activeProject && activeProject.id === currentProjectForEdit.id) {
+      setActiveProject({ ...activeProject, employees: updatedEmployees });
+    }
 
     setIsEmployeePopupOpen(false);
   };
@@ -352,25 +354,25 @@ const GitHubProjects: React.FC = () => {
     return () => window.removeEventListener('resize', checkWidth);
   }, []);
 
-const sidebar = document.querySelector('.sidebar');
-const headbar = document.querySelector('.header__up-blocks__headbar');
+  const sidebar = document.querySelector('.sidebar');
+  const headbar = document.querySelector('.header__up-blocks__headbar');
 
-const container = window.innerWidth < 1490 ? headbar : sidebar; // например, выбор контейнера по ширине
-const buttonClassName = window.innerWidth < 1490
-  ? 'header__up-blocks__headbar__btn'
-  : 'sidebar__btn';
-  if (!container) return null;
-  
-  const [btnSize, setBtnSize] = useState({ width: 0, height: 0 });
-    const btnRef = useRef<HTMLButtonElement | null>(null);
+  const container = window.innerWidth < 1490 ? headbar : sidebar; // например, выбор контейнера по ширине
+  const buttonClassName = window.innerWidth < 1490
+    ? 'header__up-blocks__headbar__btn'
+    : 'sidebar__btn';
+    if (!container) return null;
 
-    // Получаем размер кнопки при монтировании
-    useEffect(() => {
-      if (btnRef.current) {
-        const { width, height } = btnRef.current.getBoundingClientRect();
-        setBtnSize({ width, height });
-      }
-    }, [isProjectSearchOpen === false]); // пересчитываем, когда кнопка показывается
+    const [btnSize, setBtnSize] = useState({ width: 0, height: 0 });
+      const btnRef = useRef<HTMLButtonElement | null>(null);
+
+      // Получаем размер кнопки при монтировании
+      useEffect(() => {
+        if (btnRef.current) {
+          const { width, height } = btnRef.current.getBoundingClientRect();
+          setBtnSize({ width, height });
+        }
+      }, [isProjectSearchOpen === false]); // пересчитываем, когда кнопка показывается
 
 
   return (
