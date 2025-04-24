@@ -23,7 +23,9 @@ const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
                 <div className="employees-section">
                     <div className="employees-header">
                         <strong className="employees-header-text">Сотрудники:</strong>
-                        {accessLevel === "OWNER" && (
+                        {accessLevel === "OWNER" &&
+                            window.innerHeight > 500 &&
+                            window.innerWidth > 786 && (
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();

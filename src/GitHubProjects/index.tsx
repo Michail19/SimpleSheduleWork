@@ -484,6 +484,8 @@ const GitHubProjects: React.FC = () => {
                 )}
 
                 {accessLevel === "OWNER" &&
+                    window.innerHeight > 500 &&
+                    window.innerWidth > 786 &&
                     isEmployeePopupOpen &&
                     currentProjectForEdit && (
                         <EmployeeManagementPopup
