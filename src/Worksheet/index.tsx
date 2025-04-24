@@ -185,42 +185,62 @@ const Worksheet: React.FC = () => {
         return () => window.removeEventListener("resize", calculateRowsPerPage);
     }, [employees]); // или employees, если до фильтрации
 
+
     // Смена недели
+    function getWeekRangeByOffset(offset: number): { start: Date; end: Date } {
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 (воскресенье) до 6 (суббота)
+        const diffToMonday = (currentDay + 6) % 7; // Преобразуем: понедельник — 0, вторник — 1, ..., воскресенье — 6
+
+        const monday = new Date(now);
+        monday.setDate(monday.getDate() - diffToMonday + offset * 7);
+        monday.setHours(0, 0, 0, 0);
+
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+
+        return { start: monday, end: sunday };
+    }
+
     const changeWeek = async (direction: "next" | "previous") => {
-        // Сначала сохраняем все ожидающие изменения
         await flushChanges();
 
-        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
-        if (!parsedWeek) return;
+        const offsetChange = direction === "next" ? 1 : -1;
 
-        const { start, end } = parsedWeek;
-        const newStart = new Date(start);
-        const newEnd = new Date(end);
+        // Подсчёт смещения недели (можно хранить в useState или useRef)
+        setCurrentOffset(prev => {
+            const newOffset = prev + offsetChange;
 
-        if (direction === "next") {
-            newStart.setDate(newStart.getDate() + 7);
-            newEnd.setDate(newEnd.getDate() + 7);
-        } else {
-            newStart.setDate(newStart.getDate() - 7);
-            newEnd.setDate(newEnd.getDate() - 7);
-        }
+            const { start, end } = getWeekRangeByOffset(newOffset);
 
-        const formatDate = (date: Date) => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() - 3).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
+            const formatDate = (date: Date) =>
+                new Intl.DateTimeFormat("ru-RU", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    timeZone: "Europe/Moscow"
+                })
+                    .format(date)
+                    .split(".")
+                    .reverse()
+                    .join("-");
+            const formattedDate = formatDate(start);
+            console.log(start, end);
+            console.log(formattedDate);
 
-        const formattedDate = formatDate(newStart);
-        const newWeekRange = formatWeekRange(newStart, newEnd, currentTranslation);
+            const newWeekRange = formatWeekRange(start, end, currentTranslation); // остаётся та же функция
 
+            fetchWeekData(formattedDate, newWeekRange);
+
+            return newOffset;
+        });
+    };
+
+    const [currentOffset, setCurrentOffset] = useState(0);
+
+    const fetchWeekData = async (formattedDate: string, newWeekRange: string) => {
         try {
             const token = localStorage.getItem("authToken");
-            if (!token) {
-                throw new Error("Токен авторизации не найден");
-            }
-
             const url = `https://ssw-backend.onrender.com/schedule/weekly?date=${formattedDate}`;
             const response = await fetch(url, {
                 headers: {
@@ -229,59 +249,20 @@ const Worksheet: React.FC = () => {
                 },
             });
 
-            if (!response.ok) {
-                throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
-            }
+            if (!response.ok) throw new Error("Ошибка сервера");
 
             const data = await response.json();
 
-            // Сохраняем текущие локальные изменения перед обновлением
-            const localChanges = pendingChangesRef.current;
-
-            // Обновляем сотрудников с сервера
-            setEmployees(prevEmployees => {
-                const newEmployees = data.employees.map((serverEmployee: Employee) => {
-                    // Находим соответствующего сотрудника в предыдущем состоянии
-                    const prevEmployee = prevEmployees.find(e => e.id === serverEmployee.id);
-
-                    // Если есть локальные изменения для этого сотрудника, применяем их
-                    if (prevEmployee) {
-                        const employeeChanges = localChanges.find(c => c.employeeId === serverEmployee.id);
-
-                        if (employeeChanges) {
-                            return {
-                                ...serverEmployee,
-                                weekSchedule: {
-                                    ...serverEmployee.weekSchedule,
-                                    ...employeeChanges.schedule
-                                }
-                            };
-                        }
-                    }
-
-                    return serverEmployee;
-                });
-
-                return newEmployees;
-            });
-
-            const allProjects: string[] = data.employees.flatMap(
-                (employee: { projects: string }) => employee.projects?.split(" ") || []
+            const allProjects = data.employees.flatMap(
+                (e: { projects: string }) => e.projects?.split(" ") || []
             ).filter(Boolean);
 
-            const uniqueProjects: string[] = [...new Set(allProjects)];
-
-            setFilters(prev => ({
-                ...prev,
-                projects: uniqueProjects,
-                activeProjects: prev.activeProjects
-            }));
-
+            setEmployees(data.employees);
             setCurrentWeek(newWeekRange);
             setPendingChanges([]);
             pendingChangesRef.current = [];
-        } catch (error) {
-            console.error("Ошибка при загрузке данных:", error);
+        } catch (err) {
+            console.error("Ошибка при загрузке данных:", err);
             setCurrentWeek(newWeekRange);
         }
     };
@@ -448,14 +429,18 @@ const Worksheet: React.FC = () => {
         const newStart = new Date(start);
 
         // Костыль по месяцам сохраняем
-        const formatDate = (date: Date) => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() - 3).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        const formattedDate = formatDate(newStart);
+        const formatDate = (date: Date) =>
+            new Intl.DateTimeFormat("ru-RU", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                timeZone: "Europe/Moscow"
+            })
+                .format(date)
+                .split(".")
+                .reverse()
+                .join("-");
+        const formattedDate = formatDate(start);
 
         enqueueChange(
             employeeId,
@@ -535,17 +520,19 @@ const Worksheet: React.FC = () => {
         if (!parsedWeek) return;
 
         const { start, end } = parsedWeek;
-        const newStart = new Date(start);
 
-        // Форматируем дату вручную для гарантии правильного формата
-        const formatDate = (date: Date) => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() - 3).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        const formattedDate = formatDate(newStart);
+        const formatDate = (date: Date) =>
+            new Intl.DateTimeFormat("ru-RU", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                timeZone: "Europe/Moscow"
+            })
+                .format(date)
+                .split(".")
+                .reverse()
+                .join("-");
+        const formattedDate = formatDate(start);
 
         setEmployees((prev) =>
             prev.map((employee) =>
