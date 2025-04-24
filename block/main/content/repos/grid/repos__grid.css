@@ -1,3 +1,10 @@
+.repos__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
 @import url("./repo-card/repo-card.css");
 @import url("./repo-link/repo-link.css");
 @import url("./repo-meta/repo-meta.css");

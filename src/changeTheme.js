@@ -11,7 +11,8 @@ const translations = {
         sidebar_filters: "Фильтры",
         sidebar_search: "Поиск",
         sidebar_schedule: "Расписание",
-        sidebar_projects: "Проекты"
+        sidebar_projects: "Проекты",
+        list_of_projects: "Список проектов"
     },
     en: {
         loading: "Loading...",
@@ -25,7 +26,8 @@ const translations = {
         sidebar_filters: "Filters",
         sidebar_search: "Search",
         sidebar_schedule: "Schedule",
-        sidebar_projects: "Projects"
+        sidebar_projects: "Projects",
+        list_of_projects: "List of projects"
     }
 };
 

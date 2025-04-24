@@ -47,6 +47,16 @@ const GitHubProjects: React.FC = () => {
     const accessLevel = getUserAccessLevel();
 
     useEffect(() => {
+        // Применяем сохранённые настройки языка при загрузке
+        const langSetting = localStorage.getItem('changed-lang');
+        if (langSetting === 'enabled') {
+            setLanguage("en");
+        } else {
+            setLanguage("ru");
+        }
+    }, []);
+
+    useEffect(() => {
         const fetchData = async () => {
             const octokit = new Octokit();
             const token = localStorage.getItem('authToken'); // 🔐 Получаем токен
@@ -167,7 +177,7 @@ const GitHubProjects: React.FC = () => {
             if (!card) return 1;
 
             const cardWidth = card.clientWidth;
-            const gap = 24; // например, если gap: 1.5rem
+            const gap = 16; // например, если gap: 1rem
 
             return Math.max(1, Math.floor(containerWidth / (cardWidth + gap)));
         };
@@ -436,16 +446,16 @@ const GitHubProjects: React.FC = () => {
                         className="header__up-blocks__wrapper__list__btn"
                         onClick={() => handleLogout()}
                     >
-                        Выход
+                        {currentTranslation.exit}
                     </button>,
                     document.querySelector('.header__up-blocks__wrapper__list') as Element
                 )
             }
 
             <div className="worksheet">
-                {loading && <div className="loader">Загрузка...</div>}
+                {loading && <div className="loader">{currentTranslation.load}</div>}
 
-                {error && <div className="error-message">Ошибка: {error}</div>}
+                {error && <div className="error-message">{currentTranslation.error}: {error}</div>}
 
                 <div ref={containerRef} className="repos__grid">
                     {displayedRepos.map((repo) => (
@@ -469,7 +479,7 @@ const GitHubProjects: React.FC = () => {
                                 {repo.language && <span className="repo-text">{repo.language}</span>}
                                 <span className="repo-text">⭐ {repo.stargazers_count}</span>
                                 <span
-                                    className="repo-text">Обновлено: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                                    className="repo-text">{currentTranslation.update}: {new Date(repo.updated_at).toLocaleDateString()}</span>
                             </div>
                         </div>
                     ))}
@@ -480,6 +490,7 @@ const GitHubProjects: React.FC = () => {
                         project={activeProject}
                         onClose={() => setActiveProject(null)}
                         onEditEmployees={() => openEmployeePopup(activeProject)}
+                        currentTranslation={currentTranslation}
                     />
                 )}
 
@@ -492,6 +503,7 @@ const GitHubProjects: React.FC = () => {
                             project={currentProjectForEdit}
                             allEmployees={allEmployees}
                             onClose={handleSaveEmployees}
+                            currentTranslation={currentTranslation}
                         />
                     )}
             </div>

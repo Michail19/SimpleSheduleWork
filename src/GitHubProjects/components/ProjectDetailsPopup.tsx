@@ -1,17 +1,20 @@
-import {Project} from "../types";
+import {Language, Project} from "../types";
 import React from 'react';
 import {getUserAccessLevel} from "../../UserAccessLevel";
+import {translations} from "../translations";
 
 interface ProjectDetailsPopupProps {
     project: Project;
     onClose: () => void;
     onEditEmployees: () => void; // Добавьте этот проп
+    currentTranslation: typeof translations[Language];
 }
 
 const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
                                                                      project,
                                                                      onClose,
-                                                                     onEditEmployees
+                                                                     onEditEmployees,
+                                                                     currentTranslation,
                                                                  }) => {
     const accessLevel = getUserAccessLevel();
     return (
@@ -33,7 +36,7 @@ const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
                                 }}
                                 className="add-employee-btn"
                             >
-                                Управление сотрудниками
+                                {currentTranslation.controlEmployee}
                             </button>
                         )}
                     </div>
@@ -44,7 +47,7 @@ const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
                                 <li className="employees-element" key={emp.id}>{emp.fio}</li>
                             ))
                         ) : (
-                            <li className="employees-element">Нет назначенных сотрудников</li>
+                            <li className="employees-element">{currentTranslation.noEmployee}</li>
                         )}
                     </ul>
                 </div>

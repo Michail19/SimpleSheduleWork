@@ -6,6 +6,7 @@
     white-space: nowrap;
     font-size: 1.25em;
     text-decoration: none;
+    border: none;
     cursor: pointer;
 
     background: #98ED9B;

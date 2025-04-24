@@ -1,4 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
+import {translations} from "../translations";
+import {Language} from "../types";
 
 interface Employee {
     id: number;
@@ -15,12 +17,14 @@ interface EmployeeManagementPopupProps {
     project: Project;
     allEmployees: Employee[];
     onClose: (updatedEmployees: Employee[]) => void;
+    currentTranslation: typeof translations[Language];
 }
 
 const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
                                                                              project,
                                                                              allEmployees,
                                                                              onClose,
+                                                                             currentTranslation,
                                                                          }) => {
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -85,7 +89,7 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         // Проверяем токен
         const token = localStorage.getItem('authToken');
         if (!token) {
-            alert('Ошибка авторизации. Токен не найден.');
+            alert(currentTranslation.alertAuth);
             return;
         }
 
@@ -105,21 +109,21 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
             if (!response.ok) {
                 const errorData = await response.json(); // Попробуем прочитать тело ошибки
                 console.error("Детали ошибки:", errorData);
-                throw new Error(`Ошибка: ${response.status} - ${errorData.message || 'Неизвестная ошибка'}`);
+                throw new Error(`${currentTranslation.error}: ${response.status} - ${errorData.message || currentTranslation.unknownError}`);
             }
 
             // Всё успешно — закрываем попап
             onClose(currentAttached);
         } catch (error) {
             console.error('Ошибка при сохранении:', error);
-            alert('Не удалось сохранить изменения. Проверьте консоль для деталей.');
+            alert(currentTranslation.alertChange);
         }
     };
 
     return (
         <div className="popup-overlay">
             <div className="employee-management-popup">
-                <h2 className="popup-header">Управление сотрудниками: {project.name}</h2>
+                <h2 className="popup-header">{currentTranslation.controlEmployee}: {project.name}</h2>
 
                 <div className="search-section">
                     <input
@@ -127,15 +131,15 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
                         ref={searchInputRef}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Поиск сотрудников..."
+                        placeholder={currentTranslation.searchEmployeePlaceholder}
                     />
                 </div>
 
                 <div className="employees-lists">
                     <div className="attached-section">
-                        <h3 className="section-header-h">Прикрепленные сотрудники</h3>
+                        <h3 className="section-header-h">{currentTranslation.addedEmployee}</h3>
                         {currentAttached.length === 0 ? (
-                            <p className="empty-message">Нет прикрепленных сотрудников</p>
+                            <p className="empty-message">{currentTranslation.noAddedEmployee}</p>
                         ) : (
                             <ul className="employees-list">
                                 {currentAttached.map(emp => (
@@ -154,10 +158,10 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
                     </div>
 
                     <div className="available-section">
-                        <h3 className="section-header-h">Доступные сотрудники</h3>
+                        <h3 className="section-header-h">{currentTranslation.availableEmployee}</h3>
                         {availableEmployees.length === 0 ? (
                             <p className="empty-message">
-                                {searchQuery ? 'Ничего не найдено' : 'Нет доступных сотрудников'}
+                                {searchQuery ? currentTranslation.nothingFounded : currentTranslation.noAvailableEmployee}
                             </p>
                         ) : (
                             <ul className="employees-list">
@@ -179,10 +183,10 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
 
                 <div className="popup-actions">
                     <button onClick={() => onClose(project.employees)} className="cancel-btn popup-actions-btn">
-                        Закрыть
+                        {currentTranslation.close}
                     </button>
                     <button onClick={handleSave} className="save-btn popup-actions-btn">
-                        Сохранить изменения
+                        {currentTranslation.saveChanges}
                     </button>
                 </div>
             </div>
