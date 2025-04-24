@@ -59,7 +59,7 @@ const GitHubProjects: React.FC = () => {
           }),
           fetch('https://ssw-backend.onrender.com/projects/all', {
             headers: {
-              Authorization: token ? `Bearer ${token}` : '', // 🔐 токен добавляется
+              "Authorization": `Bearer ${token}`, // 🔐 токен добавляется
             },
           }),
         ]);
@@ -68,7 +68,7 @@ const GitHubProjects: React.FC = () => {
 
         const gitRepos = repoResponse.data as GitHubRepo[];
         const employeeData = await serverResponse.json();
-        const projects = employeeData?.projects ?? {};
+        const projects = employeeData?.employees ?? {};
 
         const filteredRepos = gitRepos.filter(
             (repo) =>
@@ -77,6 +77,7 @@ const GitHubProjects: React.FC = () => {
         );
 
         const merged = filteredRepos.map((repo) => {
+          console.log('REPO:', repo.name, '| EMPLOYEES:', projects[repo.name]);
           const matchedEmployees = projects[repo.name] || [];
           return {
             ...repo,
