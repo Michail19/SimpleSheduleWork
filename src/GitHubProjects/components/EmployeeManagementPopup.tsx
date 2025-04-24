@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
 interface Employee {
     id: number;
@@ -64,7 +64,7 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         if (added.length > 0) {
             payload.push({
                 action: 'add',
-                fio: added.map(emp => ({ id: emp.id, fio: emp.fio })), // Важно: передаем массив {id, fio}
+                fio: added.map(emp => ({id: emp.id, fio: emp.fio})), // Важно: передаем массив {id, fio}
                 project: project.name,
             });
         }
@@ -72,7 +72,7 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         if (removed.length > 0) {
             payload.push({
                 action: 'remove',
-                fio: removed.map(emp => ({ id: emp.id, fio: emp.fio })), // Аналогично для удаления
+                fio: removed.map(emp => ({id: emp.id, fio: emp.fio})), // Аналогично для удаления
                 project: project.name,
             });
         }

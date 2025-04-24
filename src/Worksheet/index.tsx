@@ -8,6 +8,7 @@ import { FiltersPanel } from './components/FiltersPanel';
 import { AddEmployeePopup } from './components/AddEmployeePopup';
 import { DeleteEmployeePopup } from './components/DeleteEmployeePopup';
 import {MobileEmployeeSearch} from "./components/MobileEmployeeSearch";
+import {getUserAccessLevel} from "../UserAccessLevel";
 
 const Worksheet: React.FC = () => {
     // Состояния и рефы
@@ -30,6 +31,7 @@ const Worksheet: React.FC = () => {
     const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+    const accessLevel = getUserAccessLevel();
     const [filters, setFilters] = useState<FiltersState>({
         projects: [],
         activeProjects: [],
@@ -586,24 +588,6 @@ const Worksheet: React.FC = () => {
                 }
 
                 setEditingCell(null);
-
-
-                // if (e.key === "Enter") {
-                //     const inputElement = document.querySelector("input"); // Находим input
-                //     if (inputElement) {
-                //         const value = inputElement.value; // Получаем значение
-                //
-                //         handleEdit(editingCell.employeeId, editingCell.dayIndex, editingCell.day, "start", value); // Сохраняем значение
-                //
-                //         const nextInput = inputRefs.current[1]; // Следующий input
-                //
-                //         if (nextInput) {
-                //             nextInput.focus(); // Переключаем фокус на следующий input
-                //         }
-                //
-                //         setEditingCell(null); // Завершаем редактирование
-                //     }
-                // }
             }
         };
 
@@ -705,7 +689,9 @@ const Worksheet: React.FC = () => {
     return (
         <div className="content" key={updateKey}>
             {/* Рендеринг порталов и компонентов */}
-            {document.querySelector('.sidebar') &&
+
+            {accessLevel === "OWNER" &&
+                document.querySelector('.sidebar') &&
                 ReactDOM.createPortal(
                     <button
                         className="sidebar__btn"
@@ -716,7 +702,8 @@ const Worksheet: React.FC = () => {
                     document.querySelector('.sidebar') as Element
                 )
             }
-            {document.querySelector('.header__up-blocks__headbar') &&
+            {accessLevel === "OWNER" &&
+                document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
                     <button
                         className="header__up-blocks__headbar__btn"
@@ -727,7 +714,8 @@ const Worksheet: React.FC = () => {
                     document.querySelector('.header__up-blocks__headbar') as Element
                 )
             }
-            {isAddEmployeePopupOpen && (
+            {accessLevel === "OWNER" &&
+                isAddEmployeePopupOpen && (
                 <AddEmployeePopup
                     onClose={() => setIsAddEmployeePopupOpen(false)}
                     onSave={handleAddEmployee}
@@ -737,7 +725,8 @@ const Worksheet: React.FC = () => {
                 />
             )}
 
-            {document.querySelector('.sidebar') &&
+            {accessLevel === "OWNER" &&
+                document.querySelector('.sidebar') &&
                 ReactDOM.createPortal(
                     <button
                         className="sidebar__btn"
@@ -748,7 +737,8 @@ const Worksheet: React.FC = () => {
                     document.querySelector('.sidebar') as Element
                 )
             }
-            {document.querySelector('.header__up-blocks__headbar') &&
+            {accessLevel === "OWNER" &&
+                document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
                     <button
                         className="header__up-blocks__headbar__btn"
@@ -759,7 +749,8 @@ const Worksheet: React.FC = () => {
                     document.querySelector('.header__up-blocks__headbar') as Element
                 )
             }
-            {isDeletePopupOpen && (
+            {accessLevel === "OWNER" &&
+                isDeletePopupOpen && (
                 <DeleteEmployeePopup
                     employees={employees}
                     onDelete={handleDeleteEmployee}
@@ -974,13 +965,16 @@ const Worksheet: React.FC = () => {
                                                         </>
                                                     ) : (
                                                         <div
-                                                            onClick={() =>
-                                                                setEditingCell({
-                                                                    employeeId: employee.id,
-                                                                    day: day,
-                                                                    dayIndex: dayIndex,
-                                                                })
-                                                            }
+                                                            onClick={() => {
+                                                                if (accessLevel === "OWNER" ||
+                                                                    employee === employees[0]) { // If not current
+                                                                    setEditingCell({
+                                                                        employeeId: employee.id,
+                                                                        day: day,
+                                                                        dayIndex: dayIndex,
+                                                                    });
+                                                                }
+                                                            }}
                                                         >
                                                             {`${schedule?.start} - ${schedule?.end}`}
                                                         </div>

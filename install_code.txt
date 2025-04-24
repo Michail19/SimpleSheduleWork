@@ -17,6 +17,7 @@ npm install --save-dev postcss-loader postcss
 npm install --save-dev css-loader autoprefixer
 npm install --save-dev postcss-loader postcss postcss-bem-linter
 npm install @octokit/core --save-dev
+npm install jwt-decode
 
 
 {document.querySelector('.sidebar') &&
