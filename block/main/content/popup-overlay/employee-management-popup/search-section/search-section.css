@@ -10,6 +10,11 @@
     border-radius: 4px;
 }
 
+.dark-theme .popup-search {
+    background: #2a2a2a;
+    color: #EAEAEA;
+}
+
 .search-section label {
     margin-bottom: 5px;
 }

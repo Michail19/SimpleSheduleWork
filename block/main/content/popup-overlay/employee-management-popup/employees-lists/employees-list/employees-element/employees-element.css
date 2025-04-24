@@ -12,3 +12,13 @@
     background: #f9f9f9;
     border-radius: 4px;
 }
+
+.dark-theme .employees-element {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: #414141;
+    border-radius: 4px;
+}
