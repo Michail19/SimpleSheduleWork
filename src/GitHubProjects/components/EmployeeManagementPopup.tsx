@@ -46,8 +46,74 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         setCurrentAttached(prev => prev.filter(emp => emp.id !== employeeId));
     };
 
-    const handleSave = () => {
-        onClose(currentAttached);
+    useEffect(() => {
+        setCurrentAttached(project.employees);
+    }, [project.employees]);
+
+    const handleSave = async () => {
+        // Вычисляем, кто добавлен и кто удалён
+        const originalIds = new Set(project.employees.map(e => e.id));
+        const currentIds = new Set(currentAttached.map(e => e.id));
+
+        const added = currentAttached.filter(e => !originalIds.has(e.id));
+        const removed = project.employees.filter(e => !currentIds.has(e.id));
+
+        // Формируем payload в точном формате, как в curl-примере
+        const payload = [];
+
+        if (added.length > 0) {
+            payload.push({
+                action: 'add',
+                fio: added.map(emp => ({ id: emp.id, fio: emp.fio })), // Важно: передаем массив {id, fio}
+                project: project.name,
+            });
+        }
+
+        if (removed.length > 0) {
+            payload.push({
+                action: 'remove',
+                fio: removed.map(emp => ({ id: emp.id, fio: emp.fio })), // Аналогично для удаления
+                project: project.name,
+            });
+        }
+
+        if (payload.length === 0) {
+            onClose(currentAttached);
+            return;
+        }
+
+        // Проверяем токен
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert('Ошибка авторизации. Токен не найден.');
+            return;
+        }
+
+        // Логируем payload для отладки
+        console.log("Отправляемые данные:", JSON.stringify(payload, null, 2));
+
+        try {
+            const response = await fetch('https://ssw-backend.onrender.com/projects/change', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json(); // Попробуем прочитать тело ошибки
+                console.error("Детали ошибки:", errorData);
+                throw new Error(`Ошибка: ${response.status} - ${errorData.message || 'Неизвестная ошибка'}`);
+            }
+
+            // Всё успешно — закрываем попап
+            onClose(currentAttached);
+        } catch (error) {
+            console.error('Ошибка при сохранении:', error);
+            alert('Не удалось сохранить изменения. Проверьте консоль для деталей.');
+        }
     };
 
     return (

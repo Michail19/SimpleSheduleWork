@@ -258,30 +258,60 @@ const GitHubProjects: React.FC = () => {
 
   // Загрузка всех сотрудников
   useEffect(() => {
-    const employeesJsonPath =
-        process.env.NODE_ENV === "production"
-            ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_fios.json"
-            : "/data/data_fios.json";
+    const fetchEmployees = async () => {
+      try {
+        const token = localStorage.getItem('authToken'); // 🔐 Получаем токен
 
-    fetch(employeesJsonPath)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+        const response = await fetch("https://ssw-backend.onrender.com/schedule/weekly", {
+          headers: {
+            "Authorization": `Bearer ${token}`, // 🔐 токен добавляется
+            "Content-Type": "application/json"
           }
-          return res.json();
-        })
-        .then(data => {
-          // Преобразуем id в number на случай если в JSON они строковые
-          const formattedEmployees = data.employees.map((emp: any) => ({
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Соберем уникальных сотрудников из всех проектов
+        const employeesMap = new Map<number, { id: number; fio: string }>();
+
+        data.employees.forEach((emp: any) => {
+          employeesMap.set(emp.id, { id: emp.id, fio: emp.fio });
+        });
+
+        const formattedEmployees = Array.from(employeesMap.values());
+        setAllEmployees(formattedEmployees);
+      } catch (err) {
+        console.warn("Не удалось загрузить данные с сервера, пробуем резервный источник…", err);
+
+        const employeesJsonPath =
+            process.env.NODE_ENV === "production"
+                ? "https://raw.githubusercontent.com/Michail19/SimpleSheduleWork/refs/heads/react-dev/public/data/data_fios.json"
+                : "/data/data_fios.json";
+
+        try {
+          const fallbackResponse = await fetch(employeesJsonPath);
+          if (!fallbackResponse.ok) {
+            throw new Error(`Fallback JSON HTTP error! status: ${fallbackResponse.status}`);
+          }
+
+          const fallbackData = await fallbackResponse.json();
+          const formattedEmployees = fallbackData.employees.map((emp: any) => ({
             id: Number(emp.id),
             fio: emp.fio
           }));
           setAllEmployees(formattedEmployees);
-        })
-        .catch(err => {
-          console.error("Error loading employees:", err);
-          setError("Failed to load employees data");
-        });
+        } catch (fallbackError) {
+          console.error("Ошибка при загрузке данных из резервного JSON:", fallbackError);
+          setError("Не удалось загрузить список сотрудников ни с сервера, ни из резервного источника");
+        }
+      }
+    };
+
+    fetchEmployees();
   }, []);
 
   const handleSaveEmployees = (updatedEmployees: Employee[]) => {
