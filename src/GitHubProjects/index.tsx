@@ -410,7 +410,7 @@ const GitHubProjects: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
-        window.location.href = '/index.html';
+        window.location.href = 'index.html';
     };
 
 
