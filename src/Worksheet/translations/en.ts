@@ -40,5 +40,16 @@ export default {
     addAnEmployee: "Add employee",
     addAnEmployeeBR: "Add\nemployee",
     deleteAnEmployee: "Delete employee",
-    deleteAnEmployeeBR: "Delete\nemployee"
+    deleteAnEmployeeBR: "Delete\nemployee",
+    exit: 'Exit',
+    alertEmployee: 'Failed to add employee.',
+    username: 'Username',
+    enterUsername: 'Enter username',
+    password: 'Password',
+    enterPassword: 'Enter password',
+    role: 'Role',
+    userRole: 'EMPLOYEE',
+    adminRole: 'ADMIN',
+    project: "Projects",
+    home: "Home",
 }

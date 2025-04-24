@@ -1,0 +1,24 @@
+@import url("./employees-element-name/employees-element-name.css");
+@import url("./action-btn/action-btn.css");
+@import url("./detach-btn/detach-btn.css");
+@import url("./attach-btn/attach-btn.css");
+
+.employees-element {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.dark-theme .employees-element {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: #414141;
+    border-radius: 4px;
+}

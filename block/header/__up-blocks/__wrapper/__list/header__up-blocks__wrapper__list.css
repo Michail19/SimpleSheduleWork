@@ -22,11 +22,9 @@
 
 @import url("./__btn/header__up-blocks__wrapper__list__btn.css");
 
-@media screen and (min-width: 870px) {
-    .header__up-blocks__wrapper:hover .header__up-blocks__wrapper__list {
-        visibility: visible;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75vh;
-    }
+.header__up-blocks__wrapper:hover .header__up-blocks__wrapper__list {
+    visibility: visible;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75vh;
 }

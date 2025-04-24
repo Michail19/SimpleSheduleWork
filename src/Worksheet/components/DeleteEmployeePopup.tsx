@@ -22,6 +22,28 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
         employee.fio.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const handleDelete = async () => {
+        const token = localStorage.getItem("authToken");
+        try {
+            const response = await fetch(`https://ssw-backend.onrender.com/schedule/delete/${selectedEmployee?.id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка при удалении сотрудника");
+            }
+
+            onClose();
+        } catch (error) {
+            console.error(error);
+            alert("Не удалось удалить сотрудника.");
+        }
+    };
+
     return (
         <div className="popup-overlay" onClick={onClose}>
             <div className="delete-popup" onClick={e => e.stopPropagation()}>
@@ -59,7 +81,10 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
                 <div className="popup-actions">
                     <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
                     <button
-                        onClick={() => selectedEmployee && onDelete(selectedEmployee.id)}
+                        onClick={() => {
+                            selectedEmployee && onDelete(selectedEmployee.id);
+                            handleDelete();
+                        }}
                         disabled={!selectedEmployee}
                         className="popup-actions-btn danger-btn"
                     >

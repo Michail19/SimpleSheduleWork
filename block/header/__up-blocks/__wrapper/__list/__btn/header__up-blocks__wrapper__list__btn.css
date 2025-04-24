@@ -6,6 +6,7 @@
     white-space: nowrap;
     font-size: 1.25em;
     text-decoration: none;
+    border: none;
     cursor: pointer;
 
     background: #98ED9B;
@@ -23,4 +24,10 @@
 
 .dark-theme .header__up-blocks__wrapper__list__btn:hover {
     background: #469a48;
+}
+
+@media screen and (max-width: 1090px) {
+    .header__up-blocks__wrapper__list__btn {
+        min-width: 100px;
+    }
 }

@@ -1,0 +1,6 @@
+@import url("./employees-header/employees-header.css");
+@import url("./employees-list/employees-list.css");
+
+.employees-section {
+    margin: 15px 0;
+}

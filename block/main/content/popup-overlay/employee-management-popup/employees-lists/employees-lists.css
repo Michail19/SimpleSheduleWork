@@ -1,0 +1,12 @@
+@import url("./attached-section/attached-section.css");
+@import url("./empty-message/empty-message.css");
+@import url("./employees-list/employees-list.css");
+@import url("./available-section/available-section.css");
+
+.employees-lists {
+    display: flex;
+    gap: 20px;
+    margin: 15px 0;
+    flex: 1;
+    overflow: hidden;
+}

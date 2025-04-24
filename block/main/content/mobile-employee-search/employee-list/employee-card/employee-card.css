@@ -12,6 +12,13 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.dark-theme .employee-card {
+    background: #323232;
+    border-radius: 8px;
+    padding: 5px 15px 10px 15px;
+    box-shadow: 0 2px 4px rgba(0, 154, 92, 0.75);
+}
+
 @media screen and (orientation: landscape) {
     .employee-card {
         grid-template-areas:

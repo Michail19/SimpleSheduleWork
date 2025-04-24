@@ -1,0 +1,19 @@
+.repo-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #6a737d;
+    margin-top: 0.5rem;
+}
+
+.dark-theme .repo-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #c6d8e8;
+    margin-top: 0.5rem;
+}
+
+@import url("./repo-text/repo-text.css");

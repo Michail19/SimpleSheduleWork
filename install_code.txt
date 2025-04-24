@@ -17,3 +17,39 @@ npm install --save-dev postcss-loader postcss
 npm install --save-dev css-loader autoprefixer
 npm install --save-dev postcss-loader postcss postcss-bem-linter
 npm install @octokit/core --save-dev
+npm install jwt-decode
+
+
+{document.querySelector('.sidebar') &&
+            ReactDOM.createPortal(
+                <button
+                    className="sidebar__btn"
+                    onClick={() => setIsProjectSearchOpen(true)}
+                >
+                  {currentTranslation.searchProject}
+                </button>,
+                document.querySelector('.sidebar') as Element
+            )}
+
+        {document.querySelector('.header__up-blocks__headbar') &&
+            ReactDOM.createPortal(
+                <button
+                    className="header__up-blocks__headbar__btn"
+                    onClick={() => setIsProjectSearchOpen(true)}
+                >
+                  {currentTranslation.searchProject}
+                </button>,
+                document.querySelector('.header__up-blocks__headbar') as Element
+            )}
+        {isProjectSearchOpen && (
+            ReactDOM.createPortal(
+                <SearchProjectPopup
+                    currentTranslation={currentTranslation}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    setIsOpen={setIsProjectSearchOpen}
+                    popupRef={popupRef}
+                />,
+                container
+            )
+        )}
