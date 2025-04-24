@@ -10,7 +10,7 @@
     border-radius: 4px;
 }
 
-.dark-theme .popup-search {
+.dark-theme .search-section input {
     background: #2a2a2a;
     color: #EAEAEA;
 }
