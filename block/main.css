@@ -7,6 +7,12 @@ html, body {
     overflow-y: hidden;
 }
 
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    html, body {
+        overflow-y: visible;
+    }
+}
+
 @import url("../block/loader/loader.css");
 @import url("../block/preloader/preloader.css");
 @import url("../block/page/page.css");

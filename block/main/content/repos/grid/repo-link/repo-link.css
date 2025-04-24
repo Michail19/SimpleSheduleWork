@@ -1,1 +1,15 @@
+.repo-link {
+    text-decoration: none;
+    color: #0366d6;
+}
+
+.dark-theme .repo-link {
+    text-decoration: none;
+    color: #bad2ff;
+}
+
+.repo-link:hover .repo-name {
+    text-decoration: underline;
+}
+
 @import url("./repo-name/repo-name.css");

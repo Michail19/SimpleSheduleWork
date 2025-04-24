@@ -11,3 +11,8 @@
     height: 40px;
     margin-left: 10px;
 }
+
+.dark-theme .search-toggle {
+    background: #414141;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.4);
+}

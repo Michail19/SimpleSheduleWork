@@ -100,7 +100,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
             onClose();
         } catch (error) {
             console.error(error);
-            alert("Не удалось добавить сотрудника.");
+            alert(currentTranslation.alertEmployee);
         }
     };
 
@@ -135,36 +135,36 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 </div>
 
                 <div className="search-container">
-                    <label>Username</label>
+                    <label>{currentTranslation.username}</label>
                     <input
                         type="text"
                         name="username"
-                        placeholder="Введите username"
+                        placeholder={currentTranslation.enterUsername}
                         value={employeeData.username}
                         onChange={handleChange}
                     />
                 </div>
 
                 <div className="search-container">
-                    <label>Password</label>
+                    <label>{currentTranslation.password}</label>
                     <input
                         type="password"
                         name="password"
-                        placeholder="Введите пароль"
+                        placeholder={currentTranslation.enterPassword}
                         value={employeeData.password}
                         onChange={handleChange}
                     />
                 </div>
 
                 <div className="search-container">
-                    <label>Role</label>
+                    <label>{currentTranslation.role}</label>
                     <select
                         name="role"
                         value={employeeData.role}
                         onChange={handleChange}
                     >
-                        <option value="USER">USER</option>
-                        <option value="OWNER">OWNER</option>
+                        <option value="USER">{currentTranslation.userRole}</option>
+                        <option value="OWNER">{currentTranslation.adminRole}</option>
                     </select>
                 </div>
 

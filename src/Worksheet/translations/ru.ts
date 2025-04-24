@@ -40,5 +40,16 @@ export default {
     addAnEmployee: "Добавить сотрудника",
     addAnEmployeeBR: "Добавить\nсотрудника",
     deleteAnEmployee: "Удалить сотрудника",
-    deleteAnEmployeeBR: "Удалить\nсотрудника"
+    deleteAnEmployeeBR: "Удалить\nсотрудника",
+    exit: 'Выход',
+    alertEmployee: 'Не удалось добавить сотрудника.',
+    username: 'Логин',
+    enterUsername: 'Введите username',
+    password: 'Пароль',
+    enterPassword: 'Введите пароль',
+    role: 'Роль',
+    userRole: 'СОТРУДНИК',
+    adminRole: 'АДМИН',
+    project: "Проекты",
+    home: "На главный",
 }
