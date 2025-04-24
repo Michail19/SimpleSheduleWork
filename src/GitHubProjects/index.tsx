@@ -439,18 +439,49 @@ const GitHubProjects: React.FC = () => {
                 container
             )}
 
-            {document.querySelector('.header__up-blocks__wrapper__list') &&
-                (localStorage.getItem("authToken") != null) &&
-                ReactDOM.createPortal(
-                    <button
-                        className="header__up-blocks__wrapper__list__btn"
-                        onClick={() => handleLogout()}
-                    >
-                        {currentTranslation.exit}
-                    </button>,
-                    document.querySelector('.header__up-blocks__wrapper__list') as Element
-                )
-            }
+            {window.innerWidth < 1090 ? (
+                <>
+                    {document.querySelector('.header__up-blocks__wrapper__list') &&
+                        (localStorage.getItem("authToken") != null) &&
+                        ReactDOM.createPortal(
+                            <button
+                                className="header__up-blocks__wrapper__list__btn"
+                                onClick={() => handleLogout()}
+                            >
+                                {currentTranslation.exit}
+                            </button>,
+                            document.querySelector('.header__up-blocks__wrapper__list') as Element
+                        )
+
+                    }
+                </>
+            ) : (
+                <>
+                    {document.querySelector(".header__up-blocks__wrapper__list") &&
+                        ReactDOM.createPortal(
+                            <>
+                                <a className="header__up-blocks__wrapper__list__btn" href="./index.html"
+                                   data-key="home">{currentTranslation.home}</a>
+                                <a className="header__up-blocks__wrapper__list__btn" href="./main.html"
+                                   data-key="schedule">{currentTranslation.schedule}</a>
+                            </>,
+                            document.querySelector(".header__up-blocks__wrapper__list") as Element
+                        )}
+
+                    {document.querySelector('.header__up-blocks__wrapper__list') &&
+                        (localStorage.getItem("authToken") != null) &&
+                        ReactDOM.createPortal(
+                            <button
+                                className="header__up-blocks__wrapper__list__btn"
+                                onClick={() => handleLogout()}
+                            >
+                                {currentTranslation.exit}
+                            </button>,
+                            document.querySelector('.header__up-blocks__wrapper__list') as Element
+                        )
+                    }
+                </>
+            )}
 
             <div className="worksheet">
                 {loading && <div className="loader">{currentTranslation.load}</div>}

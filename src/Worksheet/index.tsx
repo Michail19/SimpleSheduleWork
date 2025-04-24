@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useState, useRef} from "react";
 import ReactDOM from 'react-dom';
-import { Employee, FiltersState, Language } from './types';
-import { translations } from './translations';
-import { parseWeekRange, formatWeekRange, translateMonth } from "./timeParsers"
-import { calculateWorkHours, filterEmployees } from './utils';
-import { FiltersPanel } from './components/FiltersPanel';
-import { AddEmployeePopup } from './components/AddEmployeePopup';
-import { DeleteEmployeePopup } from './components/DeleteEmployeePopup';
+import {Employee, FiltersState, Language} from './types';
+import {translations} from './translations';
+import {parseWeekRange, formatWeekRange, translateMonth} from "./timeParsers"
+import {calculateWorkHours, filterEmployees} from './utils';
+import {FiltersPanel} from './components/FiltersPanel';
+import {AddEmployeePopup} from './components/AddEmployeePopup';
+import {DeleteEmployeePopup} from './components/DeleteEmployeePopup';
 import {MobileEmployeeSearch} from "./components/MobileEmployeeSearch";
 import {getUserAccessLevel} from "../UserAccessLevel";
 
@@ -40,13 +40,13 @@ const Worksheet: React.FC = () => {
         fio: '',
         projects: '',
         weekSchedule: {
-            monday: { start: '', end: '' },
-            tuesday: { start: '', end: '' },
-            wednesday: { start: '', end: '' },
-            thursday: { start: '', end: '' },
-            friday: { start: '', end: '' },
-            saturday: { start: '', end: '' },
-            sunday: { start: '', end: '' },
+            monday: {start: '', end: ''},
+            tuesday: {start: '', end: ''},
+            wednesday: {start: '', end: ''},
+            thursday: {start: '', end: ''},
+            friday: {start: '', end: ''},
+            saturday: {start: '', end: ''},
+            sunday: {start: '', end: ''},
         }
     });
 
@@ -174,7 +174,7 @@ const Worksheet: React.FC = () => {
             const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
             const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-            const otherElementsHeight = 48; // Если есть отступы, доп. элементы
+            const otherElementsHeight = 60; // Если есть отступы, доп. элементы
             const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
 
             const newRowsPerPage = Math.floor(availableHeight / finalRowHeight) || 1;
@@ -210,7 +210,7 @@ const Worksheet: React.FC = () => {
         const sunday = new Date(monday);
         sunday.setDate(monday.getDate() + 6);
 
-        return { start: monday, end: sunday };
+        return {start: monday, end: sunday};
     }
 
     const changeWeek = async (direction: "next" | "previous") => {
@@ -222,7 +222,7 @@ const Worksheet: React.FC = () => {
         setCurrentOffset(prev => {
             const newOffset = prev + offsetChange;
 
-            const { start, end } = getWeekRangeByOffset(newOffset);
+            const {start, end} = getWeekRangeByOffset(newOffset);
 
             const formatDate = (date: Date) =>
                 new Intl.DateTimeFormat("ru-RU", {
@@ -361,7 +361,7 @@ const Worksheet: React.FC = () => {
         const employee = employees.find(emp => emp.id === employeeId);
         if (!employee) return;
 
-        const oldValue = employee.weekSchedule[day] || { start: "", end: "" };
+        const oldValue = employee.weekSchedule[day] || {start: "", end: ""};
         const hadOldValues = oldValue.start !== "" || oldValue.end !== "";
         const hasNewValues = editedStart !== "" || editedEnd !== "";
 
@@ -436,7 +436,7 @@ const Worksheet: React.FC = () => {
         const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
         if (!parsedWeek) return;
 
-        const { start, end } = parsedWeek;
+        const {start, end} = parsedWeek;
         const newStart = new Date(start);
 
         // Костыль по месяцам сохраняем
@@ -468,13 +468,13 @@ const Worksheet: React.FC = () => {
             const existing = updated.find(item => item.employeeId === employeeId && item.weekStart === weekStart);
 
             if (existing) {
-                existing.schedule[day] = { start, end };
+                existing.schedule[day] = {start, end};
             } else {
                 updated.push({
                     employeeId,
                     weekStart,
                     schedule: {
-                        [day]: { start, end },
+                        [day]: {start, end},
                     },
                 });
             }
@@ -530,7 +530,7 @@ const Worksheet: React.FC = () => {
         const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
         if (!parsedWeek) return;
 
-        const { start, end } = parsedWeek;
+        const {start, end} = parsedWeek;
 
         const formatDate = (date: Date) =>
             new Intl.DateTimeFormat("ru-RU", {
@@ -552,7 +552,7 @@ const Worksheet: React.FC = () => {
                         ...employee,
                         weekSchedule: {
                             ...employee.weekSchedule,
-                            [day]: { start: "", end: "" },
+                            [day]: {start: "", end: ""},
                         },
                     }
                     : employee
@@ -584,7 +584,7 @@ const Worksheet: React.FC = () => {
                 if (inputs.length === 0) return;
 
                 const [startInput, endInput] = inputs;
-                const { employeeId, dayIndex, day } = editingCell;
+                const {employeeId, dayIndex, day} = editingCell;
 
                 if (startInput) {
                     const startValue = startInput.value;
@@ -651,7 +651,7 @@ const Worksheet: React.FC = () => {
             });
 
             return hasUpdates
-                ? { ...prev, projects: newProjects.sort() }
+                ? {...prev, projects: newProjects.sort()}
                 : prev;
         });
 
@@ -660,13 +660,13 @@ const Worksheet: React.FC = () => {
             fio: '',
             projects: '',
             weekSchedule: {
-                monday: { start: '', end: '' },
-                tuesday: { start: '', end: '' },
-                wednesday: { start: '', end: '' },
-                thursday: { start: '', end: '' },
-                friday: { start: '', end: '' },
-                saturday: { start: '', end: '' },
-                sunday: { start: '', end: '' },
+                monday: {start: '', end: ''},
+                tuesday: {start: '', end: ''},
+                wednesday: {start: '', end: ''},
+                thursday: {start: '', end: ''},
+                friday: {start: '', end: ''},
+                saturday: {start: '', end: ''},
+                sunday: {start: '', end: ''},
             }
         });
     };
@@ -725,14 +725,14 @@ const Worksheet: React.FC = () => {
             }
             {accessLevel === "OWNER" &&
                 isAddEmployeePopupOpen && (
-                <AddEmployeePopup
-                    onClose={() => setIsAddEmployeePopupOpen(false)}
-                    onSave={handleAddEmployee}
-                    currentTranslation={currentTranslation}
-                    filters={filters}
-                    initialData={newEmployee}
-                />
-            )}
+                    <AddEmployeePopup
+                        onClose={() => setIsAddEmployeePopupOpen(false)}
+                        onSave={handleAddEmployee}
+                        currentTranslation={currentTranslation}
+                        filters={filters}
+                        initialData={newEmployee}
+                    />
+                )}
 
             {accessLevel === "OWNER" &&
                 document.querySelector('.sidebar') &&
@@ -760,17 +760,17 @@ const Worksheet: React.FC = () => {
             }
             {accessLevel === "OWNER" &&
                 isDeletePopupOpen && (
-                <DeleteEmployeePopup
-                    employees={employees}
-                    onDelete={handleDeleteEmployee}
-                    onClose={() => {
-                        setIsDeletePopupOpen(false);
-                        setSearchTerm('');
-                        setSelectedEmployee(null);
-                    }}
-                    currentTranslation={currentTranslation}
-                />
-            )}
+                    <DeleteEmployeePopup
+                        employees={employees}
+                        onDelete={handleDeleteEmployee}
+                        onClose={() => {
+                            setIsDeletePopupOpen(false);
+                            setSearchTerm('');
+                            setSelectedEmployee(null);
+                        }}
+                        currentTranslation={currentTranslation}
+                    />
+                )}
 
             {document.querySelector('.sidebar') &&
                 ReactDOM.createPortal(
@@ -854,22 +854,22 @@ const Worksheet: React.FC = () => {
                     document.querySelector(".subtitle__date") as Element
                 )}
 
-            {document.querySelector('.header__up-blocks__wrapper__list') &&
-                (localStorage.getItem("authToken") != null) &&
-                ReactDOM.createPortal(
-                    <button
-                        className="header__up-blocks__wrapper__list__btn"
-                        onClick={() => handleLogout()}
-                    >
-                        Выход
-                    </button>,
-                    document.querySelector('.header__up-blocks__wrapper__list') as Element
-                )
-            }
-
             {/* Остальной JSX */}
             {isMobile ? (
                 <>
+                    {document.querySelector('.header__up-blocks__wrapper__list') &&
+                        (localStorage.getItem("authToken") != null) &&
+                        ReactDOM.createPortal(
+                            <button
+                                className="header__up-blocks__wrapper__list__btn"
+                                onClick={() => handleLogout()}
+                            >
+                                {currentTranslation.exit}
+                            </button>,
+                            document.querySelector('.header__up-blocks__wrapper__list') as Element
+                        )
+                    }
+
                     <MobileEmployeeSearch
                         employees={displayedEmployees}
                         translations={currentTranslation}
@@ -882,11 +882,36 @@ const Worksheet: React.FC = () => {
                 </>
             ) : (
                 <>
+                    {document.querySelector(".header__up-blocks__wrapper__list") &&
+                        ReactDOM.createPortal(
+                            <>
+                                <a className="header__up-blocks__wrapper__list__btn" href="./index.html"
+                                   data-key="home">{currentTranslation.home}</a>
+                                <a className="header__up-blocks__wrapper__list__btn" href="./project.html"
+                                   data-key="project">{currentTranslation.project}</a>
+                            </>,
+                            document.querySelector(".header__up-blocks__wrapper__list") as Element
+                        )}
+
+                    {document.querySelector('.header__up-blocks__wrapper__list') &&
+                        (localStorage.getItem("authToken") != null) &&
+                        ReactDOM.createPortal(
+                            <button
+                                className="header__up-blocks__wrapper__list__btn"
+                                onClick={() => handleLogout()}
+                            >
+                                {currentTranslation.exit}
+                            </button>,
+                            document.querySelector('.header__up-blocks__wrapper__list') as Element
+                        )
+                    }
+
                     <div ref={containerRef} className="worksheet">
                         {filteredEmployees.length > 0 ? (
                             <>
                                 <div className="worksheet__row__header">
-                                    <div className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
+                                    <div
+                                        className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
                                     <div className="worksheet__row__header__cell_clock">
                                         <div className="cell_clock_img"></div>
                                     </div>
@@ -905,7 +930,8 @@ const Worksheet: React.FC = () => {
                                         // style={{ height: `${maxRowHeight}px` }}
                                     >
                                         <div className="worksheet__cell_name">{employee.fio}</div>
-                                        <div className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
+                                        <div
+                                            className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
                                         {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
                                             const schedule = employee.weekSchedule[day];
 

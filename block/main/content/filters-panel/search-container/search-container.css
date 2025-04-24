@@ -11,7 +11,19 @@
         border-radius: 4px;
     }
 
+    .search-container select {
+        width: 100%;
+        padding: 10px 35px 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
     .dark-theme .search-container input {
+        background: #1E1E1E;
+        color: #EAEAEA;
+    }
+
+    .dark-theme .search-container select {
         background: #1E1E1E;
         color: #EAEAEA;
     }

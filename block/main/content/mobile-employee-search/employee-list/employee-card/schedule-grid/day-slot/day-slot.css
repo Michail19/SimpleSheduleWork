@@ -8,4 +8,8 @@
     box-sizing: border-box;
 }
 
+.dark-theme .day-slot {
+    background: #414141;
+}
+
 @import url("./day-label/day-label.css");

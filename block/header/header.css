@@ -13,7 +13,9 @@
         height: 100px;
         justify-content: center;
     }
-    
+}
+
+@media screen and (max-width: 1230px) {
     .mobile {
         visibility: hidden;
         display: none;

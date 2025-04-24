@@ -69,9 +69,7 @@ function updateText() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.querySelector('.header__up-blocks__wrapper__list__theme-toggle');
-    const themeToggle_m = document.querySelector('.header__up-blocks_menu__list__theme-toggle_m');
     const langToggle = document.querySelector('.header__up-blocks__wrapper__list__theme-toggle_lang');
-    const langToggle_m = document.querySelector('.header__up-blocks_menu__list__theme-toggle_lang_m');
     const button = document.querySelector('.btn_worksheet');
     const content = document.querySelector('.content');
     const subtitle_date = document.querySelector('.subtitle__date');
@@ -122,26 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('dark_theme');
         }
     });
-    themeToggle_m.addEventListener('click', () => {
-        document.body.classList.toggle('dark-theme');
-        if (document.body.classList.contains('dark-theme')) {
-            localStorage.setItem('dark_theme', 'enabled');
-        } else {
-            localStorage.removeItem('dark_theme');
-        }
-    });
 
     // Обработчик для переключения языка
     langToggle.addEventListener('click', () => {
-        document.body.classList.toggle('changed-lang');
-        changeLanguage();
-        if (document.body.classList.contains('changed-lang')) {
-            localStorage.setItem('changed-lang', 'enabled');
-        } else {
-            localStorage.removeItem('changed-lang');
-        }
-    });
-    langToggle_m.addEventListener('click', () => {
         document.body.classList.toggle('changed-lang');
         changeLanguage();
         if (document.body.classList.contains('changed-lang')) {
