@@ -187,6 +187,15 @@ const Worksheet: React.FC = () => {
         return () => window.removeEventListener("resize", calculateRowsPerPage);
     }, [employees]); // или employees, если до фильтрации
 
+    //Перерасчёт страниц
+    useEffect(() => {
+        if (employees.length === 0 || rowsPerPage === 0) return;
+
+        const maxPage = Math.ceil(employees.length / rowsPerPage);
+        if (currentPage > maxPage) {
+            setCurrentPage(maxPage);
+        }
+    }, [employees.length, rowsPerPage, currentPage]);
 
     // Смена недели
     function getWeekRangeByOffset(offset: number): { start: Date; end: Date } {

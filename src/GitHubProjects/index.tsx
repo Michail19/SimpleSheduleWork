@@ -175,21 +175,33 @@ const GitHubProjects: React.FC = () => {
         const calculateRowsPerPage = () => {
             if (!containerRef.current) return;
 
+            const rowElements = containerRef.current.querySelectorAll(".repo-card");
+            let maxHeight = 0;
+
+            rowElements.forEach(row => {
+                const height = (row as HTMLElement).offsetHeight;
+                if (height > maxHeight) {
+                    maxHeight = height;
+                }
+            });
+
+            const finalRowHeight = maxHeight || 70;
+
             const viewportHeight = window.innerHeight;
             const headerHeight = document.querySelector(".header")?.clientHeight || 0;
             const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-            const otherElementsHeight = 150;
+            const otherElementsHeight = 100;
 
             const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
-            const rowHeight = containerRef.current.querySelector(".repo-card")?.clientHeight || 20;
 
-            const rows = Math.floor(availableHeight / rowHeight) || 1;
+            const rows = Math.floor(availableHeight / finalRowHeight) || 1;
             const cardsPerRow = getCardsPerRow();
 
             const totalCards = rows * cardsPerRow;
 
             setRowsPerPage(totalCards);
+            if (currentPage > totalPages) setCurrentPage(1);
         };
 
         window.addEventListener("resize", calculateRowsPerPage);
@@ -257,6 +269,16 @@ const GitHubProjects: React.FC = () => {
             return prev;
         });
     };
+
+    //Перерасчёт страниц
+    useEffect(() => {
+        if (repos.length === 0 || rowsPerPage === 0) return;
+
+        const maxPage = Math.ceil(repos.length / rowsPerPage);
+        if (currentPage > maxPage) {
+            setCurrentPage(maxPage);
+        }
+    }, [repos.length, rowsPerPage, currentPage]);
 
     // Загрузка всех сотрудников
     useEffect(() => {
