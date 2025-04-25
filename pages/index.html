@@ -15,7 +15,7 @@
         <p data-key="loading">Загрузка...</p>
     </div>
 
-    <header class="header">
+    <header class="header-index">
         <div class="header__up-blocks__wrapper_menu">
             <div class="header__up-blocks__menu-toggle">☰</div>
             <div class="header__up-blocks__wrapper_menu__list">
@@ -23,7 +23,6 @@
                 <a class="header__up-blocks__wrapper__list__btn" href="./project.html" data-key="projects">Проекты</a>
             </div>
         </div>
-        <h1 class="header__title header__title_logo"><span class="mobile">SimpleScheduleWork (</span>SSW<span class="mobile">)</span></h1>
         <div class="header__up-blocks">
             <div class="header__up-blocks__headbar">
 
@@ -34,8 +33,6 @@
                 <div class="header__up-blocks__wrapper__list">
                     <button class="header__up-blocks__wrapper__list__theme-toggle"></button>
                     <button class="header__up-blocks__wrapper__list__theme-toggle_lang"></button>
-<!--                    <a class="header__up-blocks__wrapper__list__btn" href="./main.html" data-key="schedule">Расписание</a>-->
-<!--                    <a class="header__up-blocks__wrapper__list__btn" href="./project.html" data-key="projects">Проекты</a>-->
                 </div>
             </div>
         </div>
@@ -45,10 +42,119 @@
 
     <section class="content">
         <div class="head" id="start">
-            <h1>Добро пожаловать в <strong>SimpleScheduleWork</strong></h1>
-            <p><strong>SimpleScheduleWork</strong> — это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
+            <h1 class="head__title" id="mainTitle">Добро пожаловать в <br/><strong class="head__title_name">SimpleScheduleWork</strong></h1>
+            <p class="head__text" id="subText"><strong>SimpleScheduleWork</strong> — это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
                 Система предоставляет простое и наглядное представление расписания, а также управление привязкой сотрудников к проектам.
                 Организуйте рабочие недели, контролируйте занятость и управляйте проектами — всё в одном месте.</p>
+
+            <style>
+                .head {
+                    height: 400vh;
+                    display: flex;
+                    flex-direction: column;
+                    position: relative;
+                }
+
+                .head__title, .head__text {
+                    position: fixed;  /* Будем менять на absolute в скрипте */
+                    left: 5vw;
+                    right: 5vw;
+                    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1), position 0s linear 0.8s;
+                    will-change: transform, opacity;
+                }
+
+                .head__title {
+                    font-size: 5rem;
+                    top: 20vh;
+                    transform-origin: top left;
+                }
+
+                .head__title_name {
+                    margin-left: 15vw;
+                }
+
+                .head__text {
+                    font-size: 2.5rem;
+                    top: 20vh;
+                    opacity: 0;
+                    transform: translateY(30px) scale(0.95);
+                }
+
+                /* Класс для отключения фиксации */
+                .head__title.unfixed,
+                .head__text.unfixed {
+                    position: absolute;
+                    left: 5vw;
+                    right: 5vw;
+                    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+            </style>
+
+            <script>
+                const title = document.getElementById('mainTitle');
+                const subText = document.getElementById('subText');
+                const head = document.querySelector('.head');
+                const windowHeight = window.innerHeight;
+                const headHeight = head.offsetHeight;
+                const unfixedPoint = headHeight - windowHeight; // Точка отключения фиксации
+
+                // Настройки анимации
+                const settings = {
+                    titleFadeStart: 0.2,
+                    titleFadeEnd: 0.6,
+                    textFadeStart: 0.4,
+                    textFadeEnd: 0.8
+                };
+
+                window.addEventListener('scroll', () => {
+                    const scrollY = window.scrollY;
+                    const scrollProgress = scrollY / (headHeight - windowHeight * 0.7);
+
+                    // Отключаем фиксацию при достижении конца контейнера
+                    if (scrollY >= unfixedPoint) {
+                        title.classList.add('unfixed');
+                        subText.classList.add('unfixed');
+
+                        // Позиционируем абсолютно внизу контейнера
+                        title.style.top = `${headHeight - windowHeight * 0.95}px`;
+                        subText.style.top = `${headHeight - windowHeight * 0.95}px`;
+                    } else {
+                        title.classList.remove('unfixed');
+                        subText.classList.remove('unfixed');
+
+                        // Возвращаем фиксированное позиционирование
+                        title.style.top = '20vh';
+                        subText.style.top = '20vh';
+
+                        // Остальная анимация (как в предыдущем примере)
+                        if (scrollProgress >= settings.titleFadeStart) {
+                            const titleProgress = Math.min(
+                                (scrollProgress - settings.titleFadeStart) /
+                                (settings.titleFadeEnd - settings.titleFadeStart),
+                                1
+                            );
+                            title.style.opacity = 1 - titleProgress;
+                            title.style.transform = `translateY(${-40 * titleProgress}vh) scale(${1 - titleProgress * 0.2})`;
+                        } else {
+                            title.style.opacity = 1;
+                            title.style.transform = 'translateY(0) scale(1)';
+                        }
+
+                        if (scrollProgress >= settings.textFadeStart) {
+                            const textProgress = Math.min(
+                                (scrollProgress - settings.textFadeStart) /
+                                (settings.textFadeEnd - settings.textFadeStart),
+                                1
+                            );
+                            subText.style.opacity = textProgress;
+                            subText.style.transform = `translateY(${30 * (1 - textProgress)}px) scale(${0.95 + textProgress * 0.05})`;
+                        } else {
+                            subText.style.opacity = 0;
+                            subText.style.transform = 'translateY(30px) scale(0.95)';
+                        }
+                    }
+                });
+            </script>
         </div>
 
         <div class="main" id="content">
