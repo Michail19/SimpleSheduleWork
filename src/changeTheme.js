@@ -94,13 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Восстанавливаем состояние скрытых элементов
-        if (localStorage.getItem('btn_state') === 'hidden') {
-            content.classList.add('hide_content');
-            subtitle_date.classList.add('hide_content');
-            button.classList.toggle('btn_worksheet_enable');
-            footer.classList.add('hide_content');
-        } else {
-            button.classList.add('btn_worksheet_enable');
+        if (content && subtitle_date && button && footer) {
+            if (localStorage.getItem('btn_state') === 'hidden') {
+                content.classList.add('hide_content');
+                subtitle_date.classList.add('hide_content');
+                button.classList.toggle('btn_worksheet_enable');
+                footer.classList.add('hide_content');
+            } else {
+                button.classList.add('btn_worksheet_enable');
+            }
         }
     }
 
