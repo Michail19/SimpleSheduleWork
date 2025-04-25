@@ -3,6 +3,7 @@ import LoginPopup from "./components/LoginPopup";
 import ReactDOM from "react-dom";
 import {translations} from "./translations";
 import {Language} from "./types";
+import ImageEditor from "../ImageEditor";
 
 const MainCodeIndex: React.FC = () => {
     const [showLogin, setShowLogin] = useState(false);
@@ -79,7 +80,8 @@ const MainCodeIndex: React.FC = () => {
             ) : (
                 document.querySelector(".header__up-blocks__wrapper_icon-place") &&
                         ReactDOM.createPortal(
-                            <div className="header__up-blocks__wrapper__icon"></div>,
+                            // <div className="header__up-blocks__wrapper__icon"></div>,
+                            <ImageEditor src="/images/account.png" letter="M" />,
                             document.querySelector(".header__up-blocks__wrapper_icon-place") as Element
                         )
             )}

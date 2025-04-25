@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const content = document.querySelector('.content');
     const subtitle_date = document.querySelector('.subtitle__date');
     const footer = document.querySelector('.footer');
+    const authToken = localStorage.getItem('authToken');
 
     // Проверяем, первый ли это запуск
     const isFirstLaunch = localStorage.getItem('first_launch') === null;
