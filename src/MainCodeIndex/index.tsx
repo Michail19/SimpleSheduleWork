@@ -59,7 +59,6 @@ const MainCodeIndex: React.FC = () => {
         return firstChar + lastChar;
     };
 
-
     // const letter = (accessUsername?.charAt(0).toUpperCase() || "M") + (accessUsername?.charAt(accessUsername?.length - 1).toUpperCase() || "E");
 
     return (
