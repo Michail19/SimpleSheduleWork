@@ -86,7 +86,9 @@
                     position: absolute;
                     left: 5vw;
                     right: 5vw;
-                    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+                    transform: none !important;
+                    transition: none !important; /* Полностью отключаем переходы */
+                    animation: none !important;
                 }
             </style>
 
@@ -97,6 +99,7 @@
                 const windowHeight = window.innerHeight;
                 const headHeight = head.offsetHeight;
                 const unfixedPoint = headHeight - windowHeight; // Точка отключения фиксации
+                let isFixed = true;
 
                 // Настройки анимации
                 const settings = {
@@ -118,7 +121,9 @@
                         // Позиционируем абсолютно внизу контейнера
                         title.style.top = `${headHeight - windowHeight * 0.95}px`;
                         subText.style.top = `${headHeight - windowHeight * 0.95}px`;
-                    } else {
+                        isFixed = false;
+                    }
+                    else if (!isFixed) {
                         title.classList.remove('unfixed');
                         subText.classList.remove('unfixed');
 
@@ -126,7 +131,23 @@
                         title.style.top = '20vh';
                         subText.style.top = '20vh';
 
-                        // Остальная анимация (как в предыдущем примере)
+                        // Временно отключаем transition
+                        title.style.transition = 'none';
+                        subText.style.transition = 'none';
+
+                        // Возвращаем элементы на место без анимации
+                        requestAnimationFrame(() => {
+                            // Включаем transition обратно
+                            requestAnimationFrame(() => {
+                                title.style.transition = '';
+                                subText.style.transition = '';
+                            });
+                        });
+
+                        isFixed = true;
+                    }
+                    else {
+                        // Остальная анимация
                         if (scrollProgress >= settings.titleFadeStart) {
                             const titleProgress = Math.min(
                                 (scrollProgress - settings.titleFadeStart) /
