@@ -1,0 +1,7 @@
+@import "./footer__logo/footer__logo.css";
+@import "./footer__author/footer__author.css";
+
+.footer__columns__copyright {
+    position: relative;
+    flex-basis: 711px;
+}

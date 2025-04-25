@@ -1,0 +1,11 @@
+@import "./footer__columns__copyright/footer__columns__copyright.css";
+@import "./footer__columns__info/footer__columns__info.css";
+
+.footer__columns {
+    width: 90%;
+    padding: 3vh 0 1vh 0;
+    min-height: 30vh;
+    display: flex;
+    position: relative;
+}
+

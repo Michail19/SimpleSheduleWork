@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
 
 <head>
     <meta charset="UTF-8">
@@ -43,42 +43,72 @@
 
 <!--    <a href="./main.html">Здесь пока ничего нет, перейдите на основную страницу</a>-->
 
-    <section class="main">
-        <h1>Добро пожаловать в <strong>SimpleScheduleWork</strong></h1>
-        <p><strong>SimpleScheduleWork</strong> — это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
-            Система предоставляет простое и наглядное представление расписания, а также управление привязкой сотрудников к проектам.</p>
-
-        <h2>Возможности:</h2>
-        <div>
-            <ul>
-                <li><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
-                <li><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
-                <li><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
-                <li><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
-            </ul>
-
-            <div class="screenshot">
-                <img src="/images/employees.png" alt="Таблица расписания сотрудников">
-                <p>Редактирование графика сотрудников</p>
-            </div>
-            <div class="screenshot">
-                <img src="/images/projects.png" alt="Карточки проектов">
-                <p>Просмотр и фильтрация проектов</p>
-            </div>
+    <section class="content">
+        <div class="head" id="start">
+            <h1>Добро пожаловать в <strong>SimpleScheduleWork</strong></h1>
+            <p><strong>SimpleScheduleWork</strong> — это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
+                Система предоставляет простое и наглядное представление расписания, а также управление привязкой сотрудников к проектам.
+                Организуйте рабочие недели, контролируйте занятость и управляйте проектами — всё в одном месте.</p>
         </div>
 
-        <h2>Почему именно SSW?</h2>
-        <ul>
-            <li>Упрощает работу даже с большими командами.</li>
-            <li>Повышает прозрачность загруженности сотрудников.</li>
-            <li>Уменьшает риск накладок и ошибок при планировании.</li>
-        </ul>
+        <div class="main" id="content">
+            <h2>Возможности:</h2>
+            <div>
+                <ul>
+                    <li><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
+                    <li><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
+                    <li><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
+                    <li><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
+                </ul>
+
+                <div class="screenshot">
+                    <img src="/images/employees.png" alt="Таблица расписания сотрудников">
+                    <p>Редактирование графика сотрудников</p>
+                </div>
+            </div>
+
+            <h2>Преимущества сервиса:</h2>
+            <div>
+                <ul>
+                    <li>Быстрое редактирование расписания — прямо в таблице</li>
+                    <li>Планирование на несколько недель вперёд</li>
+                    <li>Привязка сотрудников к проектам</li>
+                    <li>Роли пользователей: владелец и сотрудники</li>
+                    <li>Хранение данных в облаке</li>
+                    <li>Удобный интерфейс на мобильных устройствах</li>
+                </ul>
+
+                <div class="screenshot">
+                    <img src="/images/projects.png" alt="Карточки проектов">
+                <p>Просмотр и фильтрация проектов</p>
+            </div>
+            </div>
+
+        </div>
+
+        <div class="answer" id="answer">
+            <h2>Почему именно SSW?</h2>
+            <ul>
+                <li>Упрощает работу даже с большими командами.</li>
+                <li>Повышает прозрачность загруженности сотрудников.</li>
+                <li>Уменьшает риск накладок и ошибок при планировании.</li>
+            </ul>
+        </div>
     </section>
 
     <footer class="footer-index">
-        <div class="buttons">
-            <a href="./main.html">Перейти к расписанию</a>
-            <a href="./project.html">К проектам</a>
+        <div class="footer__columns">
+            <div class="footer__columns__copyright">
+                <div class="footer__logo">SimpleScheduleWork</div>
+                <div class="footer__author">© Михаил Ершов</div>
+            </div>
+            <div class="footer__columns__info">
+                <a class="footer__column-link" href="#start">Главная</a>
+                <a class="footer__column-link" href="#content">Возможности</a>
+                <a class="footer__column-link" href="#answer">Почему SSW?</a>
+                <a class="footer__column-link" href="./main.html">Перейти к расписанию</a>
+                <a class="footer__column-link" href="./project.html">К проектам</a>
+            </div>
         </div>
     </footer>
 

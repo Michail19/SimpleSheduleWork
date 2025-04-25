@@ -1,0 +1,7 @@
+.footer__logo {
+    z-index: 5;
+    top: 0;
+    font-size: 3rem;
+    color: #f2f2f2;
+    position: absolute;
+}
