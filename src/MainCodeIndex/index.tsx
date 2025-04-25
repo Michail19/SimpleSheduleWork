@@ -10,7 +10,13 @@ const MainCodeIndex: React.FC = () => {
     const [authToken, setAuthToken] = useState<string | null>(localStorage.getItem('authToken'));
     const [language, setLanguage] = useState<Language>("ru");
     const currentTranslation = translations[language] ?? translations["ru"];
-    console.log(authToken)
+    const [iconReady, setIconReady] = useState(false);
+    console.log(authToken);
+
+    useEffect(() => {
+        const savedIcon = localStorage.getItem('userIcon');
+        if (!savedIcon) setIconReady(false);
+    }, []);
 
     useEffect(() => {
         // Применяем сохранённые настройки языка при загрузке
@@ -24,6 +30,8 @@ const MainCodeIndex: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("userIcon");
+        setIconReady(false);
         window.location.href = 'index.html';
     };
 
@@ -80,8 +88,22 @@ const MainCodeIndex: React.FC = () => {
             ) : (
                 document.querySelector(".header__up-blocks__wrapper_icon-place") &&
                         ReactDOM.createPortal(
-                            // <div className="header__up-blocks__wrapper__icon"></div>,
-                            <ImageEditor src="/images/account.png" letter="M" />,
+                            (localStorage.getItem('userIcon') ? (
+                                // <div className="header__up-blocks__wrapper__icon"></div>
+                                    <img
+                                        src={localStorage.getItem('userIcon')!}
+                                        className='header__up-blocks__wrapper__icon_gen'
+                                        alt="User Icon" />
+                                ) : (
+                                    <ImageEditor
+                                        src="/images/account.png"
+                                        letter="M"
+                                        onRender={(dataUrl) => {
+                                            localStorage.setItem('userIcon', dataUrl);
+                                            setIconReady(true); // чтобы перерендерить, если нужно
+                                        }}
+                                    />
+                                )),
                             document.querySelector(".header__up-blocks__wrapper_icon-place") as Element
                         )
             )}
