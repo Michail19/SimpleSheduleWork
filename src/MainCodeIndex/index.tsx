@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import {translations} from "./translations";
 import {Language} from "./types";
 import ImageEditor from "../ImageEditor";
+import {getUsername} from "../UserAccessLevel";
 
 const MainCodeIndex: React.FC = () => {
     const [showLogin, setShowLogin] = useState(false);
@@ -11,7 +12,9 @@ const MainCodeIndex: React.FC = () => {
     const [language, setLanguage] = useState<Language>("ru");
     const currentTranslation = translations[language] ?? translations["ru"];
     const [iconReady, setIconReady] = useState(false);
-    console.log(authToken);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
+    const accessUsername = getUsername();
+    // console.log(authToken);
 
     useEffect(() => {
         const savedIcon = localStorage.getItem('userIcon');
@@ -28,6 +31,14 @@ const MainCodeIndex: React.FC = () => {
         }
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1090);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const handleLogout = () => {
         localStorage.removeItem("authToken");
         localStorage.removeItem("userIcon");
@@ -35,9 +46,25 @@ const MainCodeIndex: React.FC = () => {
         window.location.href = 'index.html';
     };
 
+    const getFirstAndLastLetters = (username?: string | null): string => {
+        if (!username) return 'ME'; // Fallback для null/undefined
+
+        // Удаляем все не-буквы из username
+        const lettersOnly = username.replace(/[^a-zA-Z]/g, '');
+
+        // Берем первую и последнюю букву (или fallback)
+        const firstChar = lettersOnly.charAt(0).toUpperCase() || 'M';
+        const lastChar = lettersOnly.slice(-1).toUpperCase() || 'E';
+
+        return firstChar + lastChar;
+    };
+
+
+    // const letter = (accessUsername?.charAt(0).toUpperCase() || "M") + (accessUsername?.charAt(accessUsername?.length - 1).toUpperCase() || "E");
+
     return (
         <>
-            {window.innerWidth < 1090 ? (
+            {isMobile ? (
                 <>
                     {document.querySelector('.header__up-blocks__wrapper__list') &&
                         (localStorage.getItem("authToken") != null) &&
@@ -50,7 +77,6 @@ const MainCodeIndex: React.FC = () => {
                             </button>,
                             document.querySelector('.header__up-blocks__wrapper__list') as Element
                         )
-
                     }
                 </>
             ) : (
@@ -97,7 +123,7 @@ const MainCodeIndex: React.FC = () => {
                                 ) : (
                                     <ImageEditor
                                         src="/images/account.png"
-                                        letter="M"
+                                        letter={getFirstAndLastLetters(accessUsername)}
                                         onRender={(dataUrl) => {
                                             localStorage.setItem('userIcon', dataUrl);
                                             setIconReady(true); // чтобы перерендерить, если нужно

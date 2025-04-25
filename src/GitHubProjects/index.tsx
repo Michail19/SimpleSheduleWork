@@ -44,6 +44,7 @@ const GitHubProjects: React.FC = () => {
     const [isEmployeePopupOpen, setIsEmployeePopupOpen] = useState(false);
     const [currentProjectForEdit, setCurrentProjectForEdit] = useState<MergedProject | null>(null); // Для EmployeePopup
     const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [updateKey, setUpdateKey] = useState(0);
     const accessLevel = getUserAccessLevel();
 
@@ -55,6 +56,14 @@ const GitHubProjects: React.FC = () => {
         } else {
             setLanguage("ru");
         }
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1090);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     useEffect(() => {
@@ -440,7 +449,7 @@ const GitHubProjects: React.FC = () => {
                 container
             )}
 
-            {window.innerWidth < 1090 ? (
+            {isMobile ? (
                 <>
                     {document.querySelector('.header__up-blocks__wrapper__list') &&
                         (localStorage.getItem("authToken") != null) &&

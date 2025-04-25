@@ -67,7 +67,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ src, letter, onRender }) => {
 
             // Добавляем текст
             ctx.fillStyle = color;
-            ctx.font = `bold ${canvas.width / 2}px Verdana`;
+            ctx.font = `bold ${canvas.width / 2.5}px Verdana`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(letter, canvas.width / 2, canvas.height / 2);
