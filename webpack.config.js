@@ -83,6 +83,11 @@ module.exports = {
             filename: "404.html",
             chunks: ["404"],
         }),
+        new HtmlWebpackPlugin({
+            template: "./pages/contact.html",
+            filename: "contact.html",
+            chunks: ["contact"],
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 { from: './images/icon.png', to: 'icon.png' }, // Копируем иконку в dist
