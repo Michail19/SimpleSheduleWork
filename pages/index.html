@@ -188,42 +188,44 @@
         </div>
 
         <div class="scroll-container" id="content">
-            <div class="scroll-wrapper" id="scrollWrapper">
-                <section class="scroll-section">
-                    <h2 class="subtitle">Возможности:</h2>
-                    <div class="block">
-                        <ul class="block_ul">
-                            <li class="block_text"><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
-                            <li class="block_text"><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
-                            <li class="block_text"><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
-                            <li class="block_text"><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
-                        </ul>
+            <div class="horizontal-container" id="horizontalContainer">
+                <div class="scroll-wrapper" id="scrollWrapper">
+                    <section class="scroll-section">
+                        <h2 class="subtitle">Возможности:</h2>
+                        <div class="block">
+                            <ul class="block_ul">
+                                <li class="block_text"><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
+                                <li class="block_text"><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
+                                <li class="block_text"><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
+                                <li class="block_text"><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
+                            </ul>
 
-                        <div class="screenshot">
-                            <img class="screenshot_img" src="/images/employees.png" alt="Таблица расписания сотрудников">
-                            <p class="screenshot_underline">Редактирование графика сотрудников</p>
+                            <div class="screenshot">
+                                <img class="screenshot_img" src="/images/employees.png" alt="Таблица расписания сотрудников">
+                                <p class="screenshot_underline">Редактирование графика сотрудников</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="scroll-section">
+                        <h2 class="subtitle">Преимущества сервиса:</h2>
+                        <div class="block">
+                            <ul class="block_ul">
+                                <li class="block_text">Быстрое редактирование расписания — прямо в таблице</li>
+                                <li class="block_text">Планирование на несколько недель вперёд</li>
+                                <li class="block_text">Привязка сотрудников к проектам</li>
+                                <li class="block_text">Роли пользователей: владелец и сотрудники</li>
+                                <li class="block_text">Хранение данных в облаке</li>
+                                <li class="block_text">Удобный интерфейс на мобильных устройствах</li>
+                            </ul>
+
+                            <div class="screenshot">
+                                <img class="screenshot_img" src="/images/projects.png" alt="Карточки проектов">
+                            <p class="screenshot_underline">Просмотр и фильтрация проектов</p>
                         </div>
                     </div>
-                </section>
-
-                <section class="scroll-section">
-                    <h2 class="subtitle">Преимущества сервиса:</h2>
-                    <div class="block">
-                        <ul class="block_ul">
-                            <li class="block_text">Быстрое редактирование расписания — прямо в таблице</li>
-                            <li class="block_text">Планирование на несколько недель вперёд</li>
-                            <li class="block_text">Привязка сотрудников к проектам</li>
-                            <li class="block_text">Роли пользователей: владелец и сотрудники</li>
-                            <li class="block_text">Хранение данных в облаке</li>
-                            <li class="block_text">Удобный интерфейс на мобильных устройствах</li>
-                        </ul>
-
-                        <div class="screenshot">
-                            <img class="screenshot_img" src="/images/projects.png" alt="Карточки проектов">
-                        <p class="screenshot_underline">Просмотр и фильтрация проектов</p>
-                    </div>
+                    </section>
                 </div>
-                </section>
             </div>
 
             <style>
@@ -292,29 +294,42 @@
                     font-style: italic;
                 }
 
+                /* Обновлённые стили для горизонтального скролла */
                 .scroll-container {
+                    height: 550vh;
+                    display: flex;
+                }
+
+                .horizontal-container {
+                    height: 500vh; /* Высота в три экрана */
                     position: relative;
-                    width: 100%;
-                    height: 300vh; /* высота для прокрутки (если 2 секции — ставь 200vh, если 3 — 300vh) */
-                    overflow: hidden;
                 }
 
                 .scroll-wrapper {
-                    display: flex;
-                    position: sticky;
+                    position: fixed;
                     top: 0;
+                    left: 0;
                     height: 100vh;
-                    width: 100%;
-                    overflow: visible;
+                    display: flex;
                     will-change: transform;
+                    transition: transform 0.2s ease-out;
+                }
+
+                .scroll-wrapper.unfixed {
+                    position: absolute;
+                    top: auto;
+                    bottom: 0;
+                    left: 0;
                 }
 
                 .scroll-section {
                     flex: 0 0 100vw;
                     height: 100vh;
-                    box-sizing: border-box;
                     padding: 2rem;
-                    transition: transform 0.8s ease;
+                    box-sizing: border-box;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
                 }
             </style>
             <script>
@@ -338,24 +353,55 @@
 
                 document.addEventListener('DOMContentLoaded', () => {
                     const wrapper = document.getElementById('scrollWrapper');
-                    const container = document.getElementById('content');
-                    const sections = document.querySelectorAll('.scroll-section');
+                    const container = document.getElementById('horizontalContainer');
 
-                    const containerHeight = container.offsetHeight - window.innerHeight;
-                    const totalScrollLength = window.innerWidth * (sections.length - 1); // сколько всего смещать вбок
+                    const containerTop = container.offsetTop;
+                    const containerHeight = container.offsetHeight;
+                    const totalScrollWidth = wrapper.scrollWidth - window.innerWidth;
+
+                    let isFixed = true;
 
                     window.addEventListener('scroll', () => {
-                        const scrollTop = window.scrollY;
-                        const containerTop = container.offsetTop;
+                        const scrollY = window.scrollY;
 
-                        if (scrollTop >= containerTop && scrollTop <= containerTop + containerHeight) {
-                            const scrollProgress = (scrollTop - containerTop) / containerHeight;
-                            const translateX = -scrollProgress * totalScrollLength;
+                        if (scrollY >= containerTop && scrollY <= containerTop + containerHeight - window.innerHeight) {
+                            // Находимся в пределах контейнера: фиксируем
+                            if (!isFixed) {
+                                wrapper.classList.remove('unfixed');
+                                wrapper.style.position = 'fixed';
+                                wrapper.style.top = '0';
+                                isFixed = true;
+                            }
 
+                            const progress = (scrollY - containerTop) / (containerHeight - window.innerHeight);
+                            const translateX = -progress * totalScrollWidth;
                             wrapper.style.transform = `translateX(${translateX}px)`;
+                        }
+                        else if (scrollY < containerTop) {
+                            // До начала контейнера
+                            wrapper.style.transform = `translateX(0px)`;
+                            if (!isFixed) {
+                                wrapper.classList.remove('unfixed');
+                                wrapper.style.position = 'fixed';
+                                wrapper.style.top = '0';
+                                isFixed = true;
+                            }
+                        }
+                        else {
+                            // После контейнера
+                            if (isFixed) {
+                                wrapper.classList.add('unfixed');
+                                wrapper.style.position = 'absolute';
+                                wrapper.style.top = 'auto';
+                                wrapper.style.bottom = '0';
+                                const maxTranslateX = -totalScrollWidth;
+                                wrapper.style.transform = `translateX(${maxTranslateX}px)`;
+                                isFixed = false;
+                            }
                         }
                     });
                 });
+
             </script>
 
         </div>
