@@ -188,7 +188,7 @@
         </div>
 
         <div class="scroll-container" id="content">
-            <div class="scroll-wrapper" id="scrollWrapper">
+            <div class="first-vertical">
                 <section class="scroll-section">
                     <h2 class="subtitle">Возможности:</h2>
                     <div class="block">
@@ -205,7 +205,15 @@
                         </div>
                     </div>
                 </section>
+            </div>
 
+            <div class="horizontal-scroll-zone">
+                <div class="scroll-wrapper">
+                    <!-- Горизонтальный контент -->
+                </div>
+            </div>
+
+            <div class="second-vertical">
                 <section class="scroll-section">
                     <h2 class="subtitle">Преимущества сервиса:</h2>
                     <div class="block">
@@ -292,28 +300,45 @@
                     font-style: italic;
                 }
 
-                /* Обновлённые стили для горизонтального скролла */
+                /* Стили для горизонтального скролла */
                 .scroll-container {
-                    position: relative;
                     width: 100%;
-                    padding-top: 5vh;
-                    padding-bottom: 5vh;
+                    height: 300vh;
+                }
+
+                .first-vertical, .second-vertical {
+                    position: relative;
                     height: 100vh;
                 }
 
-                .scroll-wrapper {
-                    display: flex;
-                    height: 100%;
-                    will-change: transform; /* Оптимизация для анимации */
+                .horizontal-scroll-zone {
+                    position: relative;
+                    height: calc(100vh + 1px); /* Небольшой запас для точности */
                 }
 
-                .scroll-section {
-                    flex: 0 0 100vw;
-                    padding: 2rem;
-                    box-sizing: border-box;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
+                /* Анимация смены блоков */
+                .first-vertical, .second-vertical {
+                    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+                }
+
+                .second-vertical {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+
+                /* Когда страница прокручена до зоны горизонтального скролла */
+                .scrolled-past-first .first-vertical {
+                    transform: translateX(-100%);
+                    opacity: 0;
+                }
+
+                .scrolled-past-first .second-vertical {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
             </style>
             <script>
@@ -337,88 +362,34 @@
 
                 document.addEventListener('DOMContentLoaded', () => {
                     const scrollContainer = document.getElementById('content');
-                    const scrollWrapper = document.getElementById('scrollWrapper');
-                    const sections = document.querySelectorAll('.scroll-section');
-                    const head = document.querySelector('.head');
+                    const firstVertical = document.querySelector('.first-vertical');
+                    const secondVertical = document.querySelector('.second-vertical');
+                    const horizontalZone = document.querySelector('.horizontal-scroll-zone');
 
-                    // Устанавливаем правильную ширину для wrapper
-                    let totalWidth = 0;
-                    sections.forEach(section => {
-                        totalWidth += section.offsetWidth;
-                    });
-                    scrollWrapper.style.width = `${totalWidth}px`;
-
-                    // Настройки анимации
-                    const animationSettings = {
-                        startOffset: head.offsetHeight, // Когда начинать горизонтальный скролл
-                        duration: totalWidth - window.innerWidth, // Дистанция для скролла
-                        ease: 0.1 // Плавность анимации (чем меньше, тем плавнее)
-                    };
-
-                    let currentScroll = 0;
-                    let targetScroll = 0;
-                    let isAnimating = false;
-
-                    function lerp(start, end, t) {
-                        return start * (1 - t) + end * t;
-                    }
-
-                    function animateHorizontalScroll() {
-                        if (!isAnimating) return;
-
-                        currentScroll = lerp(currentScroll, targetScroll, animationSettings.ease);
-                        scrollWrapper.style.transform = `translateX(${-currentScroll}px)`;
-
-                        // Останавливаем анимацию, когда разница меньше 0.5px
-                        if (Math.abs(currentScroll - targetScroll) < 0.5) {
-                            currentScroll = targetScroll;
-                            scrollWrapper.style.transform = `translateX(${-currentScroll}px)`;
-                            isAnimating = false;
-                            return;
-                        }
-
-                        requestAnimationFrame(animateHorizontalScroll);
-                    }
+                    // Вычисляем точку, когда нужно начать анимацию
+                    const triggerPoint = horizontalZone.offsetTop - window.innerHeight * 0.5;
 
                     window.addEventListener('scroll', () => {
                         const scrollY = window.scrollY;
-                        const scrollStart = animationSettings.startOffset - window.innerHeight * 0.7;
 
-                        if (scrollY >= scrollStart) {
-                            // Рассчитываем прогресс горизонтального скролла
-                            const scrollProgress = Math.min(
-                                (scrollY - scrollStart) /
-                                (document.body.offsetHeight - scrollStart - window.innerHeight),
-                                1
-                            );
-
-                            targetScroll = scrollProgress * animationSettings.duration;
-
-                            if (!isAnimating) {
-                                isAnimating = true;
-                                animateHorizontalScroll();
-                            }
+                        if (scrollY > triggerPoint) {
+                            scrollContainer.classList.add('scrolled-past-first');
                         } else {
-                            // Возвращаем в начальное положение, если скроллим назад
-                            targetScroll = 0;
-                            if (!isAnimating && currentScroll > 0) {
-                                isAnimating = true;
-                                animateHorizontalScroll();
-                            }
+                            scrollContainer.classList.remove('scrolled-past-first');
+                        }
+
+                        // Ваш существующий код для горизонтального скролла
+                        const horizontalZoneTop = horizontalZone.offsetTop;
+                        const horizontalZoneHeight = window.innerHeight;
+
+                        if (scrollY >= horizontalZoneTop && scrollY <= horizontalZoneTop + horizontalZoneHeight) {
+                            const scrollWrapper = document.querySelector('.scroll-wrapper');
+                            const totalScrollWidth = scrollWrapper.scrollWidth - window.innerWidth;
+                            const progress = (scrollY - horizontalZoneTop) / horizontalZoneHeight;
+                            const translateX = -progress * totalScrollWidth;
+                            scrollWrapper.style.transform = `translateX(${translateX}px)`;
                         }
                     });
-
-                    // Анимация появления элементов
-                    const elements = document.querySelectorAll('.block_text');
-                    const observer = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                entry.target.classList.add('visible');
-                            }
-                        });
-                    }, { threshold: 0.3 });
-
-                    elements.forEach(el => observer.observe(el));
                 });
             </script>
         </div>
