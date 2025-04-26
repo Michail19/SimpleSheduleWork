@@ -16,6 +16,14 @@
     </div>
 
     <header class="header-index">
+        <style>
+            .header-index {
+                padding: 2vh 0.25vw;
+                position: relative;
+                z-index: 10;
+            }
+        </style>
+
         <div class="header__up-blocks__wrapper_menu">
             <div class="header__up-blocks__menu-toggle">☰</div>
             <div class="header__up-blocks__wrapper_menu__list">
@@ -24,9 +32,6 @@
             </div>
         </div>
         <div class="header__up-blocks">
-            <div class="header__up-blocks__headbar">
-
-            </div>
             <div id="head"></div>
             <div class="header__up-blocks__wrapper">
                 <div class="header__up-blocks__wrapper_icon-place"></div>
@@ -35,6 +40,17 @@
                     <button class="header__up-blocks__wrapper__list__theme-toggle_lang"></button>
                 </div>
             </div>
+            <script>
+                let loadingTimeout;
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Показываем сообщение через 3 секунды
+                    loadingTimeout = setTimeout(() => {
+                        const message = document.getElementById('loadingMessage');
+                        if (message) message.classList.add('visible');
+                    }, 3000);
+                });
+            </script>
         </div>
     </header>
 
@@ -51,10 +67,10 @@
         </style>
 
         <div class="head">
-            <h1 class="head__title" id="mainTitle">Добро пожаловать в <br/><strong class="head__title_name">SimpleScheduleWork</strong></h1>
-            <p class="head__text" id="subText"><strong id="start">SimpleScheduleWork</strong> — это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
+            <h1 class="head__title" id="mainTitle"><span data-key="welcome">Добро пожаловать в </span><br/><strong class="head__title_name">SimpleScheduleWork</strong></h1>
+            <p class="head__text" id="subText"><strong id="start">SimpleScheduleWork</strong><span data-key="description">— это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
                 Система предоставляет простое и наглядное представление расписания, а также управление привязкой сотрудников к проектам.
-                Организуйте рабочие недели, контролируйте занятость и управляйте проектами — всё в одном месте.</p>
+            Организуйте рабочие недели, контролируйте занятость и управляйте проектами — всё в одном месте.</span></p>
 
             <style>
                 .head {
@@ -190,19 +206,19 @@
         <div class="scroll-container" id="content">
             <div class="first-vertical">
                 <section class="scroll-section">
-                    <h2 class="subtitle">Возможности:</h2>
+                    <h2 class="subtitle" data-key="features">Возможности:</h2>
                     <div class="block">
                         <ul class="block_ul">
-                            <li class="block_text"><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
-                            <li class="block_text"><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
-                            <li class="block_text"><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
-                            <li class="block_text"><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
+                            <li class="block_text" data-key="feature_edit"><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
+                            <li class="block_text" data-key="feature_projects"><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
+                            <li class="block_text" data-key="feature_interface"><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
+                            <li class="block_text" data-key="feature_scaling"><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
                         </ul>
 
                         <div class="screenshot">
                             <img class="screenshot_img img_1" src="/images/employees.png" alt="Таблица расписания сотрудников">
                             <img class="screenshot_img img_2" src="/images/employeesN.png" alt="Таблица расписания сотрудников">
-                            <p class="screenshot_underline">Редактирование графика сотрудников</p>
+                            <p class="screenshot_underline" data-key="edit_schedule">Редактирование графика сотрудников</p>
                         </div>
                     </div>
                 </section>
@@ -216,21 +232,21 @@
 
             <div class="second-vertical">
                 <section class="scroll-section">
-                    <h2 class="subtitle">Преимущества сервиса:</h2>
+                    <h2 class="subtitle" data-key="advantages">Преимущества сервиса:</h2>
                     <div class="block">
                         <ul class="block_ul">
-                            <li class="block_text">Быстрое редактирование расписания — прямо в таблице</li>
-                            <li class="block_text">Планирование на несколько недель вперёд</li>
-                            <li class="block_text">Привязка сотрудников к проектам</li>
-                            <li class="block_text">Роли пользователей: владелец и сотрудники</li>
-                            <li class="block_text">Хранение данных в облаке</li>
-                            <li class="block_text">Удобный интерфейс на мобильных устройствах</li>
+                            <li class="block_text" data-key="advantage_fast_edit">Быстрое редактирование расписания — прямо в таблице</li>
+                            <li class="block_text" data-key="advantage_planning">Планирование на несколько недель вперёд</li>
+                            <li class="block_text" data-key="advantage_binding">Привязка сотрудников к проектам</li>
+                            <li class="block_text" data-key="advantage_roles">Роли пользователей: владелец и сотрудники</li>
+                            <li class="block_text" data-key="advantage_cloud">Хранение данных в облаке</li>
+                            <li class="block_text" data-key="advantage_mobile">Удобный интерфейс на мобильных устройствах</li>
                         </ul>
 
                         <div class="screenshot">
                             <img class="screenshot_img img_1" src="/images/projects.png" alt="Карточки проектов">
                             <img class="screenshot_img img_2" src="/images/projectsN.png" alt="Карточки проектов">
-                            <p class="screenshot_underline">Просмотр и фильтрация проектов</p>
+                            <p class="screenshot_underline" data-key="view_projects">Просмотр и фильтрация проектов</p>
                         </div>
                     </div>
                 </section>
@@ -421,11 +437,11 @@
         </div>
 
         <div class="answer" id="answer">
-            <h2 class="anim">Почему именно SSW?</h2>
+            <h2 class="anim" data-key="why_ssw">Почему именно SSW?</h2>
             <ul>
-                <li class="anim">Упрощает работу даже с большими командами.</li>
-                <li class="anim">Повышает прозрачность загруженности сотрудников.</li>
-                <li class="anim">Уменьшает риск накладок и ошибок при планировании.</li>
+                <li class="anim" data-key="why_team">Упрощает работу даже с большими командами.</li>
+                <li class="anim" data-key="why_transparency">Повышает прозрачность загруженности сотрудников.</li>
+                <li class="anim" data-key="why_risk">Уменьшает риск накладок и ошибок при планировании.</li>
             </ul>
 
             <style>
@@ -497,15 +513,15 @@
         <div class="footer__columns">
             <div class="footer__columns__copyright">
                 <div class="footer__logo">SimpleScheduleWork</div>
-                <div class="footer__author">© Михаил Ершов</div>
+                <div class="footer__author" data-key="author">© Михаил Ершов</div>
             </div>
             <div class="footer__columns__info">
-                <a class="footer__column-link" href="#start">Главная</a>
-                <a class="footer__column-link" href="#content">Возможности</a>
-                <a class="footer__column-link" href="#answer">Почему SSW?</a>
-                <a class="footer__column-link" href="./main.html">Перейти к расписанию</a>
-                <a class="footer__column-link" href="./project.html">К проектам</a>
-                <a class="footer__column-link" href="./contact.html">Контакты</a>
+                <a class="footer__column-link" href="#start" data-key="to_home">Главная</a>
+                <a class="footer__column-link" href="#content" data-key="possibilities">Возможности</a>
+                <a class="footer__column-link" href="#answer" data-key="why">Почему SSW?</a>
+                <a class="footer__column-link" href="./main.html" data-key="go_schedule">Перейти к расписанию</a>
+                <a class="footer__column-link" href="./project.html" data-key="go_projects">К проектам</a>
+                <a class="footer__column-link" href="./contact.html" data-key="contacts">Контакты</a>
             </div>
         </div>
     </footer>

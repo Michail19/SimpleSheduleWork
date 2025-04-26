@@ -4,6 +4,6 @@
     bottom: 0;
     margin: 18px 0;
     line-height: 25px;
-    font-size: clamp(12px, 2.5vw, 2.5rem);
+    font-size: clamp(12px, 2.5vw, 1.5rem);
     font-weight: normal;
 }
