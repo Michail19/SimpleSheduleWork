@@ -17,7 +17,7 @@ module.exports = {
     output: {
         filename: '[name].bundle.js',  // Имя итогового файла
         publicPath: process.env.NODE_ENV === 'production'
-            ? '/SimpleSheduleWork/'  // Для GitHub Pages
+            ? '/SimpleScheduleWork/'  // Для GitHub Pages
             : '/',                 // Для dev-сервера
         path: path.resolve(__dirname, 'dist'),
     },
@@ -55,7 +55,14 @@ module.exports = {
                   },
                   'ts-loader'
                 ]
-          },
+            },
+            {
+                test: /\.(png|jpg|gif|svg)$/,  // Добавлено правило для изображений
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[name][ext]'
+                }
+            }
         ],
     },
     resolve: {
@@ -91,6 +98,7 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 { from: './images/icon.png', to: 'icon.png' }, // Копируем иконку в dist
+                { from: './images', to: 'images' },  // Копируем всю папку images
             ],
         }),
         new MiniCssExtractPlugin({
