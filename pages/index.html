@@ -200,7 +200,8 @@
                         </ul>
 
                         <div class="screenshot">
-                            <img class="screenshot_img" src="/images/employees.png" alt="Таблица расписания сотрудников">
+                            <img class="screenshot_img img_1" src="/images/employees.png" alt="Таблица расписания сотрудников">
+                            <img class="screenshot_img img_2" src="/images/employeesN.png" alt="Таблица расписания сотрудников">
                             <p class="screenshot_underline">Редактирование графика сотрудников</p>
                         </div>
                     </div>
@@ -227,7 +228,8 @@
                         </ul>
 
                         <div class="screenshot">
-                            <img class="screenshot_img" src="/images/projects.png" alt="Карточки проектов">
+                            <img class="screenshot_img img_1" src="/images/projects.png" alt="Карточки проектов">
+                            <img class="screenshot_img img_2" src="/images/projectsN.png" alt="Карточки проектов">
                             <p class="screenshot_underline">Просмотр и фильтрация проектов</p>
                         </div>
                     </div>
@@ -293,11 +295,35 @@
                     transform: scale(1.02);
                 }
 
+                .dark-theme .screenshot_img {
+                    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.75);
+                }
+
+                .img_1 {
+                    display: block;
+                }
+
+                .dark-theme .img_1 {
+                    display: none;
+                }
+
+                .img_2 {
+                    display: none;
+                }
+
+                .dark-theme .img_2 {
+                    display: block;
+                }
+
                 .screenshot_underline {
                     margin-top: 0.5rem;
                     font-size: 0.95rem;
                     color: #666;
                     font-style: italic;
+                }
+
+                .dark-theme .screenshot_underline {
+                    color: #ababab;
                 }
 
                 /* Стили для горизонтального скролла */
@@ -318,6 +344,7 @@
                 .second-vertical {
                     position: relative;
                     height: 100vh;
+                    margin-top: -25vh;
                     z-index: 2; /* Второй блок поверх первого */
                     opacity: 0;
                     transform: translateX(100%); /* Второй блок сдвинут вправо */
@@ -368,8 +395,9 @@
 
                     window.addEventListener('scroll', () => {
                         const scrollY = window.scrollY;
-                        const windowBottom = scrollY + window.innerHeight; // Нижняя граница экрана
+                        const windowBottom = scrollY + window.innerHeight * 2 / 3; // Нижняя граница экрана
                         const windowTop = scrollY; // Верхняя граница экрана
+                        const windowTopBottom = scrollY + window.innerHeight * 5.75; // Верхняя нижняя граница экрана
 
                         const firstBottom = firstVertical.offsetTop + firstVertical.offsetHeight;
                         const secondTop = secondVertical.offsetTop;
@@ -384,7 +412,7 @@
                         }
 
                         // Горизонтальный скролл:
-                        if (windowTop >= horizontalZoneTop && windowTop <= secondTop) {
+                        if (windowTop >= horizontalZoneTop && windowTopBottom <= secondTop) {
                             const totalScrollWidth = scrollWrapper.scrollWidth - window.innerWidth;
                             const progress = (windowTop - horizontalZoneTop) / (secondTop - horizontalZoneTop);
                             const translateX = -progress * totalScrollWidth;
