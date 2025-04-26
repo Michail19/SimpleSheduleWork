@@ -274,7 +274,7 @@
                 }
 
                 .screenshot_img {
-                    max-width: 100%;
+                    max-width: 100vw;
                     height: auto;
                     border-radius: 12px;
                     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -294,34 +294,21 @@
 
                 /* Обновлённые стили для горизонтального скролла */
                 .scroll-container {
-                    height: calc(400vh + 100vw * 2); /* 400vh + ширина для прокрутки */
                     position: relative;
+                    width: 100%;
+                    padding-top: 5vh;
+                    padding-bottom: 5vh;
+                    height: 100vh;
                 }
 
                 .scroll-wrapper {
-                    position: absolute;
-                    top: 400vh; /* начинаем после 400vh */
-                    left: 0;
                     display: flex;
-                    height: 100vh;
-                    width: max-content;
-                    will-change: transform;
-                    transition: transform 0.2s ease-out;
-                }
-                .scroll-wrapper.fixed {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                }
-                .scroll-wrapper.unfixed {
-                    position: absolute;
-                    bottom: 0;
-                    top: auto;
+                    height: 100%;
+                    will-change: transform; /* Оптимизация для анимации */
                 }
 
                 .scroll-section {
                     flex: 0 0 100vw;
-                    height: 100vh;
                     padding: 2rem;
                     box-sizing: border-box;
                     display: flex;
@@ -349,36 +336,89 @@
                 });
 
                 document.addEventListener('DOMContentLoaded', () => {
-                    const wrapper = document.getElementById('scrollWrapper');
+                    const scrollContainer = document.getElementById('content');
+                    const scrollWrapper = document.getElementById('scrollWrapper');
+                    const sections = document.querySelectorAll('.scroll-section');
+                    const head = document.querySelector('.head');
 
-                    const startScroll = 400 * window.innerHeight / 100; // 400vh
-                    const scrollWidth = wrapper.scrollWidth;
-                    const endScroll = startScroll + scrollWidth - window.innerWidth;
+                    // Устанавливаем правильную ширину для wrapper
+                    let totalWidth = 0;
+                    sections.forEach(section => {
+                        totalWidth += section.offsetWidth;
+                    });
+                    scrollWrapper.style.width = `${totalWidth}px`;
+
+                    // Настройки анимации
+                    const animationSettings = {
+                        startOffset: head.offsetHeight, // Когда начинать горизонтальный скролл
+                        duration: totalWidth - window.innerWidth, // Дистанция для скролла
+                        ease: 0.1 // Плавность анимации (чем меньше, тем плавнее)
+                    };
+
+                    let currentScroll = 0;
+                    let targetScroll = 0;
+                    let isAnimating = false;
+
+                    function lerp(start, end, t) {
+                        return start * (1 - t) + end * t;
+                    }
+
+                    function animateHorizontalScroll() {
+                        if (!isAnimating) return;
+
+                        currentScroll = lerp(currentScroll, targetScroll, animationSettings.ease);
+                        scrollWrapper.style.transform = `translateX(${-currentScroll}px)`;
+
+                        // Останавливаем анимацию, когда разница меньше 0.5px
+                        if (Math.abs(currentScroll - targetScroll) < 0.5) {
+                            currentScroll = targetScroll;
+                            scrollWrapper.style.transform = `translateX(${-currentScroll}px)`;
+                            isAnimating = false;
+                            return;
+                        }
+
+                        requestAnimationFrame(animateHorizontalScroll);
+                    }
 
                     window.addEventListener('scroll', () => {
                         const scrollY = window.scrollY;
+                        const scrollStart = animationSettings.startOffset - window.innerHeight * 0.7;
 
-                        if (scrollY >= startScroll + 10 && scrollY <= endScroll) {
-                            if (!wrapper.classList.contains('fixed')) {
-                                wrapper.classList.add('fixed');
-                                wrapper.classList.remove('unfixed');
-                            }
+                        if (scrollY >= scrollStart) {
+                            // Рассчитываем прогресс горизонтального скролла
+                            const scrollProgress = Math.min(
+                                (scrollY - scrollStart) /
+                                (document.body.offsetHeight - scrollStart - window.innerHeight),
+                                1
+                            );
 
-                            const translateX = -(scrollY - startScroll);
-                            wrapper.style.transform = `translateX(${translateX}px)`;
-                        }
-                        else if (scrollY < startScroll) {
-                            wrapper.classList.remove('fixed', 'unfixed');
-                            wrapper.style.transform = `translateX(0px)`;
-                        }
-                        else if (scrollY > endScroll) {
-                            if (!wrapper.classList.contains('unfixed')) {
-                                wrapper.classList.add('unfixed');
-                                wrapper.classList.remove('fixed');
+                            targetScroll = scrollProgress * animationSettings.duration;
+
+                            if (!isAnimating) {
+                                isAnimating = true;
+                                animateHorizontalScroll();
                             }
-                            wrapper.style.transform = `translateX(${- (endScroll - startScroll)}px)`;
+                        } else {
+                            // Возвращаем в начальное положение, если скроллим назад
+                            targetScroll = 0;
+                            if (!isAnimating && currentScroll > 0) {
+                                isAnimating = true;
+                                animateHorizontalScroll();
+                            }
                         }
                     });
+
+                    // Анимация появления элементов
+                    const elements = document.querySelectorAll('.block_text');
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible');
+                            }
+                        });
+                    }, { threshold: 0.3 });
+
+                    elements.forEach(el => observer.observe(el));
                 });
             </script>
         </div>
