@@ -257,17 +257,7 @@
                     font-size: 1.1rem;
                     line-height: 1.6;
                     padding-left: 1.5rem;
-                }
 
-                .block_text::before {
-                    content: "✔";
-                    position: absolute;
-                    left: 0;
-                    color: #4CAF50; /* зелёный для акцента */
-                    font-size: 1rem;
-                }
-
-                .block_text {
                     opacity: 0;
                     transform: translateX(50px);
                     transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -276,6 +266,14 @@
                 .block_text.visible {
                     opacity: 1;
                     transform: translateX(0);
+                }
+
+                .block_text::before {
+                    content: "✔";
+                    position: absolute;
+                    left: 0;
+                    color: #4CAF50; /* зелёный для акцента */
+                    font-size: 1rem;
                 }
 
                 .screenshot {
@@ -424,12 +422,75 @@
         </div>
 
         <div class="answer" id="answer">
-            <h2>Почему именно SSW?</h2>
+            <h2 class="anim">Почему именно SSW?</h2>
             <ul>
-                <li>Упрощает работу даже с большими командами.</li>
-                <li>Повышает прозрачность загруженности сотрудников.</li>
-                <li>Уменьшает риск накладок и ошибок при планировании.</li>
+                <li class="anim">Упрощает работу даже с большими командами.</li>
+                <li class="anim">Повышает прозрачность загруженности сотрудников.</li>
+                <li class="anim">Уменьшает риск накладок и ошибок при планировании.</li>
             </ul>
+
+            <style>
+                .answer {
+                    margin: 2vh auto 20vh auto;
+                    padding: 1.5rem;
+                    border-radius: 8px;
+                    line-height: 1.6;
+                }
+
+                .anim {
+                    opacity: 0;
+                    transform: translateX(50px);
+                    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+
+                }
+
+                .anim.animated {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+
+                .answer h2 {
+                    margin-bottom: 1rem;
+                    font-size: 5rem;
+                    font-weight: 600;
+                    text-align: center;
+                    padding-bottom: 0.5rem;
+                }
+
+                .answer ul {
+                    padding-left: 1.5rem;
+                    margin: 1rem 0;
+                }
+
+                .answer li {
+                    margin-bottom: 0.75rem;
+                    list-style-type: disc;
+                    font-size: 2.5rem;
+                }
+
+                .answer li::marker {
+                    color: #3498db;
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const elements = document.querySelectorAll('.anim');
+
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('animated');
+                            } else {
+                                entry.target.classList.remove('animated');
+                            }
+                        });
+                    }, {
+                        threshold: 0.5 // Когда 50% элемента видны
+                    });
+
+                    elements.forEach(el => observer.observe(el));
+                });
+            </script>
         </div>
     </section>
 
