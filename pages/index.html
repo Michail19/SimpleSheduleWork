@@ -303,42 +303,41 @@
                 /* Стили для горизонтального скролла */
                 .scroll-container {
                     width: 100%;
-                    height: 400vh; /* стало больше: первая вертикаль + горизонтальная зона + вторая вертикаль */
+                    height: 400vh; /* Увеличиваем высоту для прокрутки */
                 }
 
-                .first-vertical, .second-vertical {
+                /* Первый блок с плавным выходом */
+                .first-vertical {
                     position: relative;
                     height: 100vh;
+                    z-index: 1; /* На первом плане */
+                    transition: transform 1s ease-out; /* Плавный выход первого блока */
                 }
 
-                .horizontal-scroll-zone {
-                    position: relative;
-                    height: 200vh; /* горизонтальная зона больше одной высоты экрана */
-                }
-
-                /* Анимация смены блоков */
-                .first-vertical, .second-vertical {
-                    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
-                }
-
+                /* Второй блок, изначально скрыт и сдвинут вправо */
                 .second-vertical {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    transform: translateX(100%);
+                    position: relative;
+                    height: 100vh;
+                    z-index: 2; /* Второй блок поверх первого */
                     opacity: 0;
+                    transform: translateX(100%); /* Второй блок сдвинут вправо */
+                    transition: transform 1s ease-out, opacity 1s ease-out; /* Плавная анимация */
                 }
 
-                /* Когда страница прокручена до зоны горизонтального скролла */
+                /* Когда прокрутили первый блок, второй должен появиться */
                 .scrolled-past-first .first-vertical {
-                    transform: translateX(-100%);
-                    opacity: 0;
+                    transform: translateX(-100%); /* Первый блок уходит влево */
                 }
 
                 .scrolled-past-first .second-vertical {
-                    transform: translateX(0);
-                    opacity: 1;
+                    transform: translateX(0); /* Второй блок появляется на экране */
+                    opacity: 1; /* Второй блок становится видимым */
+                }
+
+                /* Стили для горизонтального скролла */
+                .horizontal-scroll-zone {
+                    position: relative;
+                    height: 200vh; /* Зона горизонтального скролла */
                 }
             </style>
             <script>
@@ -375,7 +374,7 @@
                         const horizontalZoneHeight = horizontalZone.offsetHeight;
                         const secondTop = secondVertical.offsetTop;
 
-                        // Анимация ухода first-vertical и прихода second-vertical
+                        // Анимация скрытия первого блока и появления второго
                         if (scrollY > firstBottom) {
                             scrollContainer.classList.add('scrolled-past-first');
                         } else {
