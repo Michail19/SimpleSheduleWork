@@ -41,9 +41,18 @@
 <!--    <a href="./main.html">Здесь пока ничего нет, перейдите на основную страницу</a>-->
 
     <section class="content">
-        <div class="head" id="start">
+        <style>
+            .content {
+                margin: 0 1vw 3vh 1vw;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+        </style>
+
+        <div class="head">
             <h1 class="head__title" id="mainTitle">Добро пожаловать в <br/><strong class="head__title_name">SimpleScheduleWork</strong></h1>
-            <p class="head__text" id="subText"><strong>SimpleScheduleWork</strong> — это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
+            <p class="head__text" id="subText"><strong id="start">SimpleScheduleWork</strong> — это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
                 Система предоставляет простое и наглядное представление расписания, а также управление привязкой сотрудников к проектам.
                 Организуйте рабочие недели, контролируйте занятость и управляйте проектами — всё в одном месте.</p>
 
@@ -178,38 +187,180 @@
             </script>
         </div>
 
-        <div class="main" id="content">
-            <h2>Возможности:</h2>
-            <div>
-                <ul>
-                    <li><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
-                    <li><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
-                    <li><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
-                    <li><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
-                </ul>
+        <div class="scroll-container" id="content">
+            <section class="scroll-section">
+                <h2 class="subtitle">Возможности:</h2>
+                <div class="block">
+                    <ul class="block_ul">
+                        <li class="block_text"><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
+                        <li class="block_text"><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
+                        <li class="block_text"><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
+                        <li class="block_text"><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
+                    </ul>
 
-                <div class="screenshot">
-                    <img src="/images/employees.png" alt="Таблица расписания сотрудников">
-                    <p>Редактирование графика сотрудников</p>
+                    <div class="screenshot">
+                        <img class="screenshot_img" src="/images/employees.png" alt="Таблица расписания сотрудников">
+                        <p class="screenshot_underline">Редактирование графика сотрудников</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="scroll-section">
+                <h2 class="subtitle">Преимущества сервиса:</h2>
+                <div class="block">
+                    <ul class="block_ul">
+                        <li class="block_text">Быстрое редактирование расписания — прямо в таблице</li>
+                        <li class="block_text">Планирование на несколько недель вперёд</li>
+                        <li class="block_text">Привязка сотрудников к проектам</li>
+                        <li class="block_text">Роли пользователей: владелец и сотрудники</li>
+                        <li class="block_text">Хранение данных в облаке</li>
+                        <li class="block_text">Удобный интерфейс на мобильных устройствах</li>
+                    </ul>
+
+                    <div class="screenshot">
+                        <img class="screenshot_img" src="/images/projects.png" alt="Карточки проектов">
+                    <p class="screenshot_underline">Просмотр и фильтрация проектов</p>
                 </div>
             </div>
+            </section>
 
-            <h2>Преимущества сервиса:</h2>
-            <div>
-                <ul>
-                    <li>Быстрое редактирование расписания — прямо в таблице</li>
-                    <li>Планирование на несколько недель вперёд</li>
-                    <li>Привязка сотрудников к проектам</li>
-                    <li>Роли пользователей: владелец и сотрудники</li>
-                    <li>Хранение данных в облаке</li>
-                    <li>Удобный интерфейс на мобильных устройствах</li>
-                </ul>
+            <style>
+                .subtitle {
+                    font-size: 2rem;
+                    margin-top: 4rem;
+                    margin-bottom: 1rem;
+                    font-weight: 600;
+                    text-align: left;
+                }
 
-                <div class="screenshot">
-                    <img src="/images/projects.png" alt="Карточки проектов">
-                <p>Просмотр и фильтрация проектов</p>
-            </div>
-            </div>
+                .block_ul {
+                    list-style: none;
+                    padding-left: 1.5rem;
+                    margin-bottom: 2rem;
+                }
+
+                .block_text {
+                    position: relative;
+                    margin-bottom: 1rem;
+                    font-size: 1.1rem;
+                    line-height: 1.6;
+                    padding-left: 1.5rem;
+                }
+
+                .block_text::before {
+                    content: "✔";
+                    position: absolute;
+                    left: 0;
+                    color: #4CAF50; /* зелёный для акцента */
+                    font-size: 1rem;
+                }
+
+                .block_text {
+                    opacity: 0;
+                    transform: translateX(50px);
+                    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+
+                .block_text.visible {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+
+                .screenshot {
+                    margin: 2rem 0;
+                    text-align: center;
+                }
+
+                .screenshot_img {
+                    max-width: 100%;
+                    height: auto;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+                    transition: transform 0.3s ease;
+                }
+
+                .screenshot_img:hover {
+                    transform: scale(1.02);
+                }
+
+                .screenshot_underline {
+                    margin-top: 0.5rem;
+                    font-size: 0.95rem;
+                    color: #666;
+                    font-style: italic;
+                }
+
+                .scroll-container {
+                    /*margin: 0 1vw 3vh 1vw;*/
+                    /*display: flex;*/
+                    /*gap: 15px;*/
+                    /*flex-direction: column;*/
+
+                    overflow: hidden;
+                    position: relative;
+                    height: 200vh; /* чтобы один блок был на весь экран */
+                    width: 100%;
+                }
+
+                .scroll-section {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    padding: 2rem;
+                    box-sizing: border-box;
+                    transition: transform 0.8s ease;
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const elements = document.querySelectorAll('.block_text');
+
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible');
+                            } else {
+                                entry.target.classList.remove('visible');
+                            }
+                        });
+                    }, {
+                        threshold: 0.5 // Когда 50% элемента видны
+                    });
+
+                    elements.forEach(el => observer.observe(el));
+                });
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    const sections = document.querySelectorAll('.scroll-section');
+                    let current = 0;
+
+                    window.addEventListener('wheel', (e) => {
+                        if (e.deltaY > 0) {
+                            // скроллим вниз
+                            if (current < sections.length - 1) {
+                                current++;
+                                updateSections();
+                            }
+                        } else {
+                            // скроллим вверх
+                            if (current > 0) {
+                                current--;
+                                updateSections();
+                            }
+                        }
+                    }, { passive: true });
+
+                    function updateSections() {
+                        sections.forEach((section, index) => {
+                            section.style.transform = `translateX(${(index - current) * 100}%)`;
+                        });
+                    }
+
+                    updateSections(); // первая отрисовка
+                });
+            </script>
 
         </div>
 
