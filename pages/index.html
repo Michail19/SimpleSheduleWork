@@ -73,17 +73,17 @@
                 }
 
                 .head__title {
-                    font-size: 5rem;
+                    font-size: clamp(5px, 8vw, 5rem);
                     top: 20vh;
                     transform-origin: top left;
                 }
 
                 .head__title_name {
-                    margin-left: 15vw;
+                    margin-left: clamp(5vw, 5vw, 20vw);
                 }
 
                 .head__text {
-                    font-size: 2.5rem;
+                    font-size: clamp(1.2rem, 5vw, 2.5rem);
                     top: 20vh;
                     opacity: 0;
                     transform: translateY(30px) scale(0.95);
@@ -238,7 +238,7 @@
 
             <style>
                 .subtitle {
-                    font-size: 2rem;
+                    font-size: clamp(1.4rem, 5vw, 2rem);
                     margin-top: 4rem;
                     margin-bottom: 1rem;
                     font-weight: 600;
@@ -254,7 +254,7 @@
                 .block_text {
                     position: relative;
                     margin-bottom: 1rem;
-                    font-size: 1.1rem;
+                    font-size: clamp(1rem, 3.5vw, 1.1rem);
                     line-height: 1.6;
                     padding-left: 1.5rem;
 
@@ -315,7 +315,7 @@
 
                 .screenshot_underline {
                     margin-top: 0.5rem;
-                    font-size: 0.95rem;
+                    font-size: clamp(0.8rem, 3vw, 0.95rem);
                     color: #666;
                     font-style: italic;
                 }
@@ -450,7 +450,7 @@
 
                 .answer h2 {
                     margin-bottom: 1rem;
-                    font-size: 5rem;
+                    font-size: clamp(2rem, 8vw, 5rem);
                     font-weight: 600;
                     text-align: center;
                     padding-bottom: 0.5rem;
@@ -464,7 +464,7 @@
                 .answer li {
                     margin-bottom: 0.75rem;
                     list-style-type: disc;
-                    font-size: 2.5rem;
+                    font-size: clamp(1.5rem, 6vw, 2.5rem);
                 }
 
                 .answer li::marker {
