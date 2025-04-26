@@ -188,41 +188,43 @@
         </div>
 
         <div class="scroll-container" id="content">
-            <section class="scroll-section">
-                <h2 class="subtitle">Возможности:</h2>
-                <div class="block">
-                    <ul class="block_ul">
-                        <li class="block_text"><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
-                        <li class="block_text"><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
-                        <li class="block_text"><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
-                        <li class="block_text"><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
-                    </ul>
+            <div class="scroll-wrapper" id="scrollWrapper">
+                <section class="scroll-section">
+                    <h2 class="subtitle">Возможности:</h2>
+                    <div class="block">
+                        <ul class="block_ul">
+                            <li class="block_text"><strong>Гибкое редактирование расписания</strong>: управление временем по дням и неделям, визуальное выделение выходных и смен.</li>
+                            <li class="block_text"><strong>Быстрый доступ к проектам</strong>: фильтрация, просмотр привязок сотрудников.</li>
+                            <li class="block_text"><strong>Интуитивный интерфейс</strong>: ничего лишнего, всё на одном экране.</li>
+                            <li class="block_text"><strong>Масштабирование</strong>: переключение между неделями и сотрудниками.</li>
+                        </ul>
 
-                    <div class="screenshot">
-                        <img class="screenshot_img" src="/images/employees.png" alt="Таблица расписания сотрудников">
-                        <p class="screenshot_underline">Редактирование графика сотрудников</p>
+                        <div class="screenshot">
+                            <img class="screenshot_img" src="/images/employees.png" alt="Таблица расписания сотрудников">
+                            <p class="screenshot_underline">Редактирование графика сотрудников</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="scroll-section">
+                    <h2 class="subtitle">Преимущества сервиса:</h2>
+                    <div class="block">
+                        <ul class="block_ul">
+                            <li class="block_text">Быстрое редактирование расписания — прямо в таблице</li>
+                            <li class="block_text">Планирование на несколько недель вперёд</li>
+                            <li class="block_text">Привязка сотрудников к проектам</li>
+                            <li class="block_text">Роли пользователей: владелец и сотрудники</li>
+                            <li class="block_text">Хранение данных в облаке</li>
+                            <li class="block_text">Удобный интерфейс на мобильных устройствах</li>
+                        </ul>
+
+                        <div class="screenshot">
+                            <img class="screenshot_img" src="/images/projects.png" alt="Карточки проектов">
+                        <p class="screenshot_underline">Просмотр и фильтрация проектов</p>
                     </div>
                 </div>
-            </section>
-
-            <section class="scroll-section">
-                <h2 class="subtitle">Преимущества сервиса:</h2>
-                <div class="block">
-                    <ul class="block_ul">
-                        <li class="block_text">Быстрое редактирование расписания — прямо в таблице</li>
-                        <li class="block_text">Планирование на несколько недель вперёд</li>
-                        <li class="block_text">Привязка сотрудников к проектам</li>
-                        <li class="block_text">Роли пользователей: владелец и сотрудники</li>
-                        <li class="block_text">Хранение данных в облаке</li>
-                        <li class="block_text">Удобный интерфейс на мобильных устройствах</li>
-                    </ul>
-
-                    <div class="screenshot">
-                        <img class="screenshot_img" src="/images/projects.png" alt="Карточки проектов">
-                    <p class="screenshot_underline">Просмотр и фильтрация проектов</p>
-                </div>
+                </section>
             </div>
-            </section>
 
             <style>
                 .subtitle {
@@ -291,25 +293,27 @@
                 }
 
                 .scroll-container {
-                    /*margin: 0 1vw 3vh 1vw;*/
-                    /*display: flex;*/
-                    /*gap: 15px;*/
-                    /*flex-direction: column;*/
-
-                    overflow: hidden;
                     position: relative;
-                    height: 200vh; /* чтобы один блок был на весь экран */
                     width: 100%;
+                    height: 300vh; /* высота для прокрутки (если 2 секции — ставь 200vh, если 3 — 300vh) */
+                    overflow: hidden;
+                }
+
+                .scroll-wrapper {
+                    display: flex;
+                    position: sticky;
+                    top: 0;
+                    height: 100vh;
+                    width: 100%;
+                    overflow: visible;
+                    will-change: transform;
                 }
 
                 .scroll-section {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    padding: 2rem;
+                    flex: 0 0 100vw;
+                    height: 100vh;
                     box-sizing: border-box;
+                    padding: 2rem;
                     transition: transform 0.8s ease;
                 }
             </style>
@@ -333,32 +337,24 @@
                 });
 
                 document.addEventListener('DOMContentLoaded', () => {
+                    const wrapper = document.getElementById('scrollWrapper');
+                    const container = document.getElementById('content');
                     const sections = document.querySelectorAll('.scroll-section');
-                    let current = 0;
 
-                    window.addEventListener('wheel', (e) => {
-                        if (e.deltaY > 0) {
-                            // скроллим вниз
-                            if (current < sections.length - 1) {
-                                current++;
-                                updateSections();
-                            }
-                        } else {
-                            // скроллим вверх
-                            if (current > 0) {
-                                current--;
-                                updateSections();
-                            }
+                    const containerHeight = container.offsetHeight - window.innerHeight;
+                    const totalScrollLength = window.innerWidth * (sections.length - 1); // сколько всего смещать вбок
+
+                    window.addEventListener('scroll', () => {
+                        const scrollTop = window.scrollY;
+                        const containerTop = container.offsetTop;
+
+                        if (scrollTop >= containerTop && scrollTop <= containerTop + containerHeight) {
+                            const scrollProgress = (scrollTop - containerTop) / containerHeight;
+                            const translateX = -scrollProgress * totalScrollLength;
+
+                            wrapper.style.transform = `translateX(${translateX}px)`;
                         }
-                    }, { passive: true });
-
-                    function updateSections() {
-                        sections.forEach((section, index) => {
-                            section.style.transform = `translateX(${(index - current) * 100}%)`;
-                        });
-                    }
-
-                    updateSections(); // первая отрисовка
+                    });
                 });
             </script>
 
