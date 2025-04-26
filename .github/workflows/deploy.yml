@@ -38,6 +38,7 @@ jobs:
         npm install --save-dev css-loader autoprefixer
         npm install --save-dev postcss-loader postcss postcss-bem-linter
         npm install @octokit/core --save-dev
+        npm install jwt-decode --save-dev
       
     - name: Build project
       run: npm run build
