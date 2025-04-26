@@ -21,3 +21,27 @@ export interface Project {
 }
 
 export type Language = "ru" | "en";
+
+export async function verifyToken() {
+    const token = localStorage.getItem('authToken');
+    if (!token) return false;
+
+    try {
+        const response = await fetch('https://ssw-backend.onrender.com/projects/all', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Invalid token');
+        }
+
+        return true; // Всё ок, токен валидный
+    } catch (error) {
+        console.error('Token verification failed:', error);
+        localStorage.removeItem('authToken');
+        return false;
+    }
+}

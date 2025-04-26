@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import {translations} from "../translations";
+import {Language} from "../types";
 
 interface LoginPopupProps {
     onClose: () => void;
     onLoginSuccess: (token: string) => void;
+    currentTranslation: typeof translations[Language];
 }
 
-const LoginPopup: React.FC<LoginPopupProps> = ({ onClose, onLoginSuccess }) => {
+const LoginPopup: React.FC<LoginPopupProps> = ({ onClose, onLoginSuccess, currentTranslation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [showLoadingMessage, setShowLoadingMessage] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,7 +28,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose, onLoginSuccess }) => {
             });
 
             if (!response.ok) {
-                throw new Error('Неверное имя пользователя или пароль');
+                throw new Error(`${currentTranslation.invalidCredentials}`);
             }
 
             const data = await response.json();
@@ -35,27 +39,41 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose, onLoginSuccess }) => {
             onLoginSuccess(token);
             onClose();
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
+            setError(err instanceof Error ? err.message : `${currentTranslation.unknownError}`);
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => {
+        if (loading) {
+            const timer = setTimeout(() => {
+                setShowLoadingMessage(true);
+            }, 3000);
+
+            return () => {
+                clearTimeout(timer);
+                setShowLoadingMessage(false); // Скрывать сообщение при отмене
+            };
+        }
+    }, [loading]);
+
+
     return (
         <div className="login-popup">
             <div className="login-content">
-                <h2>Вход</h2>
+                <h2>{currentTranslation.login}</h2>
                 <form onSubmit={handleLogin}>
                     <input
                         type="text"
-                        placeholder="Имя пользователя"
+                        placeholder={currentTranslation.usernamePlaceholder}
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
                     />
                     <input
                         type="password"
-                        placeholder="Пароль"
+                        placeholder={currentTranslation.passwordPlaceholder}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -69,15 +87,15 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose, onLoginSuccess }) => {
                                 <span className="loading-dot">.</span>
                                 <span className="loading-dot">.</span>
                             </span>
-                        ) : 'Войти'}
+                        ) : `${currentTranslation.loginButton}`}
                     </button>
                 </form>
-                <button onClick={onClose}>Отмена</button>
+                <button onClick={onClose}>{currentTranslation.cancelButton}</button>
 
                 {/* Сообщение о долгой загрузке */}
                 {loading && (
-                    <div className="loading-message" id="loadingMessage">
-                        Используется маломощный сервер, пожалуйста подождите...
+                    <div className={`loading-message ${showLoadingMessage ? 'visible' : ''}`}>
+                        {currentTranslation.loadingSlowMessage}
                     </div>
                 )}
             </div>

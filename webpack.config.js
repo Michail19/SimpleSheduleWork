@@ -98,6 +98,10 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 { from: './images/icon.png', to: 'icon.png' }, // Копируем иконку в dist
+                { from: './images/employees.png', to: 'employees.png' }, // Копируем иконку в dist
+                { from: './images/employeesN.png', to: 'employeesN.png' }, // Копируем иконку в dist
+                { from: './images/projects.png', to: 'projects.png' }, // Копируем иконку в dist
+                { from: './images/projectsN.png', to: 'projectsN.png' }, // Копируем иконку в dist
                 { from: './images', to: 'images' },  // Копируем всю папку images
             ],
         }),

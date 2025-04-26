@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import LoginPopup from "./components/LoginPopup";
 import ReactDOM from "react-dom";
 import {translations} from "./translations";
-import {Language} from "./types";
+import {Language, verifyToken} from "./types";
 import ImageEditor from "../ImageEditor";
 import {getUsername} from "../UserAccessLevel";
 
@@ -19,6 +19,8 @@ const MainCodeIndex: React.FC = () => {
     useEffect(() => {
         const savedIcon = localStorage.getItem('userIcon');
         if (!savedIcon) setIconReady(false);
+
+        verifyToken();
     }, []);
 
     useEffect(() => {
@@ -138,8 +140,9 @@ const MainCodeIndex: React.FC = () => {
                     onClose={() => setShowLogin(false)}
                     onLoginSuccess={(token) => {
                         setAuthToken(token);
-                        console.log('Вошли с токеном:', token);
+                        // console.log('Вошли с токеном:', token);
                     }}
+                    currentTranslation={currentTranslation}
                 />
             )}
         </>
