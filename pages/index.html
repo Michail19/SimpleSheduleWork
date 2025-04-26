@@ -99,10 +99,6 @@
                     transition: none !important; /* Полностью отключаем переходы */
                     animation: none !important;
                 }
-
-                .head__title.unfixed {
-                    opacity: 0;
-                }
             </style>
 
             <script>
@@ -372,23 +368,25 @@
 
                     window.addEventListener('scroll', () => {
                         const scrollY = window.scrollY;
+                        const windowBottom = scrollY + window.innerHeight; // Нижняя граница экрана
+                        const windowTop = scrollY; // Верхняя граница экрана
 
                         const firstBottom = firstVertical.offsetTop + firstVertical.offsetHeight;
+                        const secondTop = secondVertical.offsetTop;
                         const horizontalZoneTop = horizontalZone.offsetTop;
                         const horizontalZoneHeight = horizontalZone.offsetHeight;
-                        const secondTop = secondVertical.offsetTop;
 
-                        // Анимация скрытия первого блока и появления второго
-                        if (scrollY > firstBottom) {
+                        // Смена состояний:
+                        if (windowBottom >= firstBottom) {
                             scrollContainer.classList.add('scrolled-past-first');
                         } else {
                             scrollContainer.classList.remove('scrolled-past-first');
                         }
 
-                        // Горизонтальный скролл
-                        if (scrollY >= horizontalZoneTop && scrollY <= (secondTop)) {
+                        // Горизонтальный скролл:
+                        if (windowTop >= horizontalZoneTop && windowTop <= secondTop) {
                             const totalScrollWidth = scrollWrapper.scrollWidth - window.innerWidth;
-                            const progress = (scrollY - horizontalZoneTop) / (secondTop - horizontalZoneTop);
+                            const progress = (windowTop - horizontalZoneTop) / (secondTop - horizontalZoneTop);
                             const translateX = -progress * totalScrollWidth;
                             scrollWrapper.style.transform = `translateX(${translateX}px)`;
                         }
