@@ -3,11 +3,15 @@
 html, body {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
+@import url("../block/loader/loader.css");
+@import url("../block/preloader/preloader.css");
 @import url("../block/page/page.css");
 @import url("../block/dark-theme/dark-theme.css");
 @import url("../block/header/header.css");
+@import url("../block/footer-index/footer-index.css");
 
 .login-popup {
     position: fixed;
@@ -15,28 +19,201 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .login-popup {
+    background: rgba(0, 0, 0, 0.7); /* Более тёмный фон для контраста */
 }
 
 .login-content {
-    background: white;
     padding: 20px;
     border-radius: 8px;
     min-width: 300px;
+
+    background: white;
+}
+
+.dark-theme .login-content {
+    background: #2d2d2d; /* Тёмный фон контейнера */
+    color: #EAEAEA; /* Светлый текст */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.login-content h2 {
+    text-align: center;
+    margin: 0 0 2.5vh 0;
 }
 
 .login-content input {
     display: block;
     margin-bottom: 10px;
-    width: 100%;
+    width: 93%;
     padding: 8px;
 }
 
-.login-content .error {
-    color: red;
-    margin-bottom: 10px;
+.dark-theme .login-content input {
+    background: #3d3d3d;
+    border-color: #555;
+    color: #EAEAEA;
 }
 
+.dark-theme .login-content input::placeholder {
+    color: #aaa;
+}
+
+.login-content .error {
+    margin-bottom: 10px;
+
+    color: red;
+}
+
+.dark-theme .login-content .error {
+    color: #ff6b6b; /* Светло-красный для лучшей видимости */
+}
+
+
+.header__up-blocks__wrapper__btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    color: #1E1E1E;
+    background-color: #D0D0D0;
+}
+
+.dark-theme .header__up-blocks__wrapper__btn {
+    color: #F5F7FA;
+    background-color: #252525;
+}
+
+.header__up-blocks__wrapper__btn:hover {
+    background-color: #EAEAEA;
+    /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
+}
+
+.dark-theme .header__up-blocks__wrapper__btn:hover {;
+    background-color: #353535;
+    /*box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);*/
+}
+
+
+/* Базовые стили кнопки (общие для всех тем) */
+.login-content button {
+    width: 100%;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+/* Светлая тема */
+.login-content button:not(:disabled) {
+    background-color: #353535;
+    color: #F5F7FA;
+}
+
+/* Тёмная тема */
+.dark-theme .login-content button:not(:disabled) {
+    background-color: #EAEAEA;
+    color: #1E1E1E;
+}
+
+/* Состояние hover (активно только когда кнопка не disabled) */
+.login-content button:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme .login-content button:not(:disabled):hover {
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* Стили для состояния загрузки (disabled) */
+.login-content button:disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.dark-theme .login-content button:disabled {
+    background-color: #555555 !important;
+    color: #999999 !important;
+}
+
+/* Анимация загрузки (опционально) */
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
+.login-content button:disabled {
+    animation: pulse 1.5s infinite;
+}
+
+.loading-wrapper {
+    display: inline-flex;
+    align-items: center;
+    height: 1em;
+}
+
+.loading-dot {
+    animation: bounce 1s infinite;
+    margin: 0 2px;
+}
+
+.loading-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+
+.loading-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    /* Светлая тема */
+    background-color: #fff8e1;
+    color: #ff6d00;
+    border-left: 3px solid #ffb74d;
+}
+
+.dark-theme .loading-message {
+    /* Тёмная тема */
+    background-color: #332900;
+    color: #ffab40;
+    border-left: 3px solid #ffb74d;
+}
+
+.loading-message.visible {
+    opacity: 1;
+}

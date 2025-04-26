@@ -1,0 +1,8 @@
+@import "./footer__columns/footer__columns.css";
+
+.footer-index {
+    background-color: #1f1f1f;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}

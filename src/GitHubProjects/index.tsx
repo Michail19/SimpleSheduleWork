@@ -7,6 +7,7 @@ import {SearchProjectPopup} from "./components/SearchProjectPopup";
 import ProjectDetailsPopup from "./components/ProjectDetailsPopup";
 import EmployeeManagementPopup from "./components/EmployeeManagementPopup";
 import {getUserAccessLevel} from "../UserAccessLevel";
+import ImageEditor from "../ImageEditor";
 
 interface GitHubRepo {
     id: number;
@@ -43,6 +44,7 @@ const GitHubProjects: React.FC = () => {
     const [isEmployeePopupOpen, setIsEmployeePopupOpen] = useState(false);
     const [currentProjectForEdit, setCurrentProjectForEdit] = useState<MergedProject | null>(null); // Для EmployeePopup
     const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [updateKey, setUpdateKey] = useState(0);
     const accessLevel = getUserAccessLevel();
 
@@ -54,6 +56,14 @@ const GitHubProjects: React.FC = () => {
         } else {
             setLanguage("ru");
         }
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1090);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     useEffect(() => {
@@ -439,7 +449,7 @@ const GitHubProjects: React.FC = () => {
                 container
             )}
 
-            {window.innerWidth < 1090 ? (
+            {isMobile ? (
                 <>
                     {document.querySelector('.header__up-blocks__wrapper__list') &&
                         (localStorage.getItem("authToken") != null) &&
@@ -481,6 +491,20 @@ const GitHubProjects: React.FC = () => {
                         )
                     }
                 </>
+            )}
+
+            {(document.querySelector(".header__up-blocks__wrapper_icon-place") &&
+                ReactDOM.createPortal(
+                    (localStorage.getItem('userIcon') ? (
+                        <img
+                            src={localStorage.getItem('userIcon')!}
+                            className='header__up-blocks__wrapper__icon_gen'
+                            alt="User Icon" />
+                    ) : (
+                        <div className="header__up-blocks__wrapper__icon"></div>
+                    )),
+                    document.querySelector(".header__up-blocks__wrapper_icon-place") as Element
+                )
             )}
 
             <div className="worksheet">

@@ -854,6 +854,20 @@ const Worksheet: React.FC = () => {
                     document.querySelector(".subtitle__date") as Element
                 )}
 
+            {(document.querySelector(".header__up-blocks__wrapper_icon-place") &&
+                ReactDOM.createPortal(
+                    (localStorage.getItem('userIcon') ? (
+                        <img
+                            src={localStorage.getItem('userIcon')!}
+                            className='header__up-blocks__wrapper__icon_gen'
+                            alt="User Icon" />
+                    ) : (
+                        <div className="header__up-blocks__wrapper__icon"></div>
+                    )),
+                    document.querySelector(".header__up-blocks__wrapper_icon-place") as Element
+                )
+            )}
+
             {/* Остальной JSX */}
             {isMobile ? (
                 <>

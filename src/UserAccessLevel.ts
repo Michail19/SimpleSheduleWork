@@ -20,3 +20,16 @@ export function getUserAccessLevel() {
         return null;
     }
 }
+
+export function getUsername() {
+    const token = localStorage.getItem("authToken"); // или sessionStorage, смотря где хранишь
+    if (!token) return null;
+
+    try {
+        const decoded = jwtDecode<MyJwtPayload>(token);
+        return decoded.sub; // это то, что ты положил в claims
+    } catch (error) {
+        console.error("Invalid token:", error);
+        return null;
+    }
+}

@@ -60,12 +60,26 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose, onLoginSuccess }) => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
+
                     {error && <p className="error">{error}</p>}
                     <button type="submit" disabled={loading}>
-                        {loading ? 'Вход...' : 'Войти'}
+                        {loading ? (
+                            <span className="loading-wrapper">
+                                <span className="loading-dot">.</span>
+                                <span className="loading-dot">.</span>
+                                <span className="loading-dot">.</span>
+                            </span>
+                        ) : 'Войти'}
                     </button>
                 </form>
                 <button onClick={onClose}>Отмена</button>
+
+                {/* Сообщение о долгой загрузке */}
+                {loading && (
+                    <div className="loading-message" id="loadingMessage">
+                        Используется маломощный сервер, пожалуйста подождите...
+                    </div>
+                )}
             </div>
         </div>
     );

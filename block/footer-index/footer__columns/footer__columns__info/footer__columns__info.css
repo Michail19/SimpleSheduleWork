@@ -1,0 +1,8 @@
+@import "./footer__column-link/footer__column-link.css";
+
+.footer__columns__info {
+    position: absolute;
+    align-self: center;
+    justify-items: right;
+    right: 0;
+}
