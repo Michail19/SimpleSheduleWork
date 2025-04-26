@@ -102,6 +102,7 @@ module.exports = {
                 { from: './images/employeesN.png', to: 'employeesN.png' }, // Копируем иконку в dist
                 { from: './images/projects.png', to: 'projects.png' }, // Копируем иконку в dist
                 { from: './images/projectsN.png', to: 'projectsN.png' }, // Копируем иконку в dist
+                { from: './images/account.png', to: 'account.png' }, // Копируем иконку в dist
                 { from: './images', to: 'images' },  // Копируем всю папку images
             ],
         }),

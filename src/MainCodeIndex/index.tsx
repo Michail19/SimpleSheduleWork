@@ -20,7 +20,13 @@ const MainCodeIndex: React.FC = () => {
         const savedIcon = localStorage.getItem('userIcon');
         if (!savedIcon) setIconReady(false);
 
-        verifyToken();
+        verifyToken().then(isValid => {
+            if (isValid) {
+                setAuthToken(localStorage.getItem('authToken')); // токен нормальный
+            } else {
+                setAuthToken(null); // токен невалидный, очищаем
+            }
+        });
     }, []);
 
     useEffect(() => {
@@ -123,7 +129,7 @@ const MainCodeIndex: React.FC = () => {
                                         alt="User Icon" />
                                 ) : (
                                     <ImageEditor
-                                        src="/images/account.png"
+                                        src="account.png"
                                         letter={getFirstAndLastLetters(accessUsername)}
                                         onRender={(dataUrl) => {
                                             localStorage.setItem('userIcon', dataUrl);

@@ -79,7 +79,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ src, letter, onRender }) => {
             }
         };
 
-        img.src = `${process.env.PUBLIC_URL}/${src}`;
+        img.src = src;
     }, [src, letter, color, bgColor, onRender]);
 
     return <canvas ref={canvasRef}

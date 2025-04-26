@@ -22,7 +22,7 @@ export interface Project {
 
 export type Language = "ru" | "en";
 
-export async function verifyToken() {
+export async function verifyToken(): Promise<boolean> {
     const token = localStorage.getItem('authToken');
     if (!token) return false;
 
@@ -35,10 +35,14 @@ export async function verifyToken() {
         });
 
         if (!response.ok) {
-            throw new Error('Invalid token');
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('authToken');
+                return false;
+            }
+            throw new Error('Server error');
         }
 
-        return true; // Всё ок, токен валидный
+        return true;
     } catch (error) {
         console.error('Token verification failed:', error);
         localStorage.removeItem('authToken');
