@@ -691,6 +691,7 @@ const Worksheet: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("userIcon");
         window.location.href = 'index.html';
     };
 
