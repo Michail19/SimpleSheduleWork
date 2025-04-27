@@ -9,6 +9,7 @@ import {AddEmployeePopup} from './components/AddEmployeePopup';
 import {DeleteEmployeePopup} from './components/DeleteEmployeePopup';
 import {MobileEmployeeSearch} from "./components/MobileEmployeeSearch";
 import {getUserAccessLevel} from "../UserAccessLevel";
+import BlockLoader from "../BlockLoader";
 
 const Worksheet: React.FC = () => {
     // Состояния и рефы
@@ -32,6 +33,7 @@ const Worksheet: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
     const accessLevel = getUserAccessLevel() || "USER";
+    const [loading, setLoading] = React.useState(true);
     const [filters, setFilters] = useState<FiltersState>({
         projects: [],
         activeProjects: [],
@@ -250,6 +252,8 @@ const Worksheet: React.FC = () => {
     const [currentOffset, setCurrentOffset] = useState(0);
 
     const fetchWeekData = async (formattedDate: string, newWeekRange: string) => {
+        setLoading(true); // Показываем прелоадер
+
         try {
             const token = localStorage.getItem("authToken");
             const url = `https://ssw-backend.onrender.com/schedule/weekly?date=${formattedDate}`;
@@ -275,6 +279,8 @@ const Worksheet: React.FC = () => {
         } catch (err) {
             console.error("Ошибка при загрузке данных:", err);
             setCurrentWeek(newWeekRange);
+        } finally {
+            setLoading(false); // Скрываем прелоадер в любом случае
         }
     };
 
@@ -861,7 +867,7 @@ const Worksheet: React.FC = () => {
                         <img
                             src={localStorage.getItem('userIcon')!}
                             className='header__up-blocks__wrapper__icon_gen'
-                            alt="User Icon" />
+                            alt="User Icon"/>
                     ) : (
                         <div className="header__up-blocks__wrapper__icon"></div>
                     )),
@@ -870,202 +876,215 @@ const Worksheet: React.FC = () => {
             )}
 
             {/* Остальной JSX */}
-            {isMobile ? (
-                <>
-                    {document.querySelector('.header__up-blocks__wrapper__list') &&
-                        (localStorage.getItem("authToken") != null) &&
-                        ReactDOM.createPortal(
-                            <button
-                                className="header__up-blocks__wrapper__list__btn"
-                                onClick={() => handleLogout()}
-                            >
-                                {currentTranslation.exit}
-                            </button>,
-                            document.querySelector('.header__up-blocks__wrapper__list') as Element
-                        )
-                    }
-
-                    <MobileEmployeeSearch
-                        employees={employees}
-                        translations={currentTranslation}
-                        editingCell={editingCell}
-                        editedTime={editedTime}
-                        onEdit={handleEdit}
-                        onBlur={handleBlur}
-                        onSetEditingCell={setEditingCell}
-                        accessLevel={accessLevel}
-                    />
-                </>
+            {loading ? (
+                <BlockLoader/> // твой прелоадер
             ) : (
                 <>
-                    {document.querySelector(".header__up-blocks__wrapper__list") &&
-                        ReactDOM.createPortal(
-                            <>
-                                <a className="header__up-blocks__wrapper__list__btn" href="./index.html"
-                                   data-key="home">{currentTranslation.home}</a>
-                                <a className="header__up-blocks__wrapper__list__btn" href="./project.html"
-                                   data-key="project">{currentTranslation.project}</a>
-                            </>,
-                            document.querySelector(".header__up-blocks__wrapper__list") as Element
-                        )}
-
-                    {document.querySelector('.header__up-blocks__wrapper__list') &&
-                        (localStorage.getItem("authToken") != null) &&
-                        ReactDOM.createPortal(
-                            <button
-                                className="header__up-blocks__wrapper__list__btn"
-                                onClick={() => handleLogout()}
-                            >
-                                {currentTranslation.exit}
-                            </button>,
-                            document.querySelector('.header__up-blocks__wrapper__list') as Element
-                        )
-                    }
-
-                    <div ref={containerRef} className="worksheet">
-                        {filteredEmployees.length > 0 ? (
-                            <>
-                                <div className="worksheet__row__header">
-                                    <div
-                                        className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
-                                    <div className="worksheet__row__header__cell_clock">
-                                        <div className="cell_clock_img"></div>
-                                    </div>
-                                    <div className="worksheet__row__header__cell">{currentTranslation.monday}</div>
-                                    <div className="worksheet__row__header__cell">{currentTranslation.tuesday}</div>
-                                    <div className="worksheet__row__header__cell">{currentTranslation.wednesday}</div>
-                                    <div className="worksheet__row__header__cell">{currentTranslation.thursday}</div>
-                                    <div className="worksheet__row__header__cell">{currentTranslation.friday}</div>
-                                    <div className="worksheet__row__header__cell">{currentTranslation.saturday}</div>
-                                    <div className="worksheet__row__header__cell">{currentTranslation.sunday}</div>
-                                </div>
-                                {displayedEmployees.map((employee, index) => (
-                                    <div
-                                        key={index}
-                                        className={`worksheet__row ${employee === employees[0] ? "current" : ""}`}
-                                        // style={{ height: `${maxRowHeight}px` }}
+                    {isMobile ? (
+                        <>
+                            {document.querySelector('.header__up-blocks__wrapper__list') &&
+                                (localStorage.getItem("authToken") != null) &&
+                                ReactDOM.createPortal(
+                                    <button
+                                        className="header__up-blocks__wrapper__list__btn"
+                                        onClick={() => handleLogout()}
                                     >
-                                        <div className="worksheet__cell_name">{employee.fio}</div>
-                                        <div
-                                            className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
-                                        {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
-                                            const schedule = employee.weekSchedule[day];
+                                        {currentTranslation.exit}
+                                    </button>,
+                                    document.querySelector('.header__up-blocks__wrapper__list') as Element
+                                )
+                            }
 
-                                            return (
-                                                <div key={dayIndex} className="worksheet__cell">
-                                                    {editingCell?.employeeId === employee.id && editingCell?.day === day ? (
-                                                        <>
-                                                            <input
-                                                                type="time"
-                                                                value={
-                                                                    editedTime[`${employee.id}-${dayIndex}-start`] || schedule.start
-                                                                }
-                                                                onChange={(e) =>
-                                                                    handleEdit(employee.id, dayIndex, day, "start", e.target.value)
-                                                                }
-                                                                onBlur={(e) =>
-                                                                    handleBlur(employee.id, dayIndex, day, "start", e)
-                                                                }
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === "Escape") {
-                                                                        setEditingCell(null);
-                                                                    }
-                                                                    if (e.key === "Enter") {
-                                                                        handleBlur(employee.id, dayIndex, day, "start", null);
-                                                                    }
-                                                                }}
-                                                            />
-                                                            -
-                                                            <input
-                                                                type="time"
-                                                                value={
-                                                                    editedTime[`${employee.id}-${dayIndex}-end`] || schedule.end
-                                                                }
-                                                                onChange={(e) =>
-                                                                    handleEdit(employee.id, dayIndex, day, "end", e.target.value)
-                                                                }
-                                                                onBlur={(e) =>
-                                                                    handleBlur(employee.id, dayIndex, day, "end", e)
-                                                                }
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === "Escape") {
-                                                                        setEditingCell(null);
-                                                                    }
-                                                                    if (e.key === "Enter") {
-                                                                        handleBlur(employee.id, dayIndex, day, "end", null);
-                                                                    }
-                                                                }}
-                                                            />
-                                                            <button
-                                                                className="clear-time-btn"
-                                                                onClick={() =>
-                                                                    handleClearTime(employee.id, dayIndex, day)
-                                                                }
-                                                                title="Очистить время"
-                                                                style={{
-                                                                    marginLeft: "0.5em",
-                                                                    cursor: "pointer",
-                                                                    background: "none",
-                                                                    border: "none",
-                                                                    fontSize: "1em",
-                                                                    color: "#888"
-                                                                }}
-                                                            >
-                                                                🗑️
-                                                            </button>
-                                                        </>
-                                                    ) : (
-                                                        <div
-                                                            onClick={() => {
-                                                                if (accessLevel === "OWNER" ||
-                                                                    employee === employees[0]) { // If not current
-                                                                    setEditingCell({
-                                                                        employeeId: employee.id,
-                                                                        day: day,
-                                                                        dayIndex: dayIndex,
-                                                                    });
-                                                                }
-                                                            }}
-                                                        >
-                                                            {`${schedule?.start} - ${schedule?.end}`}
+                            <MobileEmployeeSearch
+                                employees={employees}
+                                translations={currentTranslation}
+                                editingCell={editingCell}
+                                editedTime={editedTime}
+                                onEdit={handleEdit}
+                                onBlur={handleBlur}
+                                onSetEditingCell={setEditingCell}
+                                accessLevel={accessLevel}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            {document.querySelector(".header__up-blocks__wrapper__list") &&
+                                ReactDOM.createPortal(
+                                    <>
+                                        <a className="header__up-blocks__wrapper__list__btn" href="./index.html"
+                                           data-key="home">{currentTranslation.home}</a>
+                                        <a className="header__up-blocks__wrapper__list__btn" href="./project.html"
+                                           data-key="project">{currentTranslation.project}</a>
+                                    </>,
+                                    document.querySelector(".header__up-blocks__wrapper__list") as Element
+                                )}
+
+                            {document.querySelector('.header__up-blocks__wrapper__list') &&
+                                (localStorage.getItem("authToken") != null) &&
+                                ReactDOM.createPortal(
+                                    <button
+                                        className="header__up-blocks__wrapper__list__btn"
+                                        onClick={() => handleLogout()}
+                                    >
+                                        {currentTranslation.exit}
+                                    </button>,
+                                    document.querySelector('.header__up-blocks__wrapper__list') as Element
+                                )
+                            }
+
+                            <div ref={containerRef} className="worksheet">
+                                {filteredEmployees.length > 0 ? (
+                                    <>
+                                        <div className="worksheet__row__header">
+                                            <div
+                                                className="worksheet__row__header__cell header-cell">{currentTranslation.title}</div>
+                                            <div className="worksheet__row__header__cell_clock">
+                                                <div className="cell_clock_img"></div>
+                                            </div>
+                                            <div
+                                                className="worksheet__row__header__cell">{currentTranslation.monday}</div>
+                                            <div
+                                                className="worksheet__row__header__cell">{currentTranslation.tuesday}</div>
+                                            <div
+                                                className="worksheet__row__header__cell">{currentTranslation.wednesday}</div>
+                                            <div
+                                                className="worksheet__row__header__cell">{currentTranslation.thursday}</div>
+                                            <div
+                                                className="worksheet__row__header__cell">{currentTranslation.friday}</div>
+                                            <div
+                                                className="worksheet__row__header__cell">{currentTranslation.saturday}</div>
+                                            <div
+                                                className="worksheet__row__header__cell">{currentTranslation.sunday}</div>
+                                        </div>
+                                        {displayedEmployees.map((employee, index) => (
+                                            <div
+                                                key={index}
+                                                className={`worksheet__row ${employee === employees[0] ? "current" : ""}`}
+                                                // style={{ height: `${maxRowHeight}px` }}
+                                            >
+                                                <div className="worksheet__cell_name">{employee.fio}</div>
+                                                <div
+                                                    className="worksheet__cell_clock">{calculateWorkHours(employee.weekSchedule)}{currentTranslation.hour}</div>
+                                                {Object.keys(employee.weekSchedule).map((day: string, dayIndex: number) => {
+                                                    const schedule = employee.weekSchedule[day];
+
+                                                    return (
+                                                        <div key={dayIndex} className="worksheet__cell">
+                                                            {editingCell?.employeeId === employee.id && editingCell?.day === day ? (
+                                                                <>
+                                                                    <input
+                                                                        type="time"
+                                                                        value={
+                                                                            editedTime[`${employee.id}-${dayIndex}-start`] || schedule.start
+                                                                        }
+                                                                        onChange={(e) =>
+                                                                            handleEdit(employee.id, dayIndex, day, "start", e.target.value)
+                                                                        }
+                                                                        onBlur={(e) =>
+                                                                            handleBlur(employee.id, dayIndex, day, "start", e)
+                                                                        }
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === "Escape") {
+                                                                                setEditingCell(null);
+                                                                            }
+                                                                            if (e.key === "Enter") {
+                                                                                handleBlur(employee.id, dayIndex, day, "start", null);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    -
+                                                                    <input
+                                                                        type="time"
+                                                                        value={
+                                                                            editedTime[`${employee.id}-${dayIndex}-end`] || schedule.end
+                                                                        }
+                                                                        onChange={(e) =>
+                                                                            handleEdit(employee.id, dayIndex, day, "end", e.target.value)
+                                                                        }
+                                                                        onBlur={(e) =>
+                                                                            handleBlur(employee.id, dayIndex, day, "end", e)
+                                                                        }
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === "Escape") {
+                                                                                setEditingCell(null);
+                                                                            }
+                                                                            if (e.key === "Enter") {
+                                                                                handleBlur(employee.id, dayIndex, day, "end", null);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    <button
+                                                                        className="clear-time-btn"
+                                                                        onClick={() =>
+                                                                            handleClearTime(employee.id, dayIndex, day)
+                                                                        }
+                                                                        title="Очистить время"
+                                                                        style={{
+                                                                            marginLeft: "0.5em",
+                                                                            cursor: "pointer",
+                                                                            background: "none",
+                                                                            border: "none",
+                                                                            fontSize: "1em",
+                                                                            color: "#888"
+                                                                        }}
+                                                                    >
+                                                                        🗑️
+                                                                    </button>
+                                                                </>
+                                                            ) : (
+                                                                <div
+                                                                    onClick={() => {
+                                                                        if (accessLevel === "OWNER" ||
+                                                                            employee === employees[0]) { // If not current
+                                                                            setEditingCell({
+                                                                                employeeId: employee.id,
+                                                                                day: day,
+                                                                                dayIndex: dayIndex,
+                                                                            });
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {`${schedule?.start} - ${schedule?.end}`}
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
+                                                    );
+                                                })}
+                                            </div>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <div className="no-results">
+                                        {currentTranslation.noResults}
                                     </div>
-                                ))}
-                            </>
-                        ) : (
-                            <div className="no-results">
-                                {currentTranslation.noResults}
+                                )}
                             </div>
-                        )}
-                    </div>
-                    {document.querySelector(".footer") &&
-                        (totalPages > 1) &&
-                        ReactDOM.createPortal(
-                            <>
-                                <button
-                                    className="footer__btn"
-                                    onClick={() => changePage("previous")}
-                                    disabled={currentPage === 1}
-                                >
-                                    ◄
-                                </button>
-                                <div className="footer__place">
-                                    {currentTranslation.page} {currentPage} {currentTranslation.outOf} {totalPages}
-                                </div>
-                                <button
-                                    className="footer__btn"
-                                    onClick={() => changePage("next")}
-                                    disabled={currentPage === totalPages}
-                                >
-                                    ►
-                                </button>
-                            </>,
-                            document.querySelector(".footer") as Element
-                        )}
+                            {document.querySelector(".footer") &&
+                                (totalPages > 1) &&
+                                ReactDOM.createPortal(
+                                    <>
+                                        <button
+                                            className="footer__btn"
+                                            onClick={() => changePage("previous")}
+                                            disabled={currentPage === 1}
+                                        >
+                                            ◄
+                                        </button>
+                                        <div className="footer__place">
+                                            {currentTranslation.page} {currentPage} {currentTranslation.outOf} {totalPages}
+                                        </div>
+                                        <button
+                                            className="footer__btn"
+                                            onClick={() => changePage("next")}
+                                            disabled={currentPage === totalPages}
+                                        >
+                                            ►
+                                        </button>
+                                    </>,
+                                    document.querySelector(".footer") as Element
+                                )}
+                        </>
+                    )}
                 </>
             )}
         </div>
