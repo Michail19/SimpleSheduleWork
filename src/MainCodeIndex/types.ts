@@ -27,7 +27,7 @@ export async function verifyToken(): Promise<boolean> {
     if (!token) return false;
 
     try {
-        const response = await fetch('https://ssw-backend.onrender.com/projects/all', {
+        const response = await fetch('https://ssw-backend.onrender.com/auth/verify', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`

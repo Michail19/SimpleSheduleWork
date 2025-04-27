@@ -7,7 +7,6 @@ import {SearchProjectPopup} from "./components/SearchProjectPopup";
 import ProjectDetailsPopup from "./components/ProjectDetailsPopup";
 import EmployeeManagementPopup from "./components/EmployeeManagementPopup";
 import {getUserAccessLevel} from "../UserAccessLevel";
-import ImageEditor from "../ImageEditor";
 
 interface GitHubRepo {
     id: number;

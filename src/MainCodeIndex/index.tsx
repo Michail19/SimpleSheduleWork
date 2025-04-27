@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import LoginPopup from "./components/LoginPopup";
 import ReactDOM from "react-dom";
 import {translations} from "./translations";
@@ -13,8 +13,17 @@ const MainCodeIndex: React.FC = () => {
     const currentTranslation = translations[language] ?? translations["ru"];
     const [iconReady, setIconReady] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
-    const accessUsername = getUsername();
+    const [accessUsername, setUsername] = useState<string | null>(null);
     // console.log(authToken);
+
+    useEffect(() => {
+        if (authToken) {
+            const decoded = getUsername(); // ты можешь просто вызвать свой getUsername()
+            setUsername(decoded);
+        } else {
+            setUsername(null);
+        }
+    }, [authToken]);
 
     useEffect(() => {
         const savedIcon = localStorage.getItem('userIcon');
@@ -50,6 +59,7 @@ const MainCodeIndex: React.FC = () => {
     const handleLogout = () => {
         localStorage.removeItem("authToken");
         localStorage.removeItem("userIcon");
+        setUsername(null);
         setIconReady(false);
         window.location.href = 'index.html';
     };
@@ -66,6 +76,8 @@ const MainCodeIndex: React.FC = () => {
 
         return firstChar + lastChar;
     };
+
+    const firstLastLetters = useMemo(() => getFirstAndLastLetters(accessUsername), [accessUsername]);
 
     // const letter = (accessUsername?.charAt(0).toUpperCase() || "M") + (accessUsername?.charAt(accessUsername?.length - 1).toUpperCase() || "E");
 
@@ -128,14 +140,16 @@ const MainCodeIndex: React.FC = () => {
                                         className='header__up-blocks__wrapper__icon_gen'
                                         alt="User Icon" />
                                 ) : (
-                                    <ImageEditor
-                                        src="account.png"
-                                        letter={getFirstAndLastLetters(accessUsername)}
-                                        onRender={(dataUrl) => {
-                                            localStorage.setItem('userIcon', dataUrl);
-                                            setIconReady(true); // чтобы перерендерить, если нужно
-                                        }}
-                                    />
+                                    accessUsername && ( // <== ДОБАВИТЬ ПРОВЕРКУ!
+                                        <ImageEditor
+                                            src="account.png"
+                                            letter={getFirstAndLastLetters(accessUsername)}
+                                            onRender={(dataUrl) => {
+                                                localStorage.setItem('userIcon', dataUrl);
+                                                setIconReady(true);
+                                            }}
+                                        />
+                                    )
                                 )),
                             document.querySelector(".header__up-blocks__wrapper_icon-place") as Element
                         )

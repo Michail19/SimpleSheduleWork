@@ -14,5 +14,11 @@
     background: #3E3E3E;
 }
 
+@media screen and (max-width: 1089px) and (min-width: 300px) {
+    .subtitle__date {
+        margin-bottom: 20px;
+    }
+}
+
 @import url("./__btn/subtitle__date__btn.css");
 @import url("./__place/subtitle__date__place.css");

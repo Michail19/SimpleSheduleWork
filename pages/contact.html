@@ -23,6 +23,7 @@
         h1 {
             color: #1f1f1f;
             margin-bottom: 20px;
+            text-decoration: underline;
         }
         .info {
             margin-bottom: 30px;
@@ -52,9 +53,6 @@
         }
         .navbar {
             padding: 10px 5px;
-            display: flex;
-            gap: 20px;
-            justify-content: space-between;
         }
         .navbar a {
             text-decoration: none;
@@ -66,6 +64,17 @@
         .navbar a:hover {
             color: #4b4b4b;
             text-decoration: underline;
+        }
+        .navbar-title {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        .navbar-title h1 {
+            text-decoration: underline;
+        }
+        .navbar-title:hover h1 {
+            text-decoration: none;
         }
 
         .dark-theme {
@@ -143,14 +152,16 @@
 <body>
 <div class="container">
     <div class="navbar">
-        <h1 data-key="contact_information">Контактная информация</h1>
-        <a href="./index.html" data-key="home">Главная</a>
+        <div class="navbar-title">
+            <h1 data-key="contact_information">Контактная информация</h1>
+            <a href="./index.html" data-key="home">Главная</a>
+        </div>
     </div>
 
     <div class="info">
         <p><strong data-key="full_name">ФИО:</strong> <span data-key="name_value">Ершов Михаил Алексеевич</span></p>
         <p><strong data-key="github">GitHub (вопросы, предложения):</strong>
-            <a href="https://github.com/Michail19/SimpleSheduleWork/issues" target="_blank">github.com/Michail19/SimpleScheduleWork/issues</a>
+            <a href="https://github.com/Michail19/SimpleSheduleWork/issues" target="_blank">github.com/issues</a>
         </p>
         <p><strong data-key="university">Учебное заведение:</strong> <span data-key="university_value">МИРЭА - Российский технологический университет</span></p>
         <p><strong>Email:</strong> <a href="mailto:Mi.ershov.2017@yandex.ru">Mi.ershov.2017@yandex.ru</a></p>
