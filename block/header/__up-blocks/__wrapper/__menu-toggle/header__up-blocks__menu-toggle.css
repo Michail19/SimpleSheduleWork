@@ -10,6 +10,12 @@
         font-size: 2rem;
         border-radius: 5px;
         font-weight: bold;
+
+        color: #353535;
+        background-color: #d4e6ff;
+    }
+
+    .dark-theme .header__up-blocks__menu-toggle {
         color: #E3FFA1;
         background-color: #353535;
     }
