@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Employee, FiltersState, Language} from '../types';
-import { translations } from '../translations';
+import {translations} from '../translations';
+import {verifyToken} from "../../UserAccessLevel";
+import BlockLoader from "../../BlockLoader";
 
 interface AddEmployeePopupProps {
     onClose: () => void;
@@ -27,17 +29,18 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
         password: '',
         role: 'USER',
         weekSchedule: {
-            monday: { start: '', end: '' },
-            tuesday: { start: '', end: '' },
-            wednesday: { start: '', end: '' },
-            thursday: { start: '', end: '' },
-            friday: { start: '', end: '' },
-            saturday: { start: '', end: '' },
-            sunday: { start: '', end: '' },
+            monday: {start: '', end: ''},
+            tuesday: {start: '', end: ''},
+            wednesday: {start: '', end: ''},
+            thursday: {start: '', end: ''},
+            friday: {start: '', end: ''},
+            saturday: {start: '', end: ''},
+            sunday: {start: '', end: ''},
         }
     });
 
     const popupRef = useRef<HTMLDivElement>(null);
+    const [loading, setLoading] = React.useState(false);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -55,7 +58,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setEmployeeData(prev => ({
             ...prev,
             [name]: value
@@ -77,7 +80,28 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
 
     const handleSave = async (employee: typeof employeeData) => {
         const token = localStorage.getItem("authToken");
+
+        if (!token) {
+            console.error("Токен авторизации не найден");
+            onSave(employeeData);
+            return; // Не делаем редирект, просто выходим
+        }
+
+        if (!await verifyToken()) {
+            // Показываем alert с сообщением
+            alert(currentTranslation.old_session);
+
+            // Через небольшой таймаут (для UX) делаем редирект
+            setTimeout(() => {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("userIcon");
+                window.location.href = 'index.html';
+            }, 100); // 100мс - пользователь успеет увидеть сообщение
+        }
+
         try {
+            setLoading(true);
+
             const response = await fetch("https://ssw-backend.onrender.com/schedule/add", {
                 method: "POST",
                 headers: {
@@ -95,12 +119,16 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
 
             if (!response.ok) {
                 throw new Error("Ошибка при добавлении сотрудника");
+            } else {
+                onSave(employeeData);
             }
-            
+
             onClose();
         } catch (error) {
             console.error(error);
             alert(currentTranslation.alertEmployee);
+        } finally {
+            setLoading(false); // Скрываем прелоадер в любом случае
         }
     };
 
@@ -123,77 +151,80 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 <h2>{currentTranslation.addEmployee}</h2>
                 <button className="close-btn" onClick={onClose}>×</button>
 
-                <div className="search-container">
-                    <label>{currentTranslation.fullName}</label>
-                    <input
-                        type="text"
-                        name="fio"
-                        placeholder={currentTranslation.enterName}
-                        value={employeeData.fio}
-                        onChange={handleChange}
-                    />
-                </div>
+                {loading ? (
+                    <BlockLoader/> // твой прелоадер
+                ) : (
+                    <>
+                        <div className="search-container">
+                            <label>{currentTranslation.fullName}</label>
+                            <input
+                                type="text"
+                                name="fio"
+                                placeholder={currentTranslation.enterName}
+                                value={employeeData.fio}
+                                onChange={handleChange}
+                            />
+                        </div>
 
-                <div className="search-container">
-                    <label>{currentTranslation.username}</label>
-                    <input
-                        type="text"
-                        name="username"
-                        placeholder={currentTranslation.enterUsername}
-                        value={employeeData.username}
-                        onChange={handleChange}
-                    />
-                </div>
+                        <div className="search-container">
+                            <label>{currentTranslation.username}</label>
+                            <input
+                                type="text"
+                                name="username"
+                                placeholder={currentTranslation.enterUsername}
+                                value={employeeData.username}
+                                onChange={handleChange}
+                            />
+                        </div>
 
-                <div className="search-container">
-                    <label>{currentTranslation.password}</label>
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder={currentTranslation.enterPassword}
-                        value={employeeData.password}
-                        onChange={handleChange}
-                    />
-                </div>
+                        <div className="search-container">
+                            <label>{currentTranslation.password}</label>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder={currentTranslation.enterPassword}
+                                value={employeeData.password}
+                                onChange={handleChange}
+                            />
+                        </div>
 
-                <div className="search-container">
-                    <label>{currentTranslation.role}</label>
-                    <select
-                        name="role"
-                        value={employeeData.role}
-                        onChange={handleChange}
-                    >
-                        <option value="USER">{currentTranslation.userRole}</option>
-                        <option value="OWNER">{currentTranslation.adminRole}</option>
-                    </select>
-                </div>
+                        <div className="search-container">
+                            <label>{currentTranslation.role}</label>
+                            <select
+                                name="role"
+                                value={employeeData.role}
+                                onChange={handleChange}
+                            >
+                                <option value="USER">{currentTranslation.userRole}</option>
+                                <option value="OWNER">{currentTranslation.adminRole}</option>
+                            </select>
+                        </div>
 
-                <h3>{currentTranslation.workSchedule}</h3>
-                {Object.entries(employeeData.weekSchedule).map(([day, time]) => (
-                    <div key={day} className="schedule-row">
-                        <label>{currentTranslation[day as keyof typeof currentTranslation]}:</label>
-                        <input
-                            type="time"
-                            value={time.start}
-                            onChange={(e) => handleScheduleChange(day, 'start', e.target.value)}
-                        />
-                        <span>-</span>
-                        <input
-                            type="time"
-                            value={time.end}
-                            onChange={(e) => handleScheduleChange(day, 'end', e.target.value)}
-                        />
-                    </div>
-                ))}
+                        <h3>{currentTranslation.workSchedule}</h3>
+                        {Object.entries(employeeData.weekSchedule).map(([day, time]) => (
+                            <div key={day} className="schedule-row">
+                                <label>{currentTranslation[day as keyof typeof currentTranslation]}:</label>
+                                <input
+                                    type="time"
+                                    value={time.start}
+                                    onChange={(e) => handleScheduleChange(day, 'start', e.target.value)}
+                                />
+                                <span>-</span>
+                                <input
+                                    type="time"
+                                    value={time.end}
+                                    onChange={(e) => handleScheduleChange(day, 'end', e.target.value)}
+                                />
+                            </div>
+                        ))}
+                    </>
+                )}
 
                 <div className="popup-actions">
                     <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
                     <button
                         className="popup-actions-btn"
-                        onClick={() => {
-                            handleSave(employeeData);
-                            onSave(employeeData);
-                        }}
+                        onClick={() => handleSave(employeeData)}
                         disabled={
                             !employeeData.fio.trim() ||
                             !employeeData.username.trim() ||

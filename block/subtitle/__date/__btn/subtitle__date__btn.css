@@ -27,3 +27,26 @@
     background: #464b8d;
     color: #fff1f1;
 }
+
+.week-button {
+    transition: transform 0.5s ease;
+}
+
+/* Когда загрузка идёт — кнопки съезжаются */
+.week-button {
+    transform: translateX(0); /* Съехали к центру */
+}
+
+/* Кнопки по умолчанию разведены */
+.week-button:first-child.move-center {
+    transform: translateX(-0.5vw);
+}
+
+.week-button:last-child.move-center {
+    transform: translateX(0.5vw);
+}
+
+/* Когда загрузка закончилась — кнопки возвращаются */
+.week-button:not(.move-center) {
+    transition: transform 0.5s ease;
+}

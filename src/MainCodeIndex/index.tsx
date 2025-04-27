@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import LoginPopup from "./components/LoginPopup";
 import ReactDOM from "react-dom";
 import {translations} from "./translations";
-import {Language, verifyToken} from "./types";
+import {Language} from "./types";
 import ImageEditor from "../ImageEditor";
-import {getUsername} from "../UserAccessLevel";
+import {getUsername, verifyToken} from "../UserAccessLevel";
 
 const MainCodeIndex: React.FC = () => {
     const [showLogin, setShowLogin] = useState(false);
@@ -13,8 +13,17 @@ const MainCodeIndex: React.FC = () => {
     const currentTranslation = translations[language] ?? translations["ru"];
     const [iconReady, setIconReady] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
-    const accessUsername = getUsername();
+    const [accessUsername, setUsername] = useState<string | null>(null);
     // console.log(authToken);
+
+    useEffect(() => {
+        if (authToken) {
+            const decoded = getUsername(); // ты можешь просто вызвать свой getUsername()
+            setUsername(decoded);
+        } else {
+            setUsername(null);
+        }
+    }, [authToken]);
 
     useEffect(() => {
         const savedIcon = localStorage.getItem('userIcon');
@@ -25,6 +34,8 @@ const MainCodeIndex: React.FC = () => {
                 setAuthToken(localStorage.getItem('authToken')); // токен нормальный
             } else {
                 setAuthToken(null); // токен невалидный, очищаем
+                setUsername(null);
+                setIconReady(false);
             }
         });
     }, []);
@@ -50,6 +61,7 @@ const MainCodeIndex: React.FC = () => {
     const handleLogout = () => {
         localStorage.removeItem("authToken");
         localStorage.removeItem("userIcon");
+        setUsername(null);
         setIconReady(false);
         window.location.href = 'index.html';
     };
@@ -66,6 +78,8 @@ const MainCodeIndex: React.FC = () => {
 
         return firstChar + lastChar;
     };
+
+    const firstLastLetters = useMemo(() => getFirstAndLastLetters(accessUsername), [accessUsername]);
 
     // const letter = (accessUsername?.charAt(0).toUpperCase() || "M") + (accessUsername?.charAt(accessUsername?.length - 1).toUpperCase() || "E");
 
@@ -119,26 +133,36 @@ const MainCodeIndex: React.FC = () => {
                     className="header__up-blocks__wrapper__btn"
                     onClick={() => setShowLogin(true)}>Войти</button>
             ) : (
-                document.querySelector(".header__up-blocks__wrapper_icon-place") &&
+                <>
+                    {document.querySelector(".header__up-blocks__wrapper_icon-place") &&
                         ReactDOM.createPortal(
                             (localStorage.getItem('userIcon') ? (
                                 // <div className="header__up-blocks__wrapper__icon"></div>
-                                    <img
-                                        src={localStorage.getItem('userIcon')!}
-                                        className='header__up-blocks__wrapper__icon_gen'
-                                        alt="User Icon" />
-                                ) : (
+                                <img
+                                    src={localStorage.getItem('userIcon')!}
+                                    className='header__up-blocks__wrapper__icon_gen'
+                                    alt="User Icon"/>
+                            ) : (
+                                accessUsername && ( // <== ДОБАВИТЬ ПРОВЕРКУ!
                                     <ImageEditor
                                         src="account.png"
                                         letter={getFirstAndLastLetters(accessUsername)}
                                         onRender={(dataUrl) => {
                                             localStorage.setItem('userIcon', dataUrl);
-                                            setIconReady(true); // чтобы перерендерить, если нужно
+                                            setIconReady(true);
                                         }}
                                     />
-                                )),
+                                )
+                            )),
                             document.querySelector(".header__up-blocks__wrapper_icon-place") as Element
-                        )
+                        )}
+
+                    {document.querySelector(".header__up-blocks__menu-toggle-place") &&
+                        ReactDOM.createPortal(
+                            <div className="header__up-blocks__menu-toggle">☰</div>,
+                            document.querySelector(".header__up-blocks__menu-toggle-place") as Element
+                        )}
+                </>
             )}
 
             {showLogin && (

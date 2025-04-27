@@ -3,12 +3,19 @@
         display: flex;
         text-align: center;
         justify-content: center;
+        user-select: none;
         width: 3rem;
         height: 3rem;
         border: none;
         font-size: 2rem;
         border-radius: 5px;
         font-weight: bold;
+
+        color: #353535;
+        background-color: #d4e6ff;
+    }
+
+    .dark-theme .header__up-blocks__menu-toggle {
         color: #E3FFA1;
         background-color: #353535;
     }

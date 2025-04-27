@@ -6,38 +6,113 @@
     <link rel="icon" href="icon.png" sizes="32x32" type="image/x-icon">
     <title>404 - Страница не найдена</title>
     <style>
+        /* Общие стили */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif;
             text-align: center;
-            background-color: #F5F7FA;
-            color: #353535;
             margin: 0;
             padding: 50px;
+            transition: all 0.3s ease;
+
+            /* Светлая тема по умолчанию */
+            background-color: #F5F7FA;
+            color: #353535;
         }
+
+        /* Тёмная тема */
+        body.dark-theme {
+            background-color: #1E1E1E;
+            color: #EAEAEA;
+        }
+
         h1 {
             font-size: 5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
         }
+
         p {
             font-size: 1.5rem;
+            margin-top: 0;
+            opacity: 0.9;
         }
+
+        /* Стили для кнопки */
         a {
             text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+            /* Светлая тема */
             background-color: #007bff;
             color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: inline-block;
-            margin-top: 20px;
-            font-size: 1.2rem;
         }
+
+        /* Кнопка в тёмной теме */
+        body.dark-theme a {
+            background-color: #3A7BFF;
+            color: #FFFFFF;
+        }
+
+        /* Эффекты при наведении */
         a:hover {
-            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Светлая тема */
+        a:hover {
+            background-color: #0062cc;
+        }
+
+        /* Тёмная тема */
+        body.dark-theme a:hover {
+            background-color: #2A6BEF;
+            box-shadow: 0 4px 12px rgba(58, 123, 255, 0.2);
         }
     </style>
+
+    <script>
+        const translations = {
+            ru: {
+                not_founded: "Ой! Страница не найдена.",
+                returning: "Вернуться на главную"
+            },
+            en: {
+                not_founded: "Oops! The page was not found.",
+                returning: "Back to the main page"
+            }
+        };
+
+        let currentLang = localStorage.getItem("lang") || "ru";
+
+        function updateText() {
+            document.querySelectorAll("[data-key]").forEach((el) => {
+                const key = el.getAttribute("data-key");
+                el.textContent = translations[currentLang][key];
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('dark_theme') === 'enabled') {
+                document.body.classList.add('dark-theme');
+            }
+
+            if (localStorage.getItem('changed-lang') === 'enabled') {
+                document.body.classList.add('changed-lang');
+                updateText();
+            }
+        });
+    </script>
 </head>
 <body>
     <h1>404</h1>
-    <p>Ой! Страница не найдена.</p>
-    <a href="./index.html">Вернуться на главную</a>
+    <p data-key="not_founded">Ой! Страница не найдена.</p>
+    <a href="./index.html" data-key="returning">Вернуться на главную</a>
 </body>
 </html>

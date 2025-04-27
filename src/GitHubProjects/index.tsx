@@ -6,8 +6,8 @@ import {Employee, Language} from "./types";
 import {SearchProjectPopup} from "./components/SearchProjectPopup";
 import ProjectDetailsPopup from "./components/ProjectDetailsPopup";
 import EmployeeManagementPopup from "./components/EmployeeManagementPopup";
-import {getUserAccessLevel} from "../UserAccessLevel";
-import ImageEditor from "../ImageEditor";
+import {getUserAccessLevel, verifyToken} from "../UserAccessLevel";
+import BlockLoader, {touch_on_load} from "../BlockLoader";
 
 interface GitHubRepo {
     id: number;
@@ -46,7 +46,8 @@ const GitHubProjects: React.FC = () => {
     const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [updateKey, setUpdateKey] = useState(0);
-    const accessLevel = getUserAccessLevel();
+    const accessLevel = getUserAccessLevel() || "OWNER";
+    const [load, setLoad] = React.useState(true);
 
     useEffect(() => {
         // Применяем сохранённые настройки языка при загрузке
@@ -70,6 +71,19 @@ const GitHubProjects: React.FC = () => {
         const fetchData = async () => {
             const octokit = new Octokit();
             const token = localStorage.getItem('authToken'); // 🔐 Получаем токен
+
+            if (token) {
+                if (!await verifyToken()) {
+                    // Показываем alert с сообщением
+                    alert(currentTranslation.old_session);
+
+                    // Через небольшой таймаут (для UX) делаем редирект
+                    setTimeout(() => {
+                        handleLogout();
+                        window.location.href = 'index.html';
+                    }, 100); // 100мс - пользователь успеет увидеть сообщение
+                }
+            }
 
             try {
                 // 1. Пробуем получить данные с сервера с авторизацией
@@ -155,6 +169,7 @@ const GitHubProjects: React.FC = () => {
                 }
             } finally {
                 setLoading(false);
+                setLoad(false)
             }
         };
 
@@ -206,6 +221,7 @@ const GitHubProjects: React.FC = () => {
             });
 
             const finalRowHeight = maxHeight || 70;
+            // const finalRowHeight = containerRef.current.clientHeight;
 
             const viewportHeight = window.innerHeight;
             const headerHeight = document.querySelector(".header")?.clientHeight || 0;
@@ -213,7 +229,10 @@ const GitHubProjects: React.FC = () => {
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
             const otherElementsHeight = 100;
 
-            const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
+            let availableHeight;
+            if (isMobile)
+                availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
+            else availableHeight = containerRef.current.clientHeight;
 
             const rows = Math.floor(availableHeight / finalRowHeight) || 1;
             const cardsPerRow = getCardsPerRow();
@@ -420,8 +439,13 @@ const GitHubProjects: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("userIcon");
         window.location.href = 'index.html';
     };
+
+    useEffect(() => {
+        if (!isMobile) touch_on_load();
+    }, [load]);
 
 
     return (
@@ -451,7 +475,8 @@ const GitHubProjects: React.FC = () => {
 
             {isMobile ? (
                 <>
-                    {document.querySelector('.header__up-blocks__wrapper__list') &&
+                    {
+                        document.querySelector('.header__up-blocks__wrapper__list') &&
                         (localStorage.getItem("authToken") != null) &&
                         ReactDOM.createPortal(
                             <button
@@ -467,7 +492,8 @@ const GitHubProjects: React.FC = () => {
                 </>
             ) : (
                 <>
-                    {document.querySelector(".header__up-blocks__wrapper__list") &&
+                    {
+                        document.querySelector(".header__up-blocks__wrapper__list") &&
                         ReactDOM.createPortal(
                             <>
                                 <a className="header__up-blocks__wrapper__list__btn" href="./index.html"
@@ -476,7 +502,8 @@ const GitHubProjects: React.FC = () => {
                                    data-key="schedule">{currentTranslation.schedule}</a>
                             </>,
                             document.querySelector(".header__up-blocks__wrapper__list") as Element
-                        )}
+                        )
+                    }
 
                     {document.querySelector('.header__up-blocks__wrapper__list') &&
                         (localStorage.getItem("authToken") != null) &&
@@ -499,7 +526,7 @@ const GitHubProjects: React.FC = () => {
                         <img
                             src={localStorage.getItem('userIcon')!}
                             className='header__up-blocks__wrapper__icon_gen'
-                            alt="User Icon" />
+                            alt="User Icon"/>
                     ) : (
                         <div className="header__up-blocks__wrapper__icon"></div>
                     )),
@@ -507,61 +534,67 @@ const GitHubProjects: React.FC = () => {
                 )
             )}
 
-            <div className="worksheet">
-                {loading && <div className="loader">{currentTranslation.load}</div>}
+            {load ? (
+                <BlockLoader/> // твой прелоадер
+            ) : (
+                <>
+                    <div className="worksheet">
+                        {loading && <div className="loader">{currentTranslation.load}</div>}
 
-                {error && <div className="error-message">{currentTranslation.error}: {error}</div>}
+                        {error && <div className="error-message">{currentTranslation.error}: {error}</div>}
 
-                <div ref={containerRef} className="repos__grid">
-                    {displayedRepos.map((repo) => (
-                        <div
-                            key={repo.id}
-                            className="repo-card"
-                            onClick={() => setActiveProject(repo)}
-                            style={{cursor: 'pointer'}}
-                        >
-                            <a
-                                href={repo.html_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="repo-link"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <h3 className="repo-name">{repo.name}</h3>
-                            </a>
-                            {repo.description && <p>{repo.description}</p>}
-                            <div className="repo-meta">
-                                {repo.language && <span className="repo-text">{repo.language}</span>}
-                                <span className="repo-text">⭐ {repo.stargazers_count}</span>
-                                <span
-                                    className="repo-text">{currentTranslation.update}: {new Date(repo.updated_at).toLocaleDateString()}</span>
-                            </div>
+                        <div ref={containerRef} className="repos__grid">
+                            {displayedRepos.map((repo) => (
+                                <div
+                                    key={repo.id}
+                                    className="repo-card"
+                                    onClick={() => setActiveProject(repo)}
+                                    style={{cursor: 'pointer'}}
+                                >
+                                    <a
+                                        href={repo.html_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="repo-link"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <h3 className="repo-name">{repo.name}</h3>
+                                    </a>
+                                    {repo.description && <p>{repo.description}</p>}
+                                    <div className="repo-meta">
+                                        {repo.language && <span className="repo-text">{repo.language}</span>}
+                                        <span className="repo-text">⭐ {repo.stargazers_count}</span>
+                                        <span
+                                            className="repo-text">{currentTranslation.update}: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
 
-                {activeProject && (
-                    <ProjectDetailsPopup
-                        project={activeProject}
-                        onClose={() => setActiveProject(null)}
-                        onEditEmployees={() => openEmployeePopup(activeProject)}
-                        currentTranslation={currentTranslation}
-                    />
-                )}
+                        {activeProject && (
+                            <ProjectDetailsPopup
+                                project={activeProject}
+                                onClose={() => setActiveProject(null)}
+                                onEditEmployees={() => openEmployeePopup(activeProject)}
+                                currentTranslation={currentTranslation}
+                            />
+                        )}
 
-                {accessLevel === "OWNER" &&
-                    window.innerHeight > 500 &&
-                    window.innerWidth > 786 &&
-                    isEmployeePopupOpen &&
-                    currentProjectForEdit && (
-                        <EmployeeManagementPopup
-                            project={currentProjectForEdit}
-                            allEmployees={allEmployees}
-                            onClose={handleSaveEmployees}
-                            currentTranslation={currentTranslation}
-                        />
-                    )}
-            </div>
+                        {accessLevel === "OWNER" &&
+                            window.innerHeight > 500 &&
+                            window.innerWidth > 786 &&
+                            isEmployeePopupOpen &&
+                            currentProjectForEdit && (
+                                <EmployeeManagementPopup
+                                    project={currentProjectForEdit}
+                                    allEmployees={allEmployees}
+                                    onClose={handleSaveEmployees}
+                                    currentTranslation={currentTranslation}
+                                />
+                            )}
+                    </div>
+                </>
+            )}
             {document.querySelector(".footer") &&
                 ReactDOM.createPortal(
                     <>

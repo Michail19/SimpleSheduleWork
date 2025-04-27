@@ -1,1 +1,13 @@
 @import url("./_text/subtitle__date__place_text.css");
+
+.week-range {
+    display: inline-block;
+    text-align: center;
+    transition: opacity 0.3s ease; /* Плавная анимация */
+    opacity: 1;
+}
+
+.week-range.fade-out {
+    opacity: 0;
+    width: clamp(0rem, 5vw, auto);
+}

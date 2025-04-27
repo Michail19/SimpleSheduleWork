@@ -82,27 +82,29 @@ html, body {
     padding: 12px 24px;
     border: none;
     border-radius: 3px;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
 
     color: #1E1E1E;
-    background-color: #D0D0D0;
+    background-color: #F5F7FA;
 }
 
 .dark-theme .header__up-blocks__wrapper__btn {
     color: #F5F7FA;
-    background-color: #252525;
+    background-color: #1E1E1E;
 }
 
 .header__up-blocks__wrapper__btn:hover {
-    background-color: #EAEAEA;
+    color: #F5F7FA;
+    background-color: #252525;
     /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
 }
 
-.dark-theme .header__up-blocks__wrapper__btn:hover {;
-    background-color: #353535;
+.dark-theme .header__up-blocks__wrapper__btn:hover {
+    color: #1E1E1E;
+    background-color: #F5F7FA;
     /*box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);*/
 }
 

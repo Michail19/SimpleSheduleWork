@@ -24,4 +24,5 @@ export default {
     saveChanges: 'Save changes',
     schedule: "Schedule",
     home: "Home",
+    old_session: "Your session is outdated. Log in again.",
 }
