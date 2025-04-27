@@ -10,6 +10,7 @@ interface MobileEmployeeSearchProps {
     onEdit: (employeeId: string, dayIndex: number, day: string, type: string, value: string) => void;
     onBlur: (employeeId: string, dayIndex: number, day: string, type: "start" | "end", event?: React.FocusEvent<HTMLInputElement> | null) => void;
     onSetEditingCell: (cell: { employeeId: string; day: string; dayIndex: number } | null) => void;
+    accessLevel: string; // Добавляем проп для уровня доступа
 }
 
 export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
@@ -20,22 +21,43 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                                                                               onEdit,
                                                                               onBlur,
                                                                               onSetEditingCell,
+                                                                              accessLevel,
                                                                           }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [currentEmployeeIndex, setCurrentEmployeeIndex] = useState(0);
 
     const filteredEmployees = useMemo(() => {
+        if (!searchTerm) return employees;
         return employees.filter(employee =>
             employee.fio.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [employees, searchTerm]);
 
+    // Сохраняем позицию при изменении фильтрации
     useEffect(() => {
-        setCurrentEmployeeIndex(0);
+        if (filteredEmployees.length > 0) {
+            // Если текущий сотрудник остался в отфильтрованном списке, сохраняем его позицию
+            const currentEmployeeId = filteredEmployees[currentEmployeeIndex]?.id;
+            if (currentEmployeeId) {
+                const newIndex = filteredEmployees.findIndex(e => e.id === currentEmployeeId);
+                if (newIndex >= 0) {
+                    setCurrentEmployeeIndex(newIndex);
+                    return;
+                }
+            }
+            // Иначе сбрасываем на первый элемент
+            setCurrentEmployeeIndex(0);
+        }
     }, [filteredEmployees]);
 
     const currentEmployee = filteredEmployees[currentEmployeeIndex];
+
+    // Проверка прав на редактирование
+    const canEdit = (employee: Employee) => {
+        return accessLevel === "OWNER" ||
+            (accessLevel === "USER" && employee === employees[0]);
+    };
 
     return (
         <div className="mobile-employee-search">
@@ -56,17 +78,16 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
             <div className="employee-list">
                 {filteredEmployees.length > 0 ? (
                     <>
-                        {/* Отображаем только текущую карточку */}
-                        <div className="employee-card" key={filteredEmployees[currentEmployeeIndex].id}>
+                        <div className="employee-card" key={currentEmployee.id}>
                             <div className="employee-header">
-                                <h3>{filteredEmployees[currentEmployeeIndex].fio}</h3>
+                                <h3>{currentEmployee.fio}</h3>
                                 <span className="hours">
-                                    {calculateWorkHours(filteredEmployees[currentEmployeeIndex].weekSchedule)}{translations.hour}
+                                    {calculateWorkHours(currentEmployee.weekSchedule)}{translations.hour}
                                 </span>
                             </div>
 
                             <div className="schedule-grid">
-                                {Object.entries(filteredEmployees[currentEmployeeIndex].weekSchedule).map(([day, schedule], dayIndex) => (
+                                {Object.entries(currentEmployee.weekSchedule).map(([day, schedule], dayIndex) => (
                                     <div className="day-slot" key={day}>
                                         <div className="day-label">{translations[day]}</div>
                                         {editingCell?.employeeId === currentEmployee.id && editingCell?.day === day ? (
@@ -88,20 +109,23 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                                         ) : (
                                             <div
                                                 className="time-display"
-                                                onClick={() => onSetEditingCell({
+                                                onClick={() => canEdit(currentEmployee) && onSetEditingCell({
                                                     employeeId: currentEmployee.id,
                                                     day: day,
                                                     dayIndex: dayIndex
                                                 })}
+                                                style={{
+                                                    cursor: canEdit(currentEmployee) ? 'pointer' : 'default',
+                                                    opacity: canEdit(currentEmployee) ? 1 : 0.7
+                                                }}
                                             >
-                                                {`${schedule?.start} - ${schedule?.end}`}
+                                                {`${schedule?.start || '--'} - ${schedule?.end || '--'}`}
                                             </div>
                                         )}
                                     </div>
                                 ))}
 
                                 <div className="slot">
-                                    {/* Кнопка поиска */}
                                     <button
                                         className="search-toggle"
                                         onClick={() => setIsSearchVisible(!isSearchVisible)}
@@ -112,8 +136,8 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                             </div>
                         </div>
 
-                        {/* Навигация между карточками — ТОЛЬКО при активном поиске */}
-                        {isSearchVisible && filteredEmployees.length > 1 && (
+                        {/* Навигация между карточками - показываем всегда, а не только при поиске */}
+                        {filteredEmployees.length > 1 && (
                             <div className="footer">
                                 <button
                                     className="footer__btn"
@@ -122,7 +146,9 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                                 >
                                     ◄
                                 </button>
-                                <span className="footer__place">{currentEmployeeIndex + 1} / {filteredEmployees.length}</span>
+                                <span className="footer__place">
+                                    {currentEmployeeIndex + 1} / {filteredEmployees.length}
+                                </span>
                                 <button
                                     className="footer__btn"
                                     disabled={currentEmployeeIndex >= filteredEmployees.length - 1}

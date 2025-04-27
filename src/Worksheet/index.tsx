@@ -31,7 +31,7 @@ const Worksheet: React.FC = () => {
     const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-    const accessLevel = getUserAccessLevel();
+    const accessLevel = getUserAccessLevel() || "USER";
     const [filters, setFilters] = useState<FiltersState>({
         projects: [],
         activeProjects: [],
@@ -892,6 +892,7 @@ const Worksheet: React.FC = () => {
                         onEdit={handleEdit}
                         onBlur={handleBlur}
                         onSetEditingCell={setEditingCell}
+                        accessLevel={accessLevel}
                     />
                 </>
             ) : (
