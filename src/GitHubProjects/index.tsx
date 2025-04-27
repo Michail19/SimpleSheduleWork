@@ -221,6 +221,7 @@ const GitHubProjects: React.FC = () => {
             });
 
             const finalRowHeight = maxHeight || 70;
+            // const finalRowHeight = containerRef.current.clientHeight;
 
             const viewportHeight = window.innerHeight;
             const headerHeight = document.querySelector(".header")?.clientHeight || 0;
@@ -228,7 +229,10 @@ const GitHubProjects: React.FC = () => {
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
             const otherElementsHeight = 100;
 
-            const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
+            let availableHeight;
+            if (isMobile)
+                availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
+            else availableHeight = containerRef.current.clientHeight;
 
             const rows = Math.floor(availableHeight / finalRowHeight) || 1;
             const cardsPerRow = getCardsPerRow();
@@ -471,26 +475,20 @@ const GitHubProjects: React.FC = () => {
 
             {isMobile ? (
                 <>
-                    {load ? (
-                        <BlockLoader/> // твой прелоадер
-                    ) : (
-                        <>
-                            {
-                                document.querySelector('.header__up-blocks__wrapper__list') &&
-                                (localStorage.getItem("authToken") != null) &&
-                                ReactDOM.createPortal(
-                                    <button
-                                        className="header__up-blocks__wrapper__list__btn"
-                                        onClick={() => handleLogout()}
-                                    >
-                                        {currentTranslation.exit}
-                                    </button>,
-                                    document.querySelector('.header__up-blocks__wrapper__list') as Element
-                                )
+                    {
+                        document.querySelector('.header__up-blocks__wrapper__list') &&
+                        (localStorage.getItem("authToken") != null) &&
+                        ReactDOM.createPortal(
+                            <button
+                                className="header__up-blocks__wrapper__list__btn"
+                                onClick={() => handleLogout()}
+                            >
+                                {currentTranslation.exit}
+                            </button>,
+                            document.querySelector('.header__up-blocks__wrapper__list') as Element
+                        )
 
-                            }
-                        </>
-                    )}
+                    }
                 </>
             ) : (
                 <>
@@ -595,31 +593,31 @@ const GitHubProjects: React.FC = () => {
                                 />
                             )}
                     </div>
-                    {document.querySelector(".footer") &&
-                        ReactDOM.createPortal(
-                            <>
-                                <button
-                                    className="footer__btn"
-                                    onClick={() => changePage("previous")}
-                                    disabled={currentPage === 1}
-                                >
-                                    ◄
-                                </button>
-                                <div className="footer__place">
-                                    {currentTranslation.page} {currentPage} {currentTranslation.outOf} {totalPages}
-                                </div>
-                                <button
-                                    className="footer__btn"
-                                    onClick={() => changePage("next")}
-                                    disabled={currentPage === totalPages}
-                                >
-                                    ►
-                                </button>
-                            </>,
-                            document.querySelector(".footer") as Element
-                        )}
                 </>
             )}
+            {document.querySelector(".footer") &&
+                ReactDOM.createPortal(
+                    <>
+                        <button
+                            className="footer__btn"
+                            onClick={() => changePage("previous")}
+                            disabled={currentPage === 1}
+                        >
+                            ◄
+                        </button>
+                        <div className="footer__place">
+                            {currentTranslation.page} {currentPage} {currentTranslation.outOf} {totalPages}
+                        </div>
+                        <button
+                            className="footer__btn"
+                            onClick={() => changePage("next")}
+                            disabled={currentPage === totalPages}
+                        >
+                            ►
+                        </button>
+                    </>,
+                    document.querySelector(".footer") as Element
+                )}
         </div>
     );
 };
