@@ -35,24 +35,24 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
     const [loading, setLoading] = React.useState(false);
 
     // Фильтрация сотрудников
+    const filterEmployees = (employees: Employee[], query: string) => {
+        if (!query) return employees;
+        return employees.filter(emp =>
+            emp.fio.toLowerCase().includes(query.toLowerCase())
+        );
+    };
+
     useEffect(() => {
-        const filtered_at = allEmployees.filter(emp =>
-            emp.fio.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        const filtered = allEmployees.filter(emp =>
             !currentAttached.some(attached => attached.id === emp.id)
         );
-        setAvailableEmployees(filtered_at);
-
-        const filtered_av = allEmployees.filter(emp =>
-            emp.fio.toLowerCase().includes(searchQuery.toLowerCase()) &&
-            !availableEmployees.some(available => available.id === emp.id)
-        );
-        setAvailableEmployees(filtered_av);
-    }, [searchQuery, availableEmployees, currentAttached, allEmployees]);
+        setAvailableEmployees(filtered);
+    }, [currentAttached, allEmployees]);
 
     const handleAttach = (employee: Employee) => {
         setCurrentAttached(prev => [...prev, employee]);
-        setSearchQuery('');
-        searchInputRef.current?.focus();
+        // setSearchQuery('');
+        // searchInputRef.current?.focus();
     };
 
     const handleDetach = (employeeId: number) => {
@@ -145,6 +145,7 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         }
     };
 
+
     return (
         <div className="popup-overlay">
             <div className="employee-management-popup">
@@ -167,14 +168,13 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
                         <div className="employees-lists">
                             <div className="attached-section">
                                 <h3 className="section-header-h">{currentTranslation.addedEmployee}</h3>
-                                {currentAttached.length === 0 ? (
+                                {filterEmployees(currentAttached, searchQuery).length === 0 ? (
                                     <p className="empty-message">
-                                        {/*{currentTranslation.noAddedEmployee}*/}
                                         {searchQuery ? currentTranslation.nothingFounded : currentTranslation.noAddedEmployee}
                                     </p>
                                 ) : (
                                     <ul className="employees-list">
-                                        {currentAttached.map(emp => (
+                                        {filterEmployees(currentAttached, searchQuery).map(emp => (
                                             <li className="employees-element" key={`attached-${emp.id}`}>
                                                 <span className="employees-element-name">{emp.fio}</span>
                                                 <button
@@ -191,13 +191,13 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
 
                             <div className="available-section">
                                 <h3 className="section-header-h">{currentTranslation.availableEmployee}</h3>
-                                {availableEmployees.length === 0 ? (
+                                {filterEmployees(availableEmployees, searchQuery).length === 0 ? (
                                     <p className="empty-message">
                                         {searchQuery ? currentTranslation.nothingFounded : currentTranslation.noAvailableEmployee}
                                     </p>
                                 ) : (
                                     <ul className="employees-list">
-                                        {availableEmployees.map(emp => (
+                                        {filterEmployees(availableEmployees, searchQuery).map(emp => (
                                             <li className="employees-element" key={`available-${emp.id}`}>
                                                 <span className="employees-element-name">{emp.fio}</span>
                                                 <button

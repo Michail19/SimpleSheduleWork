@@ -80,6 +80,7 @@ const GitHubProjects: React.FC = () => {
                     // Через небольшой таймаут (для UX) делаем редирект
                     setTimeout(() => {
                         handleLogout();
+                        window.location.href = 'index.html';
                     }, 100); // 100мс - пользователь успеет увидеть сообщение
                 }
             }
