@@ -6,7 +6,8 @@ import {Employee, Language} from "./types";
 import {SearchProjectPopup} from "./components/SearchProjectPopup";
 import ProjectDetailsPopup from "./components/ProjectDetailsPopup";
 import EmployeeManagementPopup from "./components/EmployeeManagementPopup";
-import {getUserAccessLevel} from "../UserAccessLevel";
+import {getUserAccessLevel, verifyToken} from "../UserAccessLevel";
+import BlockLoader, {touch_on_load} from "../BlockLoader";
 
 interface GitHubRepo {
     id: number;
@@ -70,6 +71,18 @@ const GitHubProjects: React.FC = () => {
         const fetchData = async () => {
             const octokit = new Octokit();
             const token = localStorage.getItem('authToken'); // 🔐 Получаем токен
+
+            if (token) {
+                if (!await verifyToken()) {
+                    // Показываем alert с сообщением
+                    alert(currentTranslation.old_session);
+
+                    // Через небольшой таймаут (для UX) делаем редирект
+                    setTimeout(() => {
+                        handleLogout();
+                    }, 100); // 100мс - пользователь успеет увидеть сообщение
+                }
+            }
 
             try {
                 // 1. Пробуем получить данные с сервера с авторизацией
@@ -155,6 +168,7 @@ const GitHubProjects: React.FC = () => {
                 }
             } finally {
                 setLoading(false);
+                setLoad(false)
             }
         };
 
@@ -424,6 +438,10 @@ const GitHubProjects: React.FC = () => {
         window.location.href = 'index.html';
     };
 
+    useEffect(() => {
+        if (!isMobile) touch_on_load();
+    }, [load]);
+
 
     return (
         <div className="content" key={updateKey}>
@@ -452,23 +470,31 @@ const GitHubProjects: React.FC = () => {
 
             {isMobile ? (
                 <>
-                    {document.querySelector('.header__up-blocks__wrapper__list') &&
-                        (localStorage.getItem("authToken") != null) &&
-                        ReactDOM.createPortal(
-                            <button
-                                className="header__up-blocks__wrapper__list__btn"
-                                onClick={() => handleLogout()}
-                            >
-                                {currentTranslation.exit}
-                            </button>,
-                            document.querySelector('.header__up-blocks__wrapper__list') as Element
-                        )
+                    {load ? (
+                        <BlockLoader/> // твой прелоадер
+                    ) : (
+                        <>
+                            {
+                                document.querySelector('.header__up-blocks__wrapper__list') &&
+                                (localStorage.getItem("authToken") != null) &&
+                                ReactDOM.createPortal(
+                                    <button
+                                        className="header__up-blocks__wrapper__list__btn"
+                                        onClick={() => handleLogout()}
+                                    >
+                                        {currentTranslation.exit}
+                                    </button>,
+                                    document.querySelector('.header__up-blocks__wrapper__list') as Element
+                                )
 
-                    }
+                            }
+                        </>
+                    )}
                 </>
             ) : (
                 <>
-                    {document.querySelector(".header__up-blocks__wrapper__list") &&
+                    {
+                        document.querySelector(".header__up-blocks__wrapper__list") &&
                         ReactDOM.createPortal(
                             <>
                                 <a className="header__up-blocks__wrapper__list__btn" href="./index.html"
@@ -477,7 +503,8 @@ const GitHubProjects: React.FC = () => {
                                    data-key="schedule">{currentTranslation.schedule}</a>
                             </>,
                             document.querySelector(".header__up-blocks__wrapper__list") as Element
-                        )}
+                        )
+                    }
 
                     {document.querySelector('.header__up-blocks__wrapper__list') &&
                         (localStorage.getItem("authToken") != null) &&
@@ -500,7 +527,7 @@ const GitHubProjects: React.FC = () => {
                         <img
                             src={localStorage.getItem('userIcon')!}
                             className='header__up-blocks__wrapper__icon_gen'
-                            alt="User Icon" />
+                            alt="User Icon"/>
                     ) : (
                         <div className="header__up-blocks__wrapper__icon"></div>
                     )),
@@ -508,84 +535,90 @@ const GitHubProjects: React.FC = () => {
                 )
             )}
 
-            <div className="worksheet">
-                {loading && <div className="loader">{currentTranslation.load}</div>}
+            {load ? (
+                <BlockLoader/> // твой прелоадер
+            ) : (
+                <>
+                    <div className="worksheet">
+                        {loading && <div className="loader">{currentTranslation.load}</div>}
 
-                {error && <div className="error-message">{currentTranslation.error}: {error}</div>}
+                        {error && <div className="error-message">{currentTranslation.error}: {error}</div>}
 
-                <div ref={containerRef} className="repos__grid">
-                    {displayedRepos.map((repo) => (
-                        <div
-                            key={repo.id}
-                            className="repo-card"
-                            onClick={() => setActiveProject(repo)}
-                            style={{cursor: 'pointer'}}
-                        >
-                            <a
-                                href={repo.html_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="repo-link"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <h3 className="repo-name">{repo.name}</h3>
-                            </a>
-                            {repo.description && <p>{repo.description}</p>}
-                            <div className="repo-meta">
-                                {repo.language && <span className="repo-text">{repo.language}</span>}
-                                <span className="repo-text">⭐ {repo.stargazers_count}</span>
-                                <span
-                                    className="repo-text">{currentTranslation.update}: {new Date(repo.updated_at).toLocaleDateString()}</span>
-                            </div>
+                        <div ref={containerRef} className="repos__grid">
+                            {displayedRepos.map((repo) => (
+                                <div
+                                    key={repo.id}
+                                    className="repo-card"
+                                    onClick={() => setActiveProject(repo)}
+                                    style={{cursor: 'pointer'}}
+                                >
+                                    <a
+                                        href={repo.html_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="repo-link"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <h3 className="repo-name">{repo.name}</h3>
+                                    </a>
+                                    {repo.description && <p>{repo.description}</p>}
+                                    <div className="repo-meta">
+                                        {repo.language && <span className="repo-text">{repo.language}</span>}
+                                        <span className="repo-text">⭐ {repo.stargazers_count}</span>
+                                        <span
+                                            className="repo-text">{currentTranslation.update}: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
 
-                {activeProject && (
-                    <ProjectDetailsPopup
-                        project={activeProject}
-                        onClose={() => setActiveProject(null)}
-                        onEditEmployees={() => openEmployeePopup(activeProject)}
-                        currentTranslation={currentTranslation}
-                    />
-                )}
+                        {activeProject && (
+                            <ProjectDetailsPopup
+                                project={activeProject}
+                                onClose={() => setActiveProject(null)}
+                                onEditEmployees={() => openEmployeePopup(activeProject)}
+                                currentTranslation={currentTranslation}
+                            />
+                        )}
 
-                {accessLevel === "OWNER" &&
-                    window.innerHeight > 500 &&
-                    window.innerWidth > 786 &&
-                    isEmployeePopupOpen &&
-                    currentProjectForEdit && (
-                        <EmployeeManagementPopup
-                            project={currentProjectForEdit}
-                            allEmployees={allEmployees}
-                            onClose={handleSaveEmployees}
-                            currentTranslation={currentTranslation}
-                        />
-                    )}
-            </div>
-            {document.querySelector(".footer") &&
-                ReactDOM.createPortal(
-                    <>
-                        <button
-                            className="footer__btn"
-                            onClick={() => changePage("previous")}
-                            disabled={currentPage === 1}
-                        >
-                            ◄
-                        </button>
-                        <div className="footer__place">
-                            {currentTranslation.page} {currentPage} {currentTranslation.outOf} {totalPages}
-                        </div>
-                        <button
-                            className="footer__btn"
-                            onClick={() => changePage("next")}
-                            disabled={currentPage === totalPages}
-                        >
-                            ►
-                        </button>
-                    </>,
-                    document.querySelector(".footer") as Element
-                )}
+                        {accessLevel === "OWNER" &&
+                            window.innerHeight > 500 &&
+                            window.innerWidth > 786 &&
+                            isEmployeePopupOpen &&
+                            currentProjectForEdit && (
+                                <EmployeeManagementPopup
+                                    project={currentProjectForEdit}
+                                    allEmployees={allEmployees}
+                                    onClose={handleSaveEmployees}
+                                    currentTranslation={currentTranslation}
+                                />
+                            )}
+                    </div>
+                    {document.querySelector(".footer") &&
+                        ReactDOM.createPortal(
+                            <>
+                                <button
+                                    className="footer__btn"
+                                    onClick={() => changePage("previous")}
+                                    disabled={currentPage === 1}
+                                >
+                                    ◄
+                                </button>
+                                <div className="footer__place">
+                                    {currentTranslation.page} {currentPage} {currentTranslation.outOf} {totalPages}
+                                </div>
+                                <button
+                                    className="footer__btn"
+                                    onClick={() => changePage("next")}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    ►
+                                </button>
+                            </>,
+                            document.querySelector(".footer") as Element
+                        )}
+                </>
+            )}
         </div>
     );
 };
