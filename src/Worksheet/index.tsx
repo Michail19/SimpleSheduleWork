@@ -146,6 +146,8 @@ const Worksheet: React.FC = () => {
                 } catch (fallbackErr) {
                     console.error("Ошибка при загрузке fallback JSON:", fallbackErr);
                 }
+            } finally {
+                setLoading(false); // Скрываем прелоадер в любом случае
             }
         };
 
