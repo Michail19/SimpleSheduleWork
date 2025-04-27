@@ -241,7 +241,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 <div className="popup-actions">
                     <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
                     <button
-                        className="popup-actions-btn"
+                        className="popup-actions-btn save-btn"
                         onClick={() => handleSave(employeeData)}
                         disabled={
                             !employeeData.fio.trim() ||
