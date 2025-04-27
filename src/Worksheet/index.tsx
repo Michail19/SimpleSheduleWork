@@ -34,6 +34,7 @@ const Worksheet: React.FC = () => {
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
     const accessLevel = getUserAccessLevel() || "OWNER";
     const [loading, setLoading] = React.useState(true);
+    const [fade, setFade] = useState(false);
     const [filters, setFilters] = useState<FiltersState>({
         projects: [],
         activeProjects: [],
@@ -230,6 +231,16 @@ const Worksheet: React.FC = () => {
         return {start: monday, end: sunday};
     }
 
+    // const handleChangeWeek = async (direction: "next" | "previous") => {
+    //     setFade(true); // начинаем исчезновение
+    //
+    //     setTimeout(async () => {
+    //         await changeWeek(direction); // твоя логика смены недели
+    //         setFade(false); // снова показываем
+    //     }, 300); // чуть больше времени на исчезновение
+    // };
+
+
     const changeWeek = async (direction: "next" | "previous") => {
         await flushChanges();
 
@@ -259,6 +270,7 @@ const Worksheet: React.FC = () => {
             const newWeekRange = formatWeekRange(start, end, currentTranslation); // остаётся та же функция
 
             fetchWeekData(formattedDate, newWeekRange);
+
 
             return newOffset;
         });
@@ -746,6 +758,12 @@ const Worksheet: React.FC = () => {
 
     useEffect(() => {
         if (!isMobile) touch_on_load();
+
+        if (loading) {
+            setFade(true); // начинаем исчезновение, когда началась загрузка
+        } else {
+            setFade(false); // показываем обратно, когда загрузка закончилась
+        }
     }, [loading]);
 
 
@@ -883,7 +901,7 @@ const Worksheet: React.FC = () => {
             {document.querySelector(".subtitle__date__place") &&
                 ReactDOM.createPortal(
                     <button
-                        className="subtitle__date__btn"
+                        className={`subtitle__date__btn week-button ${fade ? 'move-center' : ''}`}
                         onClick={() => changeWeek('previous')}
                     >
                         ◄
@@ -893,14 +911,14 @@ const Worksheet: React.FC = () => {
 
             {document.querySelector(".subtitle__date__place") &&
                 ReactDOM.createPortal(
-                    <span className="subtitle__date__place_text">{currentWeek}</span>,
+                    <span className={`subtitle__date__place_text week-range ${fade ? 'fade-out' : ''}`}>{currentWeek}</span>,
                     document.querySelector(".subtitle__date__place") as Element
                 )}
 
             {document.querySelector(".subtitle__date") &&
                 ReactDOM.createPortal(
                     <button
-                        className="subtitle__date__btn"
+                        className={`subtitle__date__btn week-button ${fade ? 'move-center' : ''}`}
                         onClick={() => changeWeek('next')}
                     >
                         ►
