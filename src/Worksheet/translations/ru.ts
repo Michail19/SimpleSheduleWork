@@ -42,7 +42,7 @@ export default {
     deleteAnEmployee: "Удалить сотрудника",
     deleteAnEmployeeBR: "Удалить\nсотрудника",
     exit: 'Выход',
-    alertEmployee: 'Не удалось добавить сотрудника.',
+    alertEmployee: 'Не удалось добавить сотрудника. Вероятно введённый логин уже существует. Попробуйте позже или измените логин.',
     username: 'Логин',
     enterUsername: 'Введите username',
     password: 'Пароль',

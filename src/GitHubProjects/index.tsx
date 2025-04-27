@@ -82,6 +82,8 @@ const GitHubProjects: React.FC = () => {
                         handleLogout();
                         window.location.href = 'index.html';
                     }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+                    return; // <<< ДОБАВИТЬ! Прерываем функцию
                 }
             }
 
@@ -234,7 +236,14 @@ const GitHubProjects: React.FC = () => {
                 availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
             else availableHeight = containerRef.current.clientHeight;
 
-            const rows = Math.floor(availableHeight / finalRowHeight) || 1;
+            let rows;
+            if (availableHeight > 0) {
+                rows = Math.floor(availableHeight / finalRowHeight) || 1;
+            }
+            else {
+                rows = 1
+            }
+
             const cardsPerRow = getCardsPerRow();
 
             const totalCards = rows * cardsPerRow;

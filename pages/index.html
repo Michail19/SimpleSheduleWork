@@ -15,7 +15,7 @@
         <p data-key="loading">Загрузка...</p>
     </div>
 
-    <header class="header-index">
+    <header class="header-index" id="start">
         <style>
             .header-index {
                 padding: 2vh 0.25vw;
@@ -57,7 +57,7 @@
 
         <div class="head">
             <h1 class="head__title" id="mainTitle"><span data-key="welcome">Добро пожаловать в </span><br/><strong class="head__title_name">SimpleScheduleWork</strong></h1>
-            <p class="head__text" id="subText"><strong id="start">SimpleScheduleWork</strong><span data-key="description">— это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
+            <p class="head__text" id="subText"><strong>SimpleScheduleWork</strong><span data-key="description">— это инструмент для эффективного планирования и управления рабочим графиком сотрудников.
                 Система предоставляет простое и наглядное представление расписания, а также управление привязкой сотрудников к проектам.
             Организуйте рабочие недели, контролируйте занятость и управляйте проектами — всё в одном месте.</span></p>
 
@@ -287,7 +287,7 @@
                 }
 
                 .screenshot_img {
-                    max-width: 95vw;
+                    max-width: 98vw;
                     height: auto;
                     border-radius: 12px;
                     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -340,7 +340,7 @@
                     position: relative;
                     height: 100vh;
                     z-index: 1; /* На первом плане */
-                    transition: transform 1s ease-out; /* Плавный выход первого блока */
+                    transition: transform 0.75s ease-out; /* Плавный выход первого блока */
                 }
 
                 /* Второй блок, изначально скрыт и сдвинут вправо */
@@ -351,7 +351,7 @@
                     z-index: 2; /* Второй блок поверх первого */
                     opacity: 0;
                     transform: translateX(100%); /* Второй блок сдвинут вправо */
-                    transition: transform 1s ease-out, opacity 1s ease-out; /* Плавная анимация */
+                    transition: transform 0.75s ease-out, opacity 1s ease-out; /* Плавная анимация */
                 }
 
                 /* Когда прокрутили первый блок, второй должен появиться */
@@ -513,6 +513,24 @@
                 <a class="footer__column-link" href="./contact.html" data-key="contacts">Контакты</a>
             </div>
         </div>
+        <script>
+            document.querySelectorAll('.footer__column-link[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault(); // Отменяем стандартное поведение
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        // Плавная прокрутка к элементу
+                        window.scrollTo({
+                            top: targetElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        </script>
     </footer>
 
     <script src="changeTheme.bundle.js"></script>
