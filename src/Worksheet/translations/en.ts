@@ -42,7 +42,7 @@ export default {
     deleteAnEmployee: "Delete employee",
     deleteAnEmployeeBR: "Delete\nemployee",
     exit: 'Exit',
-    alertEmployee: 'Failed to add employee.',
+    alertEmployee: 'Failed to add employee. The entered username probably already exists. Please try again later or change your username.',
     username: 'Username',
     enterUsername: 'Enter username',
     password: 'Password',

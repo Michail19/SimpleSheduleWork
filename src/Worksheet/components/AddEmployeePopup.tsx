@@ -163,6 +163,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                                 placeholder={currentTranslation.enterName}
                                 value={employeeData.fio}
                                 onChange={handleChange}
+                                autoComplete="off" // Отключаем автозаполнение
                             />
                         </div>
 
@@ -174,6 +175,13 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                                 placeholder={currentTranslation.enterUsername}
                                 value={employeeData.username}
                                 onChange={handleChange}
+                                autoComplete="new-username" // Блокируем подсказки
+                                // Дополнительные атрибуты для надёжности:
+                                role="presentation" // Помечаем как "не для автозаполнения"
+                                readOnly // Временно блокируем (Chrome иногда игнорирует autocomplete)
+                                onFocus={(e) => {
+                                    e.target.removeAttribute("readOnly"); // Разблокируем при фокусе
+                                }}
                             />
                         </div>
 
@@ -185,6 +193,8 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                                 placeholder={currentTranslation.enterPassword}
                                 value={employeeData.password}
                                 onChange={handleChange}
+                                autoComplete="new-password" // Блокируем сохранение пароля
+                                data-lpignore="true" // Отключает LastPass и другие менеджеры паролей
                             />
                         </div>
 
