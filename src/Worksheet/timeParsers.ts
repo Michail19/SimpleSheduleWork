@@ -25,11 +25,20 @@ export const parseWeekRange = (weekRange: string, currentTranslation: any) => {
 };
 
 export const formatWeekRange = (start: Date, end: Date, currentTranslation: any) => {
-    const monthKey = monthOrder[start.getMonth()];
-    const monthName = currentTranslation[monthKey];
+    const startMonthKey = monthOrder[start.getMonth()];
+    const endMonthKey = monthOrder[end.getMonth()];
+    const startMonthName = currentTranslation[startMonthKey];
+    const endMonthName = currentTranslation[endMonthKey];
 
-    return `${start.getDate()}-${end.getDate()} ${monthName} ${start.getFullYear()}`;
+    if (start.getMonth() === end.getMonth()) {
+        // Один месяц
+        return `${start.getDate()}–${end.getDate()} ${startMonthName} ${start.getFullYear()}`;
+    } else {
+        // Разные месяцы
+        return `${start.getDate()} ${startMonthName} – ${end.getDate()} ${endMonthName} ${start.getFullYear()}`;
+    }
 };
+
 
 
 export const translateMonth = (weekString: string, currentTranslation: any) => {

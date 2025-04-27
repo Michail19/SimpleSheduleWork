@@ -313,6 +313,7 @@ const Worksheet: React.FC = () => {
         }
     };
 
+
     const toggleProjectFilter = (project: string) => {
         setFilters(prev => {
             const newActiveProjects = prev.activeProjects.includes(project)
