@@ -243,6 +243,7 @@ const Worksheet: React.FC = () => {
 
     const changeWeek = async (direction: "next" | "previous") => {
         await flushChanges();
+        setEditingCell(null);
 
         const offsetChange = direction === "next" ? 1 : -1;
 
