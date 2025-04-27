@@ -32,7 +32,7 @@ const Worksheet: React.FC = () => {
     const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-    const accessLevel = getUserAccessLevel() || "USER";
+    const accessLevel = getUserAccessLevel() || "OWNER";
     const [loading, setLoading] = React.useState(true);
     const [filters, setFilters] = useState<FiltersState>({
         projects: [],
@@ -281,6 +281,7 @@ const Worksheet: React.FC = () => {
 
             if (!token) {
                 console.error("Токен авторизации не найден");
+                setCurrentWeek(newWeekRange);
                 return; // Не делаем редирект, просто выходим
             }
 

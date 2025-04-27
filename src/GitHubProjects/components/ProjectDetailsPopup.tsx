@@ -16,7 +16,7 @@ const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({
                                                                      onEditEmployees,
                                                                      currentTranslation,
                                                                  }) => {
-    const accessLevel = getUserAccessLevel();
+    const accessLevel = getUserAccessLevel() || "OWNER";
     return (
         <div className="popup-overlay" onClick={onClose}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>

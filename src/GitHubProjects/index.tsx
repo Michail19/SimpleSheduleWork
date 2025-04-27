@@ -45,7 +45,8 @@ const GitHubProjects: React.FC = () => {
     const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [updateKey, setUpdateKey] = useState(0);
-    const accessLevel = getUserAccessLevel();
+    const accessLevel = getUserAccessLevel() || "OWNER";
+    const [load, setLoad] = React.useState(true);
 
     useEffect(() => {
         // Применяем сохранённые настройки языка при загрузке

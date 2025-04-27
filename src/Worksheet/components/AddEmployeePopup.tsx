@@ -81,6 +81,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
 
         if (!token) {
             console.error("Токен авторизации не найден");
+            onSave(employeeData);
             return; // Не делаем редирект, просто выходим
         }
 
@@ -114,6 +115,9 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
 
             if (!response.ok) {
                 throw new Error("Ошибка при добавлении сотрудника");
+            }
+            else {
+                onSave(employeeData);
             }
             
             onClose();
@@ -209,10 +213,7 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                     <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
                     <button
                         className="popup-actions-btn"
-                        onClick={() => {
-                            handleSave(employeeData);
-                            onSave(employeeData);
-                        }}
+                        onClick={() => handleSave(employeeData)}
                         disabled={
                             !employeeData.fio.trim() ||
                             !employeeData.username.trim() ||

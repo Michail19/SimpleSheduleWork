@@ -28,6 +28,7 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
 
         if (!token) {
             console.error("Токен авторизации не найден");
+            selectedEmployee && onDelete(selectedEmployee.id);
             return; // Не делаем редирект, просто выходим
         }
 
