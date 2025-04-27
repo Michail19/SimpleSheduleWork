@@ -234,7 +234,14 @@ const GitHubProjects: React.FC = () => {
                 availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
             else availableHeight = containerRef.current.clientHeight;
 
-            const rows = Math.floor(availableHeight / finalRowHeight) || 1;
+            let rows;
+            if (availableHeight > 0) {
+                rows = Math.floor(availableHeight / finalRowHeight) || 1;
+            }
+            else {
+                rows = 1
+            }
+
             const cardsPerRow = getCardsPerRow();
 
             const totalCards = rows * cardsPerRow;
