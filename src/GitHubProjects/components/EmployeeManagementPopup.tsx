@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {translations} from "../translations";
 import {Language} from "../types";
 import {verifyToken} from "../../UserAccessLevel";
+import BlockLoader from "../../BlockLoader";
 
 interface Employee {
     id: number;
@@ -31,15 +32,22 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
     const [searchQuery, setSearchQuery] = useState('');
     const [currentAttached, setCurrentAttached] = useState<Employee[]>(project.employees);
     const [availableEmployees, setAvailableEmployees] = useState<Employee[]>([]);
+    const [loading, setLoading] = React.useState(false);
 
     // Фильтрация сотрудников
     useEffect(() => {
-        const filtered = allEmployees.filter(emp =>
+        const filtered_at = allEmployees.filter(emp =>
             emp.fio.toLowerCase().includes(searchQuery.toLowerCase()) &&
             !currentAttached.some(attached => attached.id === emp.id)
         );
-        setAvailableEmployees(filtered);
-    }, [searchQuery, currentAttached, allEmployees]);
+        setAvailableEmployees(filtered_at);
+
+        const filtered_av = allEmployees.filter(emp =>
+            emp.fio.toLowerCase().includes(searchQuery.toLowerCase()) &&
+            !availableEmployees.some(available => available.id === emp.id)
+        );
+        setAvailableEmployees(filtered_av);
+    }, [searchQuery, availableEmployees, currentAttached, allEmployees]);
 
     const handleAttach = (employee: Employee) => {
         setCurrentAttached(prev => [...prev, employee]);
@@ -110,6 +118,8 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         console.log("Отправляемые данные:", JSON.stringify(payload, null, 2));
 
         try {
+            setLoading(true);
+
             const response = await fetch('https://ssw-backend.onrender.com/projects/change', {
                 method: 'POST',
                 headers: {
@@ -130,6 +140,8 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         } catch (error) {
             console.error('Ошибка при сохранении:', error);
             alert(currentTranslation.alertChange);
+        } finally {
+            setLoading(false); // Скрываем прелоадер в любом случае
         }
     };
 
@@ -138,61 +150,70 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
             <div className="employee-management-popup">
                 <h2 className="popup-header">{currentTranslation.controlEmployee}: {project.name}</h2>
 
-                <div className="search-section">
-                    <input
-                        type="text"
-                        ref={searchInputRef}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={currentTranslation.searchEmployeePlaceholder}
-                    />
-                </div>
+                {loading ? (
+                    <BlockLoader/> // твой прелоадер
+                ) : (
+                    <>
+                        <div className="search-section">
+                            <input
+                                type="text"
+                                ref={searchInputRef}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={currentTranslation.searchEmployeePlaceholder}
+                            />
+                        </div>
 
-                <div className="employees-lists">
-                    <div className="attached-section">
-                        <h3 className="section-header-h">{currentTranslation.addedEmployee}</h3>
-                        {currentAttached.length === 0 ? (
-                            <p className="empty-message">{currentTranslation.noAddedEmployee}</p>
-                        ) : (
-                            <ul className="employees-list">
-                                {currentAttached.map(emp => (
-                                    <li className="employees-element" key={`attached-${emp.id}`}>
-                                        <span className="employees-element-name">{emp.fio}</span>
-                                        <button
-                                            onClick={() => handleDetach(emp.id)}
-                                            className="action-btn detach-btn"
-                                        >
-                                            −
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
+                        <div className="employees-lists">
+                            <div className="attached-section">
+                                <h3 className="section-header-h">{currentTranslation.addedEmployee}</h3>
+                                {currentAttached.length === 0 ? (
+                                    <p className="empty-message">
+                                        {/*{currentTranslation.noAddedEmployee}*/}
+                                        {searchQuery ? currentTranslation.nothingFounded : currentTranslation.noAddedEmployee}
+                                    </p>
+                                ) : (
+                                    <ul className="employees-list">
+                                        {currentAttached.map(emp => (
+                                            <li className="employees-element" key={`attached-${emp.id}`}>
+                                                <span className="employees-element-name">{emp.fio}</span>
+                                                <button
+                                                    onClick={() => handleDetach(emp.id)}
+                                                    className="action-btn detach-btn"
+                                                >
+                                                    −
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
 
-                    <div className="available-section">
-                        <h3 className="section-header-h">{currentTranslation.availableEmployee}</h3>
-                        {availableEmployees.length === 0 ? (
-                            <p className="empty-message">
-                                {searchQuery ? currentTranslation.nothingFounded : currentTranslation.noAvailableEmployee}
-                            </p>
-                        ) : (
-                            <ul className="employees-list">
-                                {availableEmployees.map(emp => (
-                                    <li className="employees-element" key={`available-${emp.id}`}>
-                                        <span className="employees-element-name">{emp.fio}</span>
-                                        <button
-                                            onClick={() => handleAttach(emp)}
-                                            className="action-btn attach-btn"
-                                        >
-                                            +
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                </div>
+                            <div className="available-section">
+                                <h3 className="section-header-h">{currentTranslation.availableEmployee}</h3>
+                                {availableEmployees.length === 0 ? (
+                                    <p className="empty-message">
+                                        {searchQuery ? currentTranslation.nothingFounded : currentTranslation.noAvailableEmployee}
+                                    </p>
+                                ) : (
+                                    <ul className="employees-list">
+                                        {availableEmployees.map(emp => (
+                                            <li className="employees-element" key={`available-${emp.id}`}>
+                                                <span className="employees-element-name">{emp.fio}</span>
+                                                <button
+                                                    onClick={() => handleAttach(emp)}
+                                                    className="action-btn attach-btn"
+                                                >
+                                                    +
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
 
                 <div className="popup-actions">
                     <button onClick={() => onClose(project.employees)} className="cancel-btn popup-actions-btn">

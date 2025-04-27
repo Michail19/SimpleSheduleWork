@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {Employee, Language} from '../types';
 import {translations} from "../translations";
 import {verifyToken} from "../../UserAccessLevel";
+import BlockLoader from "../../BlockLoader";
 
 interface DeleteEmployeePopupProps {
     employees: Employee[];
@@ -18,6 +19,7 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
                                                                         }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+    const [loading, setLoading] = React.useState(false);
 
     const filteredEmployees = employees.filter(employee =>
         employee.fio.toLowerCase().includes(searchTerm.toLowerCase())
@@ -45,6 +47,8 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
         }
 
         try {
+            setLoading(true);
+
             const response = await fetch(`https://ssw-backend.onrender.com/schedule/delete/${selectedEmployee?.id}`, {
                 method: "DELETE",
                 headers: {
@@ -55,8 +59,7 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
 
             if (!response.ok) {
                 throw new Error("Ошибка при удалении сотрудника");
-            }
-            else {
+            } else {
                 selectedEmployee && onDelete(selectedEmployee.id);
             }
 
@@ -64,6 +67,8 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
         } catch (error) {
             console.error(error);
             alert("Не удалось удалить сотрудника.");
+        } finally {
+            setLoading(false); // Скрываем прелоадер в любом случае
         }
     };
 
@@ -73,33 +78,39 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
                 <h2>{currentTranslation.deleteEmployee}</h2>
                 <button className="close-btn" onClick={onClose}>×</button>
 
-                <div className="search-container">
-                    <input
-                        type="text"
-                        placeholder={currentTranslation.searchPlaceholder}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        autoFocus
-                    />
-                </div>
+                {loading ? (
+                    <BlockLoader/> // твой прелоадер
+                ) : (
+                    <>
+                        <div className="search-container">
+                            <input
+                                type="text"
+                                placeholder={currentTranslation.searchPlaceholder}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                autoFocus
+                            />
+                        </div>
 
-                <div className="employees-list">
-                    {filteredEmployees.length > 0 ? (
-                        filteredEmployees.map(employee => (
-                            <div
-                                key={employee.id}
-                                className={`employee-item ${
-                                    selectedEmployee?.id === employee.id ? 'selected' : ''
-                                }`}
-                                onClick={() => setSelectedEmployee(employee)}
-                            >
-                                <span>{employee.fio}</span>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="no-results">{currentTranslation.noResults}</div>
-                    )}
-                </div>
+                        <div className="employees-list">
+                            {filteredEmployees.length > 0 ? (
+                                filteredEmployees.map(employee => (
+                                    <div
+                                        key={employee.id}
+                                        className={`employee-item ${
+                                            selectedEmployee?.id === employee.id ? 'selected' : ''
+                                        }`}
+                                        onClick={() => setSelectedEmployee(employee)}
+                                    >
+                                        <span>{employee.fio}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="no-results">{currentTranslation.noResults}</div>
+                            )}
+                        </div>
+                    </>
+                )}
 
                 <div className="popup-actions">
                     <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
