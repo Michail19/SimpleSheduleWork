@@ -51,6 +51,18 @@ const MainCodeIndex: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        const handleLanguageChange = (event: Event) => {
+            const newLang = (event as CustomEvent<string>).detail as Language; // Приведение типа
+            if (newLang) {
+                setLanguage(newLang);
+            }
+        };
+
+        window.addEventListener("languageUpdateEvent", handleLanguageChange);
+        return () => window.removeEventListener("languageUpdateEvent", handleLanguageChange);
+    }, []);
+
+    useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 1090);
         };
@@ -131,7 +143,7 @@ const MainCodeIndex: React.FC = () => {
             {!authToken ? (
                 <button
                     className="header__up-blocks__wrapper__btn"
-                    onClick={() => setShowLogin(true)}>Войти</button>
+                    onClick={() => setShowLogin(true)}>{currentTranslation.login}</button>
             ) : (
                 <>
                     {document.querySelector(".header__up-blocks__wrapper_icon-place") &&
