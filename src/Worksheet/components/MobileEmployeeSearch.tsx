@@ -114,12 +114,8 @@ export const MobileEmployeeSearch: React.FC<MobileEmployeeSearchProps> = ({
                                                     day: day,
                                                     dayIndex: dayIndex
                                                 })}
-                                                style={{
-                                                    cursor: canEdit(currentEmployee) ? 'pointer' : 'default',
-                                                    opacity: canEdit(currentEmployee) ? 1 : 0.7
-                                                }}
                                             >
-                                                {`${schedule?.start || '--'} - ${schedule?.end || '--'}`}
+                                                {`${schedule?.start} - ${schedule?.end}`}
                                             </div>
                                         )}
                                     </div>

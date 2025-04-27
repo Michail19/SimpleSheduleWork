@@ -886,7 +886,7 @@ const Worksheet: React.FC = () => {
                     }
 
                     <MobileEmployeeSearch
-                        employees={displayedEmployees}
+                        employees={employees}
                         translations={currentTranslation}
                         editingCell={editingCell}
                         editedTime={editedTime}

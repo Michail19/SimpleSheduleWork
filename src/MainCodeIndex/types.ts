@@ -46,6 +46,7 @@ export async function verifyToken(): Promise<boolean> {
     } catch (error) {
         console.error('Token verification failed:', error);
         localStorage.removeItem('authToken');
+        localStorage.removeItem("userIcon");
         return false;
     }
 }

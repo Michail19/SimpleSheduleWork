@@ -34,6 +34,8 @@ const MainCodeIndex: React.FC = () => {
                 setAuthToken(localStorage.getItem('authToken')); // токен нормальный
             } else {
                 setAuthToken(null); // токен невалидный, очищаем
+                setUsername(null);
+                setIconReady(false);
             }
         });
     }, []);
