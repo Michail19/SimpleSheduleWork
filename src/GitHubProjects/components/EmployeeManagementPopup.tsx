@@ -112,6 +112,8 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
                 localStorage.removeItem("userIcon");
                 window.location.href = 'index.html';
             }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+            return; // <<< ДОБАВИТЬ! Прерываем функцию
         }
 
         // Логируем payload для отладки

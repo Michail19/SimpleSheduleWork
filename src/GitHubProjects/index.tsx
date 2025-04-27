@@ -82,6 +82,8 @@ const GitHubProjects: React.FC = () => {
                         handleLogout();
                         window.location.href = 'index.html';
                     }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+                    return; // <<< ДОБАВИТЬ! Прерываем функцию
                 }
             }
 

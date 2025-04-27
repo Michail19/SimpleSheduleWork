@@ -44,6 +44,8 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
                 localStorage.removeItem("userIcon");
                 window.location.href = 'index.html';
             }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+            return; // <<< ДОБАВИТЬ! Прерываем функцию
         }
 
         try {
@@ -60,6 +62,7 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
             if (!response.ok) {
                 throw new Error("Ошибка при удалении сотрудника");
             } else {
+                console.log(selectedEmployee && selectedEmployee.id);
                 selectedEmployee && onDelete(selectedEmployee.id);
             }
 

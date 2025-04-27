@@ -99,6 +99,8 @@ const Worksheet: React.FC = () => {
                         handleLogout();
                         window.location.href = 'index.html';
                     }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+                    return; // <<< ДОБАВИТЬ! Прерываем функцию
                 }
             }
 
@@ -306,6 +308,8 @@ const Worksheet: React.FC = () => {
                 setTimeout(() => {
                     handleLogout();
                 }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+                return; // <<< ДОБАВИТЬ! Прерываем функцию
             }
 
             const data = await response.json();
@@ -569,6 +573,8 @@ const Worksheet: React.FC = () => {
                 setTimeout(() => {
                     handleLogout();
                 }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+                return; // <<< ДОБАВИТЬ! Прерываем функцию
             }
 
             const response = await fetch("https://ssw-backend.onrender.com/schedule/update", {
@@ -685,20 +691,13 @@ const Worksheet: React.FC = () => {
     const handleAddEmployee = (employeeData: Omit<Employee, 'id'> & { id?: string }) => {
         const projectsFromNewEmployee = employeeData.projects?.split(' ').filter(Boolean) || [];
 
-        // Генерируем новый ID
-        const newId = employees.length > 0
-            ? Math.max(...employees.map(e => parseInt(e.id))) + 1
-            : 1;
-
         // Создаем нового сотрудника с ID на первом месте
-        const newEmployee: Employee = {
-            id: newId.toString(),
-            fio: employeeData.fio,
-            projects: employeeData.projects || '',
-            weekSchedule: employeeData.weekSchedule
-        };
+        if (!employeeData.id) {
+            console.error('Ошибка: нет id у нового сотрудника');
+            return;
+        }
 
-        setEmployees(prev => [...prev, newEmployee]);
+        setEmployees(prevEmployees => [...prevEmployees, employeeData as Employee]);
 
         // Обновляем список фильтров
         setFilters(prev => {

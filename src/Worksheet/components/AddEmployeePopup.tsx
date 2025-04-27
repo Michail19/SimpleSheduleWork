@@ -97,6 +97,8 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
                 localStorage.removeItem("userIcon");
                 window.location.href = 'index.html';
             }, 100); // 100мс - пользователь успеет увидеть сообщение
+
+            return; // <<< ДОБАВИТЬ! Прерываем функцию
         }
 
         try {
@@ -120,7 +122,13 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
             if (!response.ok) {
                 throw new Error("Ошибка при добавлении сотрудника");
             } else {
-                onSave(employeeData);
+                const generatedId = await response.json();
+                const newEmployeeData = {
+                    ...employeeData,
+                    id: String(generatedId), // или оставить просто generatedId, если в твоём массиве id — число
+                };
+                onSave(newEmployeeData);
+                console.log(newEmployeeData.id);
             }
 
             onClose();
