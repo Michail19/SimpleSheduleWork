@@ -6,6 +6,41 @@ html, body {
     overflow-x: hidden;
 }
 
+/* Полностью убираем скроллбар и трек в Chrome */
+::-webkit-scrollbar {
+    width: 0 !important;  /* Убираем ширину */
+    height: 0 !important; /* Убираем высоту */
+    background: transparent !important; /* Делаем фон прозрачным */
+    -webkit-appearance: none !important; /* Отключаем стандартный вид */
+}
+
+/* Убираем трек (дорожку) */
+::-webkit-scrollbar-track {
+    display: none !important; /* Полностью скрываем */
+    background: transparent !important;
+}
+
+/* Убираем бегунок (скроллбар) */
+::-webkit-scrollbar-thumb {
+    display: none !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Для Firefox и Edge */
+html {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+/* Оставляем скролл функциональным */
+body {
+    overflow: -moz-scrollbars-none; /* Старый Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    scrollbar-width: none; /* Firefox 64+ */
+    -webkit-overflow-scrolling: touch; /* iOS smooth scroll */
+}
+
 @import url("../block/loader/loader.css");
 @import url("../block/preloader/preloader.css");
 @import url("../block/page/page.css");
