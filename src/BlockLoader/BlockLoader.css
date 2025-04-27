@@ -1,15 +1,15 @@
 .block-preloader {
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.7); /* полупрозрачная подложка */
+    /*background: rgba(255, 255, 255, 0.7); !* полупрозрачная подложка *!*/
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute; /* важно, чтобы прелоадер был поверх блока */
+    /*position: absolute; !* важно, чтобы прелоадер был поверх блока *!*/
     top: 0;
     left: 0;
     z-index: 10;
-    border-radius: 8px; /* если хочешь скругления */
+    /*border-radius: 8px; !* если хочешь скругления *!*/
 }
 
 /* Сам анимированный кружок */
