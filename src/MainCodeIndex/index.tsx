@@ -133,28 +133,36 @@ const MainCodeIndex: React.FC = () => {
                     className="header__up-blocks__wrapper__btn"
                     onClick={() => setShowLogin(true)}>Войти</button>
             ) : (
-                document.querySelector(".header__up-blocks__wrapper_icon-place") &&
+                <>
+                    {document.querySelector(".header__up-blocks__wrapper_icon-place") &&
                         ReactDOM.createPortal(
                             (localStorage.getItem('userIcon') ? (
                                 // <div className="header__up-blocks__wrapper__icon"></div>
-                                    <img
-                                        src={localStorage.getItem('userIcon')!}
-                                        className='header__up-blocks__wrapper__icon_gen'
-                                        alt="User Icon" />
-                                ) : (
-                                    accessUsername && ( // <== ДОБАВИТЬ ПРОВЕРКУ!
-                                        <ImageEditor
-                                            src="account.png"
-                                            letter={getFirstAndLastLetters(accessUsername)}
-                                            onRender={(dataUrl) => {
-                                                localStorage.setItem('userIcon', dataUrl);
-                                                setIconReady(true);
-                                            }}
-                                        />
-                                    )
-                                )),
+                                <img
+                                    src={localStorage.getItem('userIcon')!}
+                                    className='header__up-blocks__wrapper__icon_gen'
+                                    alt="User Icon"/>
+                            ) : (
+                                accessUsername && ( // <== ДОБАВИТЬ ПРОВЕРКУ!
+                                    <ImageEditor
+                                        src="account.png"
+                                        letter={getFirstAndLastLetters(accessUsername)}
+                                        onRender={(dataUrl) => {
+                                            localStorage.setItem('userIcon', dataUrl);
+                                            setIconReady(true);
+                                        }}
+                                    />
+                                )
+                            )),
                             document.querySelector(".header__up-blocks__wrapper_icon-place") as Element
-                        )
+                        )}
+
+                    {document.querySelector(".header__up-blocks__menu-toggle-place") &&
+                        ReactDOM.createPortal(
+                            <div className="header__up-blocks__menu-toggle">☰</div>,
+                            document.querySelector(".header__up-blocks__menu-toggle-place") as Element
+                        )}
+                </>
             )}
 
             {showLogin && (

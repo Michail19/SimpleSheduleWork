@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {translations} from "../translations";
 import {Language} from "../types";
+import {verifyToken} from "../../UserAccessLevel";
 
 interface Employee {
     id: number;
@@ -91,6 +92,18 @@ const EmployeeManagementPopup: React.FC<EmployeeManagementPopupProps> = ({
         if (!token) {
             alert(currentTranslation.alertAuth);
             return;
+        }
+
+        if (!await verifyToken()) {
+            // Показываем alert с сообщением
+            alert(currentTranslation.old_session);
+
+            // Через небольшой таймаут (для UX) делаем редирект
+            setTimeout(() => {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("userIcon");
+                window.location.href = 'index.html';
+            }, 100); // 100мс - пользователь успеет увидеть сообщение
         }
 
         // Логируем payload для отладки
