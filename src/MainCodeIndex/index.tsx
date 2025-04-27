@@ -2,9 +2,9 @@ import React, {useEffect, useMemo, useState} from "react";
 import LoginPopup from "./components/LoginPopup";
 import ReactDOM from "react-dom";
 import {translations} from "./translations";
-import {Language, verifyToken} from "./types";
+import {Language} from "./types";
 import ImageEditor from "../ImageEditor";
-import {getUsername} from "../UserAccessLevel";
+import {getUsername, verifyToken} from "../UserAccessLevel";
 
 const MainCodeIndex: React.FC = () => {
     const [showLogin, setShowLogin] = useState(false);

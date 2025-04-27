@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Employee, FiltersState, Language} from '../types';
 import { translations } from '../translations';
+import {verifyToken} from "../../UserAccessLevel";
 
 interface AddEmployeePopupProps {
     onClose: () => void;
@@ -77,6 +78,24 @@ export const AddEmployeePopup: React.FC<AddEmployeePopupProps> = ({
 
     const handleSave = async (employee: typeof employeeData) => {
         const token = localStorage.getItem("authToken");
+
+        if (!token) {
+            console.error("Токен авторизации не найден");
+            return; // Не делаем редирект, просто выходим
+        }
+
+        if (!await verifyToken()) {
+            // Показываем alert с сообщением
+            alert(currentTranslation.old_session);
+
+            // Через небольшой таймаут (для UX) делаем редирект
+            setTimeout(() => {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("userIcon");
+                window.location.href = 'index.html';
+            }, 100); // 100мс - пользователь успеет увидеть сообщение
+        }
+
         try {
             const response = await fetch("https://ssw-backend.onrender.com/schedule/add", {
                 method: "POST",

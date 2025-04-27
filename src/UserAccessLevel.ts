@@ -33,3 +33,32 @@ export function getUsername() {
         return null;
     }
 }
+
+export async function verifyToken(): Promise<boolean> {
+    const token = localStorage.getItem('authToken');
+    if (!token) return false;
+
+    try {
+        const response = await fetch('https://ssw-backend.onrender.com/auth/verify', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('authToken');
+                return false;
+            }
+            throw new Error('Server error');
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Token verification failed:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem("userIcon");
+        return false;
+    }
+}

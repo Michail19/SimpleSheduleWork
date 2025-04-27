@@ -52,4 +52,5 @@ export default {
     adminRole: 'АДМИН',
     project: "Проекты",
     home: "На главный",
+    old_session: "Ваша сессия устарела. Войдите снова.",
 }

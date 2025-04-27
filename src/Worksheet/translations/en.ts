@@ -52,4 +52,5 @@ export default {
     adminRole: 'ADMIN',
     project: "Projects",
     home: "Home",
+    old_session: "Your session is outdated. Log in again.",
 }

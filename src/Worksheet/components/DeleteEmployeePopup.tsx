@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {Employee, Language} from '../types';
 import {translations} from "../translations";
+import {verifyToken} from "../../UserAccessLevel";
 
 interface DeleteEmployeePopupProps {
     employees: Employee[];
@@ -24,6 +25,24 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
 
     const handleDelete = async () => {
         const token = localStorage.getItem("authToken");
+
+        if (!token) {
+            console.error("Токен авторизации не найден");
+            return; // Не делаем редирект, просто выходим
+        }
+
+        if (!await verifyToken()) {
+            // Показываем alert с сообщением
+            alert(currentTranslation.old_session);
+
+            // Через небольшой таймаут (для UX) делаем редирект
+            setTimeout(() => {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("userIcon");
+                window.location.href = 'index.html';
+            }, 100); // 100мс - пользователь успеет увидеть сообщение
+        }
+
         try {
             const response = await fetch(`https://ssw-backend.onrender.com/schedule/delete/${selectedEmployee?.id}`, {
                 method: "DELETE",
@@ -35,6 +54,9 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
 
             if (!response.ok) {
                 throw new Error("Ошибка при удалении сотрудника");
+            }
+            else {
+                selectedEmployee && onDelete(selectedEmployee.id);
             }
 
             onClose();
@@ -81,10 +103,7 @@ export const DeleteEmployeePopup: React.FC<DeleteEmployeePopupProps> = ({
                 <div className="popup-actions">
                     <button className="popup-actions-btn" onClick={onClose}>{currentTranslation.cancel}</button>
                     <button
-                        onClick={() => {
-                            selectedEmployee && onDelete(selectedEmployee.id);
-                            handleDelete();
-                        }}
+                        onClick={() => handleDelete()}
                         disabled={!selectedEmployee}
                         className="popup-actions-btn danger-btn"
                     >

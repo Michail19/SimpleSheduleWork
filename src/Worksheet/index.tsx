@@ -8,7 +8,7 @@ import {FiltersPanel} from './components/FiltersPanel';
 import {AddEmployeePopup} from './components/AddEmployeePopup';
 import {DeleteEmployeePopup} from './components/DeleteEmployeePopup';
 import {MobileEmployeeSearch} from "./components/MobileEmployeeSearch";
-import {getUserAccessLevel} from "../UserAccessLevel";
+import {getUserAccessLevel, verifyToken} from "../UserAccessLevel";
 import BlockLoader, {touch_on_load} from "../BlockLoader";
 
 const Worksheet: React.FC = () => {
@@ -87,6 +87,18 @@ const Worksheet: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem("authToken"); // предполагается, что ты сохраняешь токен после логина
+
+            if (token) {
+                if (!await verifyToken()) {
+                    // Показываем alert с сообщением
+                    alert(currentTranslation.old_session);
+
+                    // Через небольшой таймаут (для UX) делаем редирект
+                    setTimeout(() => {
+                        handleLogout();
+                    }, 100); // 100мс - пользователь успеет увидеть сообщение
+                }
+            }
 
             try {
                 // console.log(token);
@@ -267,7 +279,20 @@ const Worksheet: React.FC = () => {
                 },
             });
 
-            if (!response.ok) throw new Error("Ошибка сервера");
+            if (!token) {
+                console.error("Токен авторизации не найден");
+                return; // Не делаем редирект, просто выходим
+            }
+
+            if (!await verifyToken()) {
+                // Показываем alert с сообщением
+                alert(currentTranslation.old_session);
+
+                // Через небольшой таймаут (для UX) делаем редирект
+                setTimeout(() => {
+                    handleLogout();
+                }, 100); // 100мс - пользователь успеет увидеть сообщение
+            }
 
             const data = await response.json();
 
@@ -516,7 +541,20 @@ const Worksheet: React.FC = () => {
 
         try {
             const token = localStorage.getItem("authToken");
-            if (!token) throw new Error("Токен авторизации не найден");
+            if (!token) {
+                console.error("Токен авторизации не найден");
+                return; // Не делаем редирект, просто выходим
+            }
+
+            if (!await verifyToken()) {
+                // Показываем alert с сообщением
+                alert(currentTranslation.old_session);
+
+                // Через небольшой таймаут (для UX) делаем редирект
+                setTimeout(() => {
+                    handleLogout();
+                }, 100); // 100мс - пользователь успеет увидеть сообщение
+            }
 
             const response = await fetch("https://ssw-backend.onrender.com/schedule/update", {
                 method: "POST",
