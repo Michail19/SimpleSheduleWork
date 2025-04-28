@@ -231,17 +231,47 @@ const GitHubProjects: React.FC = () => {
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
             const otherElementsHeight = 100;
 
-            let availableHeight;
-            if (isMobile)
-                availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
-            else availableHeight = containerRef.current.clientHeight;
-
-            let rows;
-            if (availableHeight > 0) {
-                rows = Math.floor(availableHeight / finalRowHeight) || 1;
+            const availableHeight1 = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
+            const availableHeight2 = containerRef.current.clientHeight;
+            let rows1, rows2;
+            if (availableHeight1 > 0) {
+                rows1 = Math.floor(availableHeight1 / finalRowHeight) || 1;
             }
             else {
-                rows = 1
+                rows1 = 0;
+            }
+
+            let rows;
+            if (isMobile) {
+                rows = rows1;
+            }
+            else {
+                if (availableHeight2 > 0) {
+                    rows2 = Math.floor(availableHeight2 / finalRowHeight) || 1;
+                }
+                else {
+                    rows2 = 0;
+                }
+
+                if (rows1 > 0 && rows2 <= 0) rows = rows1;
+                else if (rows1 <= 0 && rows2 > 0) rows = rows2;
+                else if (rows1 > 0 && rows2 > 0) {
+                    const dif = availableHeight1 - availableHeight2;
+                    if (dif < 0) {
+                        if (dif > finalRowHeight) {
+                            rows = rows2;
+                        } else {
+                            rows = rows1;
+                        }
+                    } else {
+                        if (-dif > finalRowHeight) {
+                            rows = rows2;
+                        } else {
+                            rows = rows1;
+                        }
+                    }
+                    console.log(availableHeight1, availableHeight2, dif, finalRowHeight, rows);
+                } else rows = 1;
             }
 
             const cardsPerRow = getCardsPerRow();
