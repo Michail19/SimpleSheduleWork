@@ -23,6 +23,8 @@ npm install --save-dev eslint
 npm install --save-dev jest-environment-jsdom
 npm install --save-dev @types/jest
 npm install --save-dev @testing-library/jest-dom
+npm install --save-dev typescript-eslint eslint-plugin-react @eslint/js typescript-eslint
+
 
 {document.querySelector('.sidebar') &&
             ReactDOM.createPortal(
