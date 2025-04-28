@@ -3,6 +3,7 @@
 .footer-index {
     background-color: #1f1f1f;
     position: relative;
+    padding: 5vh 0;
     display: flex;
     justify-content: center;
 }
