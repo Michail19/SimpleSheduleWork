@@ -6,6 +6,7 @@
     "strict": true,
     "esModuleInterop": true,
     "baseUrl": "./src",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "types": ["jest", "node"]
   }
 }

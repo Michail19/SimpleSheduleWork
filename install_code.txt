@@ -21,7 +21,8 @@ npm install jwt-decode --save-dev
 npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest
 npm install --save-dev eslint
 npm install --save-dev jest-environment-jsdom
-
+npm install --save-dev @types/jest
+npm install --save-dev @testing-library/jest-dom
 
 {document.querySelector('.sidebar') &&
             ReactDOM.createPortal(

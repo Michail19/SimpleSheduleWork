@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import test from "node:test";
+import '@testing-library/jest-dom'
 
 function HelloWorld() {
     return <h1>Hello, World!</h1>;
