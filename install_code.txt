@@ -17,9 +17,10 @@ npm install --save-dev postcss-loader postcss
 npm install --save-dev css-loader autoprefixer
 npm install --save-dev postcss-loader postcss postcss-bem-linter
 npm install @octokit/core --save-dev
-npm install jwt-decode
+npm install jwt-decode --save-dev
 npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest
 npm install --save-dev eslint
+npm install --save-dev jest-environment-jsdom
 
 
 {document.querySelector('.sidebar') &&
