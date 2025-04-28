@@ -39,6 +39,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: write  # Добавьте это
     steps:
     - uses: actions/checkout@v3
     - name: Deploy to gh-pages
