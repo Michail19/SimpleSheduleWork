@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "node node_modules/webpack/bin/webpack.js serve",
+    "test": "jest",
+    "lint": "eslint 'src/**/*.{ts,tsx,js,jsx}'",
     "build": "webpack --mode production",
+    "start": "webpack serve --mode development",
+    "run": "node node_modules/webpack/bin/webpack.js serve",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
