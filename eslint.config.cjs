@@ -2,37 +2,35 @@ const js = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const reactPlugin = require('eslint-plugin-react');
 
-module.exports = [
+module.exports = tseslint.config(
+    {
+        // Базовые настройки
+        files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+        ignores: ['**/*.config.js'],
+    },
+    // Наследуем рекомендуемые конфигурации
     js.configs.recommended,
-    tseslint.configs.recommended,
+    ...tseslint.configs.recommended,
+    // Добавляем React-специфичные настройки
     {
         plugins: {
             react: reactPlugin,
         },
+        languageOptions: {
+            parserOptions: {
+                ecmaFeatures: {
+                    jsx: true,
+                },
+            },
+        },
         rules: {
-            'react/react-in-jsx-scope': 'off', // если используешь новые версии React
-            'react/prop-types': 'off',          // если не используешь PropTypes (с TypeScript они не нужны)
+            'react/react-in-jsx-scope': 'off',
+            'react/prop-types': 'off',
         },
         settings: {
             react: {
                 version: 'detect',
             },
         },
-    },
-    {
-        files: ['*.ts', '*.tsx'],
-        extends: [
-            js.configs.recommended,
-            tseslint.configs.recommended,
-        ],
-        rules: {
-            'react/react-in-jsx-scope': 'off', // если используешь новые версии React
-            'react/prop-types': 'off',          // если не используешь PropTypes (с TypeScript они не нужны)
-        },
-        settings: {
-            react: {
-                version: 'detect',
-            },
-        },
-    },
-];
+    }
+);
