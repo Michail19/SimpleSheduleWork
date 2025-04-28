@@ -194,7 +194,7 @@ const Worksheet: React.FC = () => {
             const headerHeight = document.querySelector(".header")?.clientHeight || 0; // Высота заголовка
             const dateSwitcherHeight = document.querySelector(".subtitle")?.clientHeight || 0;
             const paginationHeight = document.querySelector(".footer")?.clientHeight || 0;
-            const otherElementsHeight = 60; // Если есть отступы, доп. элементы
+            const otherElementsHeight = 70; // Если есть отступы, доп. элементы
             const availableHeight = viewportHeight - headerHeight - dateSwitcherHeight - paginationHeight - otherElementsHeight;
 
             const newRowsPerPage = Math.floor(availableHeight / finalRowHeight) || 1;
