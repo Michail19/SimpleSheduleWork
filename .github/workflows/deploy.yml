@@ -43,6 +43,18 @@ jobs:
       contents: write  # Добавьте это
     steps:
     - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: Install dependencies
+      run: npm install
+    - name: Build project
+      run: npm run build
+      env:
+        NODE_ENV: production
+    
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
       with:
