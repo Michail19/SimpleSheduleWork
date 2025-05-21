@@ -38,6 +38,9 @@ export async function verifyToken(): Promise<boolean> {
     const token = localStorage.getItem('authToken');
     if (!token) return false;
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 сек
+
     try {
         const response = await fetch('https://ssw-backend.onrender.com/auth/verify', {
             method: 'GET',
@@ -53,6 +56,8 @@ export async function verifyToken(): Promise<boolean> {
             }
             throw new Error('Server error');
         }
+
+        clearTimeout(timeoutId);
 
         return true;
     } catch (error) {
