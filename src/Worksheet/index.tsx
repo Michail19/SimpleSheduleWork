@@ -35,6 +35,7 @@ const Worksheet: React.FC = () => {
     const accessLevel = getUserAccessLevel() || "OWNER";
     const [loading, setLoading] = React.useState(true);
     const [fade, setFade] = useState(false);
+    const [currentWeekStartDate, setCurrentWeekStartDate] = useState<string>("");
     const [filters, setFilters] = useState<FiltersState>({
         projects: [],
         activeProjects: [],
@@ -244,6 +245,10 @@ const Worksheet: React.FC = () => {
 
 
     const changeWeek = async (direction: "next" | "previous") => {
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+            debounceRef.current = null;
+        }
         await flushChanges();
         setEditingCell(null);
 
@@ -274,7 +279,6 @@ const Worksheet: React.FC = () => {
 
             fetchWeekData(formattedDate, newWeekRange);
 
-
             return newOffset;
         });
     };
@@ -297,6 +301,7 @@ const Worksheet: React.FC = () => {
             if (!token) {
                 console.error("Токен авторизации не найден");
                 setCurrentWeek(newWeekRange);
+                setCurrentWeekStartDate(formattedDate);
                 return; // Не делаем редирект, просто выходим
             }
 
@@ -320,11 +325,13 @@ const Worksheet: React.FC = () => {
 
             setEmployees(data.employees);
             setCurrentWeek(newWeekRange);
+            setCurrentWeekStartDate(formattedDate);
             setPendingChanges([]);
             pendingChangesRef.current = [];
         } catch (err) {
             console.error("Ошибка при загрузке данных:", err);
             setCurrentWeek(newWeekRange);
+            setCurrentWeekStartDate(formattedDate);
         } finally {
             setLoading(false); // Скрываем прелоадер в любом случае
         }
@@ -486,25 +493,28 @@ const Worksheet: React.FC = () => {
 
         setEditingCell(null);
 
-        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
-        if (!parsedWeek) return;
+        // const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
+        // if (!parsedWeek) return;
+        //
+        // const {start, end} = parsedWeek;
+        // const newStart = new Date(start);
+        //
+        // // Костыль по месяцам сохраняем
+        // const formatDate = (date: Date) =>
+        //     new Intl.DateTimeFormat("ru-RU", {
+        //         year: "numeric",
+        //         month: "2-digit",
+        //         day: "2-digit",
+        //         timeZone: "Europe/Moscow"
+        //     })
+        //         .format(date)
+        //         .split(".")
+        //         .reverse()
+        //         .join("-");
+        // const formattedDate = formatDate(start);
 
-        const {start, end} = parsedWeek;
-        const newStart = new Date(start);
-
-        // Костыль по месяцам сохраняем
-        const formatDate = (date: Date) =>
-            new Intl.DateTimeFormat("ru-RU", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                timeZone: "Europe/Moscow"
-            })
-                .format(date)
-                .split(".")
-                .reverse()
-                .join("-");
-        const formattedDate = formatDate(start);
+        const formattedDate = currentWeekStartDate;
+        if (!formattedDate) return;
 
         enqueueChange(
             employeeId,
@@ -589,29 +599,34 @@ const Worksheet: React.FC = () => {
             if (!response.ok) {
                 console.error("Ошибка при отправке:", await response.text());
             }
+
+            // console.log("Отправка изменений:", JSON.stringify(payload, null, 2));
         } catch (error) {
             console.error("Ошибка при отправке расписания:", error);
         }
     };
 
     const handleClearTime = (employeeId: string, dayIndex: number, day: string) => {
-        const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
-        if (!parsedWeek) return;
+        // const parsedWeek = parseWeekRange(currentWeek, currentTranslation);
+        // if (!parsedWeek) return;
+        //
+        // const {start, end} = parsedWeek;
+        //
+        // const formatDate = (date: Date) =>
+        //     new Intl.DateTimeFormat("ru-RU", {
+        //         year: "numeric",
+        //         month: "2-digit",
+        //         day: "2-digit",
+        //         timeZone: "Europe/Moscow"
+        //     })
+        //         .format(date)
+        //         .split(".")
+        //         .reverse()
+        //         .join("-");
+        // const formattedDate = formatDate(start);
 
-        const {start, end} = parsedWeek;
-
-        const formatDate = (date: Date) =>
-            new Intl.DateTimeFormat("ru-RU", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                timeZone: "Europe/Moscow"
-            })
-                .format(date)
-                .split(".")
-                .reverse()
-                .join("-");
-        const formattedDate = formatDate(start);
+        const formattedDate = currentWeekStartDate;
+        if (!formattedDate) return;
 
         setEmployees((prev) =>
             prev.map((employee) =>
