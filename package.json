@@ -4,6 +4,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "test": "jest",
+    "jest": "node node_modules/jest/bin/jest.js",
     "lint": "eslint 'src/**/*.{ts,tsx,js,jsx}'",
     "build": "webpack --mode production",
     "start": "webpack serve --mode development",

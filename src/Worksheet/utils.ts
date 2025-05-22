@@ -23,6 +23,27 @@ export const calculateWorkHours = (time: { [day: string]: Schedule }): string =>
     return Math.round(totalHours).toString();
 };
 
+export const calculateWorkHoursPerDay = (time: Schedule): number => {
+    let totalHours = 0;
+
+    if (!time?.start || !time?.end) return 0;
+
+    const startTime = new Date(`1970-01-01T${time.start}:00`);
+    const endTime = new Date(`1970-01-01T${time.end}:00`);
+
+    if (endTime >= startTime) {
+        totalHours += (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    } else {
+        const midnight = new Date("1970-01-02T00:00:00");
+        totalHours += (midnight.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+        totalHours += (endTime.getTime() - new Date("1970-01-01T00:00:00").getTime()) / (1000 * 60 * 60);
+    }
+
+    let result = totalHours.toFixed(1);
+    if (result[result.length - 1] != '0') return parseInt(result);
+    return Math.round(totalHours);
+};
+
 export const filterEmployees = (employees: Employee[], filters: FiltersState, searchQuery: string) => {
     let result = employees;
 

@@ -5,12 +5,12 @@
     padding: 0.5rem;
     border-radius: 5px;
     
-    box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);
+    /*box-shadow: 5px 5px 5px rgba(171, 200, 255, 0.9);*/
     background: #E8F0FE;
 }
 
 .dark-theme .worksheet__cell {
-    box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
+    /*box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);*/
     background: #323232;
 }
 
