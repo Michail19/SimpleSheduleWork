@@ -6,10 +6,10 @@
     border-radius: 5px;
 
     /*box-shadow: 5px 5px 5px rgba(0, 206, 167, 0.75);*/
-    background: #DBDCB0;
+    background: rgba(94, 192, 255, 0.65);
 }
 
 .dark-theme .worksheet__cell_name {
     /*box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);*/
-    background: #4D4E20;
+    background: #326385;
 }

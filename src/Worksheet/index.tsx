@@ -1070,10 +1070,10 @@ const Worksheet: React.FC = () => {
                                                     return (
                                                         <div
                                                             key={dayIndex}
-                                                            className="worksheet__cell"
-                                                            style={{
-                                                                boxShadow: `5px 5px 5px ${getGreenTransparency(calculateWorkHoursPerDay(schedule))}`
-                                                            }}>
+                                                            className="worksheet__cell">
+                                                            {/* style={{*/}
+                                                            {/*     boxShadow: `5px 5px 5px ${getGreenTransparency(calculateWorkHoursPerDay(schedule))}`*/}
+                                                            {/* }}>*/}
                                                             {editingCell?.employeeId === employee.id && editingCell?.day === day ? (
                                                                 <>
                                                                     <input

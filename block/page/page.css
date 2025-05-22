@@ -1,6 +1,6 @@
 .page {
     font-family: 'Inter', sans-serif;
-    background: #F5F7FA;
+    background: #ffffe9;
     color: #353535;
     transition: background-color 0.4s ease, color 0.4s ease;
 }

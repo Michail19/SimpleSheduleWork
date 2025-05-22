@@ -1,11 +1,17 @@
 .header {
     display: flex;
     align-items: center;
-    background: #737373;
+    background: #75d555;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     border-radius: 0 0 10px 10px;
     color: #FFFFFF;
     height: 100px;
     justify-content: space-between;
+}
+
+.dark-theme .header {
+    background: #1f3c61;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
 }
 
 @media screen and (max-width: 869px) {

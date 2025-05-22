@@ -1,10 +1,19 @@
 .current {
+    position: relative;
     margin: -0.6vh -1vw;
     padding: 0.6vh 1vw;
-    
-    background: #F7FF00;
+    z-index: 0;
+    border-radius: 4px;
+    animation: combined-highlight 6s ease infinite;
 }
 
-.dark-theme .current {
-    background: #4b4b00;
+@keyframes combined-highlight {
+    0%, 100% {
+        box-shadow: 0 0 0 2px rgba(65, 239, 23, 0.3);
+        background-color: rgba(27, 37, 1, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(152, 37, 186, 0.5);
+        background-color: rgba(48, 57, 0, 0.2);
+    }
 }

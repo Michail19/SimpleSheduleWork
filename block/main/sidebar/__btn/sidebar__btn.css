@@ -9,7 +9,7 @@
         text-decoration: none;
         cursor: pointer;
 
-        background: #98ED9B;
+        background: rgba(152, 237, 155, 0.78);
         color: #353535;
     }
 
@@ -32,5 +32,9 @@
 @media screen and (min-width: 1490px) {
     .sidebar__btn.active {
         background-color: #a3ffa6;
+    }
+
+    .dark-theme .sidebar__btn.active {
+        background-color: rgba(163, 255, 166, 0.63);
     }
 }
