@@ -22,7 +22,7 @@ export default {
     october: "October",
     november: "November",
     december: "December",
-    filters: 'Filters',
+    filters: 'Search &\nFilters',
     clearFilters: 'Clear filters',
     searchByName: 'Search for employees...',
     addEmployee: "Add Employee",

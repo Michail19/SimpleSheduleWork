@@ -13,7 +13,8 @@
         color: #353535;
     }
 
-    .sidebar__btn:hover {
+    .sidebar__btn:hover,
+    .sidebar__btn.active {
         background: #a3ffa6;
     }
 
@@ -22,19 +23,10 @@
         color: #EAEAEA;
     }
 
-    .dark-theme .sidebar__btn:hover {
+    .dark-theme .sidebar__btn:hover,
+    .dark-theme .sidebar__btn.active {
         background: #469a48;
     }
 }
 
 @import url("./_worksheet/btn_worksheet.css");
-
-@media screen and (min-width: 1490px) {
-    .sidebar__btn.active {
-        background-color: #a3ffa6;
-    }
-
-    .dark-theme .sidebar__btn.active {
-        background-color: rgba(163, 255, 166, 0.63);
-    }
-}

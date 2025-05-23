@@ -798,6 +798,33 @@ const Worksheet: React.FC = () => {
         <div className="content" key={updateKey}>
             {/* Рендеринг порталов и компонентов */}
 
+            {document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className={`sidebar__btn ${showFilters ? 'active' : ''}`}
+                        onClick={() => setShowFilters(!showFilters)}
+                        data-key="sidebar_filters"
+                    >
+                        {currentTranslation.filters}
+                    </button>,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+            {showFilters && (
+                ReactDOM.createPortal(
+                    <FiltersPanel
+                        filters={filters}
+                        searchQuery={searchQueryEmployees}
+                        currentTranslation={currentTranslation}
+                        setSearchQuery={setSearchQueryEmployees}
+                        toggleProjectFilter={toggleProjectFilter}
+                        clearFilters={clearFilters}
+                        setShowFilters={setShowFilters}
+                    />,
+                    document.querySelector('.sidebar') as Element
+                )
+            )}
+
             {accessLevel === "OWNER" &&
                 document.querySelector('.sidebar') &&
                 ReactDOM.createPortal(
@@ -870,33 +897,6 @@ const Worksheet: React.FC = () => {
                         currentTranslation={currentTranslation}
                     />
                 )}
-
-            {document.querySelector('.sidebar') &&
-                ReactDOM.createPortal(
-                    <button
-                        className={`sidebar__btn ${showFilters ? 'active' : ''}`}
-                        onClick={() => setShowFilters(!showFilters)}
-                        data-key="sidebar_filters"
-                    >
-                        {currentTranslation.filters}
-                    </button>,
-                    document.querySelector('.sidebar') as Element
-                )
-            }
-            {showFilters && (
-                ReactDOM.createPortal(
-                    <FiltersPanel
-                        filters={filters}
-                        searchQuery={searchQueryEmployees}
-                        currentTranslation={currentTranslation}
-                        setSearchQuery={setSearchQueryEmployees}
-                        toggleProjectFilter={toggleProjectFilter}
-                        clearFilters={clearFilters}
-                        setShowFilters={setShowFilters}
-                    />,
-                    document.querySelector('.sidebar') as Element
-                )
-            )}
 
             {document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
