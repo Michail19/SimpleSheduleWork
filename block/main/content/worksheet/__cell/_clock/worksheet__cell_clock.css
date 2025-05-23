@@ -6,11 +6,11 @@
     text-align: center; 
     align-content: center;
     
-    box-shadow: 5px 5px 5px rgba(0, 206, 167, 0.75);
-    background: #3FFF55;
+    /*box-shadow: 5px 5px 5px rgba(0, 206, 167, 0.75);*/
+    background: rgba(204, 208, 236, 0.71);
 }
 
 .dark-theme .worksheet__cell_clock {
-    box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);
-    background: #16921A;
+    /*box-shadow: 5px 5px 5px rgba(0, 154, 92, 0.75);*/
+    background: #434040;
 }

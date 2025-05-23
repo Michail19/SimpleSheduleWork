@@ -22,7 +22,7 @@ export default {
     october: "Октября",
     november: "Ноября",
     december: "Декабря",
-    filters: 'Фильтры',
+    filters: 'Поиск и\nфильтры',
     clearFilters: 'Сбросить фильтры',
     searchByName: 'Поиск сотрудников...',
     addEmployee: "Добавить сотрудника",

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Employee, FiltersState, Language} from './types';
 import {translations} from './translations';
 import {parseWeekRange, formatWeekRange, translateMonth} from "./timeParsers"
-import {calculateWorkHours, filterEmployees} from './utils';
+import {calculateWorkHours, calculateWorkHoursPerDay, filterEmployees} from './utils';
 import {FiltersPanel} from './components/FiltersPanel';
 import {AddEmployeePopup} from './components/AddEmployeePopup';
 import {DeleteEmployeePopup} from './components/DeleteEmployeePopup';
@@ -23,6 +23,7 @@ const Worksheet: React.FC = () => {
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1090);
     const [language, setLanguage] = useState<Language>("ru");
+    const [theme, setTheme] = useState(localStorage.getItem('dark_theme') === 'enabled');
     const [updateKey, setUpdateKey] = useState(0);
     const [showFilters, setShowFilters] = useState(false);
     const [searchQueryEmployees, setSearchQueryEmployees] = useState('');
@@ -781,10 +782,48 @@ const Worksheet: React.FC = () => {
         }
     }, [loading]);
 
+    function getGreenTransparency(valueGreen: number, max = 100) {
+        const opacity = 0.1 + (valueGreen / max);
+        console.log(opacity);
+        console.log(theme);
+        return theme ?`rgba(0, 154, 92, ${opacity})` :`rgba(171, 200, 255, ${opacity})`;
+    }
+
+    useEffect(() => {
+        setTheme(localStorage.getItem('dark_theme') === 'enabled');
+    }, [localStorage.getItem('dark_theme')]);
+
 
     return (
         <div className="content" key={updateKey}>
             {/* Рендеринг порталов и компонентов */}
+
+            {document.querySelector('.sidebar') &&
+                ReactDOM.createPortal(
+                    <button
+                        className={`sidebar__btn ${showFilters ? 'active' : ''}`}
+                        onClick={() => setShowFilters(!showFilters)}
+                        data-key="sidebar_filters"
+                    >
+                        {currentTranslation.filters}
+                    </button>,
+                    document.querySelector('.sidebar') as Element
+                )
+            }
+            {showFilters && (
+                ReactDOM.createPortal(
+                    <FiltersPanel
+                        filters={filters}
+                        searchQuery={searchQueryEmployees}
+                        currentTranslation={currentTranslation}
+                        setSearchQuery={setSearchQueryEmployees}
+                        toggleProjectFilter={toggleProjectFilter}
+                        clearFilters={clearFilters}
+                        setShowFilters={setShowFilters}
+                    />,
+                    document.querySelector('.sidebar') as Element
+                )
+            )}
 
             {accessLevel === "OWNER" &&
                 document.querySelector('.sidebar') &&
@@ -858,33 +897,6 @@ const Worksheet: React.FC = () => {
                         currentTranslation={currentTranslation}
                     />
                 )}
-
-            {document.querySelector('.sidebar') &&
-                ReactDOM.createPortal(
-                    <button
-                        className={`sidebar__btn ${showFilters ? 'active' : ''}`}
-                        onClick={() => setShowFilters(!showFilters)}
-                        data-key="sidebar_filters"
-                    >
-                        {currentTranslation.filters}
-                    </button>,
-                    document.querySelector('.sidebar') as Element
-                )
-            }
-            {showFilters && (
-                ReactDOM.createPortal(
-                    <FiltersPanel
-                        filters={filters}
-                        searchQuery={searchQueryEmployees}
-                        currentTranslation={currentTranslation}
-                        setSearchQuery={setSearchQueryEmployees}
-                        toggleProjectFilter={toggleProjectFilter}
-                        clearFilters={clearFilters}
-                        setShowFilters={setShowFilters}
-                    />,
-                    document.querySelector('.sidebar') as Element
-                )
-            )}
 
             {document.querySelector('.header__up-blocks__headbar') &&
                 ReactDOM.createPortal(
@@ -1056,7 +1068,12 @@ const Worksheet: React.FC = () => {
                                                     const schedule = employee.weekSchedule[day];
 
                                                     return (
-                                                        <div key={dayIndex} className="worksheet__cell">
+                                                        <div
+                                                            key={dayIndex}
+                                                            className="worksheet__cell">
+                                                            {/* style={{*/}
+                                                            {/*     boxShadow: `5px 5px 5px ${getGreenTransparency(calculateWorkHoursPerDay(schedule))}`*/}
+                                                            {/* }}>*/}
                                                             {editingCell?.employeeId === employee.id && editingCell?.day === day ? (
                                                                 <>
                                                                     <input

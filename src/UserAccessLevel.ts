@@ -39,7 +39,10 @@ export async function verifyToken(): Promise<boolean> {
     if (!token) return false;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 сек
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+        return false;
+    }, 8000); // 8 сек
 
     try {
         const response = await fetch('https://ssw-backend.onrender.com/auth/verify', {

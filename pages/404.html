@@ -6,85 +6,80 @@
     <link rel="icon" href="icon.png" sizes="32x32" type="image/x-icon">
     <title>404 - Страница не найдена</title>
     <style>
-        /* Общие стили */
         body {
             font-family: 'Inter', Arial, sans-serif;
-            text-align: center;
             margin: 0;
-            padding: 50px;
-            transition: all 0.3s ease;
-
-            /* Светлая тема по умолчанию */
-            background-color: #F5F7FA;
-            color: #353535;
+            background-color: #0A0C10;
+            color: #eaeaea;
         }
 
-        /* Тёмная тема */
-        body.dark-theme {
-            background-color: #1E1E1E;
-            color: #EAEAEA;
+        /* Фоновая секция */
+        .image-section {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('404.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: contain;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 5vh;
+            box-sizing: border-box;
         }
 
+        /* Контейнер с текстом */
+        .text-content {
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Заголовок */
         h1 {
-            font-size: 5rem;
-            margin-bottom: 0.5rem;
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin: 0.5rem 0;
             font-weight: 700;
         }
 
+        /* Описание */
         p {
-            font-size: 1.5rem;
-            margin-top: 0;
+            font-size: clamp(1rem, 2vw, 1.8rem);
+            margin: 0.2rem 0;
             opacity: 0.9;
         }
 
-        /* Стили для кнопки */
+        /* Кнопка */
         a {
             text-decoration: none;
             padding: 12px 24px;
             border-radius: 6px;
             display: inline-block;
-            margin-top: 30px;
-            font-size: 1.2rem;
+            margin-top: 20px;
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
             font-weight: 500;
             transition: all 0.3s ease;
-
-            /* Светлая тема */
             background-color: #007bff;
             color: #fff;
         }
 
-        /* Кнопка в тёмной теме */
-        body.dark-theme a {
-            background-color: #3A7BFF;
-            color: #FFFFFF;
-        }
-
-        /* Эффекты при наведении */
         a:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Светлая тема */
-        a:hover {
             background-color: #0062cc;
-        }
-
-        /* Тёмная тема */
-        body.dark-theme a:hover {
-            background-color: #2A6BEF;
-            box-shadow: 0 4px 12px rgba(58, 123, 255, 0.2);
         }
     </style>
 
     <script>
         const translations = {
             ru: {
-                not_founded: "Ой! Страница не найдена.",
+                okak: "ОКАК",
+                not_founded: "Страница не найдена.",
                 returning: "Вернуться на главную"
             },
             en: {
-                not_founded: "Oops! The page was not found.",
+                okak: "OKAK",
+                not_founded: "The page was not found.",
                 returning: "Back to the main page"
             }
         };
@@ -99,10 +94,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('dark_theme') === 'enabled') {
-                document.body.classList.add('dark-theme');
-            }
-
             if (localStorage.getItem('changed-lang') === 'enabled') {
                 document.body.classList.add('changed-lang');
                 updateText();
@@ -111,8 +102,13 @@
     </script>
 </head>
 <body>
-    <h1>404</h1>
-    <p data-key="not_founded">Ой! Страница не найдена.</p>
-    <a href="./index.html" data-key="returning">Вернуться на главную</a>
+    <div class="image-section">
+        <div class="text-content">
+            <h1>404</h1>
+            <p data-key="okak" style="font-size: clamp(1.5rem, 2vw, 2.5rem);">ОКАК</p>
+            <p data-key="not_founded">Страница не найдена.</p>
+            <a href="./index.html" data-key="returning">Вернуться на главную</a>
+        </div>
+    </div>
 </body>
 </html>

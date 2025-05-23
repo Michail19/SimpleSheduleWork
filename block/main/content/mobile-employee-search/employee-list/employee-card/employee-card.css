@@ -16,7 +16,7 @@
     background: #323232;
     border-radius: 8px;
     padding: 5px 15px 10px 15px;
-    box-shadow: 0 2px 4px rgba(0, 154, 92, 0.75);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 @media screen and (orientation: landscape) {
